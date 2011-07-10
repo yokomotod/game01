@@ -1,0 +1,13 @@
+html, body{
+	margin:0;
+	width:100%;
+}
+
+header{
+	text-align:center;
+	margin:auto;
+}
+#main{
+	width:600px;
+	margin:0 auto;
+}
