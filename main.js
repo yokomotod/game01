@@ -109,40 +109,40 @@ function initBuffers() {
 	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
 	vertices = [
 	// Front face
-	-1.0, -1.0,  1.0,
-	1.0, -1.0,  1.0,
-	1.0,  1.0,  1.0,
-	-1.0,  1.0,  1.0,
+	-0.5, -0.5,  0.5,
+	0.5, -0.5,  0.5,
+	0.5,  0.5,  0.5,
+	-0.5,  0.5,  0.5,
 
 	// Back face
-	-1.0, -1.0, -1.0,
-	-1.0,  1.0, -1.0,
-	1.0,  1.0, -1.0,
-	1.0, -1.0, -1.0,
+	-0.5, -0.5, -0.5,
+	-0.5,  0.5, -0.5,
+	0.5,  0.5, -0.5,
+	0.5, -0.5, -0.5,
 
 	// Top face
-	-1.0,  1.0, -1.0,
-	-1.0,  1.0,  1.0,
-	1.0,  1.0,  1.0,
-	1.0,  1.0, -1.0,
+	-0.5,  0.5, -0.5,
+	-0.5,  0.5,  0.5,
+	0.5,  0.5,  0.5,
+	0.5,  0.5, -0.5,
 
 	// Bottom face
-	-1.0, -1.0, -1.0,
-	1.0, -1.0, -1.0,
-	1.0, -1.0,  1.0,
-	-1.0, -1.0,  1.0,
+	-0.5, -0.5, -0.5,
+	0.5, -0.5, -0.5,
+	0.5, -0.5,  0.5,
+	-0.5, -0.5,  0.5,
 
 	// Right face
-	1.0, -1.0, -1.0,
-	1.0,  1.0, -1.0,
-	1.0,  1.0,  1.0,
-	1.0, -1.0,  1.0,
+	0.5, -0.5, -0.5,
+	0.5,  0.5, -0.5,
+	0.5,  0.5,  0.5,
+	0.5, -0.5,  0.5,
 
 	// Left face
-	-1.0, -1.0, -1.0,
-	-1.0, -1.0,  1.0,
-	-1.0,  1.0,  1.0,
-	-1.0,  1.0, -1.0
+	-0.5, -0.5, -0.5,
+	-0.5, -0.5,  0.5,
+	-0.5,  0.5,  0.5,
+	-0.5,  0.5, -0.5
 	];
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 	cubeVertexPositionBuffer.itemSize = 3;
@@ -151,12 +151,12 @@ function initBuffers() {
 	cubeVertexColorBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
 	colors = [
-	[1.0, 0.0, 0.0, 1.0], // Front face
-	[1.0, 1.0, 0.0, 1.0], // Back face
-	[0.0, 1.0, 0.0, 1.0], // Top face
-	[1.0, 0.5, 0.5, 1.0], // Bottom face
-	[1.0, 0.0, 1.0, 1.0], // Right face
-	[0.0, 0.0, 1.0, 1.0]  // Left face
+	[0.5, 0.5, 0.5, 1.0], // Front face
+	[0.5, 0.5, 0.5, 1.0], // Back face
+	[0.5, 0.5, 0.5, 1.0], // Top face
+	[0.5, 0.5, 0.5, 1.0], // Bottom face
+	[0.5, 0.5, 0.5, 1.0], // Right face
+	[0.5, 0.5, 0.5, 1.0]  // Left face
 	];
 	var unpackedColors = [];
 	for (var i in colors) {
@@ -212,69 +212,6 @@ function initBuffers() {
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeLineIndices), gl.STATIC_DRAW);
 	cubeLineIndexBuffer.itemSize = 1;
 	cubeLineIndexBuffer.numItems = 24;
-}
-
-var rCube = 0;
-
-function drawScene() {
-	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-	mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-
-	mat4.identity(mvMatrix);
-
-	mat4.translate(mvMatrix, [0.0, 0.0, -10.0]);
-
-	for (var x=0; x<2; x++) {
-		for (var y=0; y<2; y++) {
-			for (var z=0; z<2; z++) {
-				mvPushMatrix();
-
-				mat4.rotate(mvMatrix, degToRad(rCube), [1, 1, 1]);
-				mat4.translate(mvMatrix, [x, y, z]);
-
-				gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-				gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-				gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
-				gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-				setMatrixUniforms();
-				gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-
-				gl.bindBuffer(gl.ARRAY_BUFFER, cubeLineColorBuffer);
-				gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeLineColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeLineIndexBuffer);
-				gl.drawElements(gl.LINES, cubeLineIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-
-				mvPopMatrix();
-
-			}
-		}
-	}
-
-}
-
-var lastTime = 0;
-
-function animate() {
-	var timeNow = new Date().getTime();
-	if (lastTime != 0) {
-		var elapsed = timeNow - lastTime;
-
-		rCube -= (75 * elapsed) / 1000.0;
-		//			rCube = 30;
-	}
-	lastTime = timeNow;
-}
-
-function tick() {
-	requestAnimFrame(tick);
-	drawScene();
-	animate();
 }
 
 var MazeMap = function() {
@@ -665,18 +602,47 @@ MazeMap.prototype = {
 			return false;
 		}
 	},
-	draw: function (ctx, xWidth, yWidth) {
+	draw: function () {
 
 		for (var x=0; x < this.xSize; x++) {
 			for (var y=0; y < this.ySize; y++) {
-				if (this.map[x][y] == 0) {
-					ctx.fillStyle = "Gray";
+				if (this.map[x][y] == 1) {
+					mvPushMatrix();
+
+					mat4.translate(mvMatrix, [x, y, 0]);
+
+					gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+					gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+					gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
+					gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+					gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+					setMatrixUniforms();
+					gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+					gl.bindBuffer(gl.ARRAY_BUFFER, cubeLineColorBuffer);
+					gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeLineColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+					gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeLineIndexBuffer);
+					gl.drawElements(gl.LINES, cubeLineIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+					mvPopMatrix();
 				} else {
-					ctx.fillStyle = "Black";
 				}
-				ctx.fillRect(x*xWidth, y*yWidth, xWidth, yWidth);
 			};
 		};
+
+		// for (var x=0; x < this.xSize; x++) {
+		// for (var y=0; y < this.ySize; y++) {
+		// if (this.map[x][y] == 0) {
+		// ctx.fillStyle = "Gray";
+		// } else {
+		// ctx.fillStyle = "Black";
+		// }
+		// ctx.fillRect(x*xWidth, y*yWidth, xWidth, yWidth);
+		// };
+		// };
 	}
 }
 var Game = function() {
@@ -684,20 +650,20 @@ var Game = function() {
 }
 Game.prototype = {
 	initialize: function() {
-		var canvas = document.getElementById("canvas");
-		if (! canvas) {
-			return false;
-		}
-		var ctx = canvas.getContext("2d");
-		if (! ctx) {
-			return false;
-		}
-		this.ctx = ctx;
-
+		// var canvas = document.getElementById("canvas");
+		// if (! canvas) {
+		// return false;
+		// }
+		// var ctx = canvas.getContext("2d");
+		// if (! ctx) {
+		// return false;
+		// }
+		// this.ctx = ctx;
+		//
 		this.key = 0;
 
-		this.xSize = 50;
-		this.ySize = 50;
+		this.xSize = 30;
+		this.ySize = 30;
 
 		this.map = new MazeMap(this.xSize, this.ySize);
 		this.xPos = 1;
@@ -731,23 +697,36 @@ Game.prototype = {
 		return true;
 	},
 	draw: function() {
-		var w = 600;
-		var h = 600;
+		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-		var xWidth = w / this.xSize;
-		var yWidth = h / this.ySize;
+		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
-		this.ctx.beginPath();
+		mat4.identity(mvMatrix);
 
-		this.map.draw(this.ctx, xWidth, yWidth);
+		mat4.translate(mvMatrix, [0, 0, -10.0]);
+		mat4.rotate(mvMatrix, degToRad(150), [1, 0, 0]);
+		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
 
-		this.ctx.fillStyle = "Red";
+		// var w = 600;
+		// var h = 600;
+		//
+		// var xWidth = w / this.xSize;
+		// var yWidth = h / this.ySize;
+		//
+		// this.ctx.beginPath();
+		//
+		// this.map.draw(this.ctx, xWidth, yWidth);
+		//
+		// this.ctx.fillStyle = "Red";
+		//
+		// var xCenter = (this.xPos+0.5) * xWidth;
+		// var yCenter = (this.yPos+0.5) * yWidth;
+		//
+		// this.ctx.arc(xCenter, yCenter, xWidth/2, 0, Math.PI*2, false);
+		// this.ctx.fill();
 
-		var xCenter = (this.xPos+0.5) * xWidth;
-		var yCenter = (this.yPos+0.5) * yWidth;
-
-		this.ctx.arc(xCenter, yCenter, xWidth/2, 0, Math.PI*2, false);
-		this.ctx.fill();
+		this.map.draw();
 
 	},
 	move: function(d) {
@@ -793,14 +772,15 @@ function main() {
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 
-	tick();
+	// disable original tick()
+	// tick();
 
-	// game = new Game();
- 
-	// setInterval("game.loop()", 1000/60);
+	game = new Game();
 
-	// document.onkeydown = keyDown;
+	setInterval("game.loop()", 1000/60);
 
-	// game.draw();
+	document.onkeydown = keyDown;
+
+	game.draw();
 
 }
