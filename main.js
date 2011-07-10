@@ -382,8 +382,7 @@ MazeMap.prototype = {
 	isWall: function(x, y) {
 		if (this.map[x][y] == 1) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	},
@@ -406,15 +405,51 @@ var Game = function() {
 }
 Game.prototype = {
 	initialize: function() {
+		var canvas = document.getElementById("canvas");
+		if (! canvas) {
+			return false;
+		}
+		var ctx = canvas.getContext("2d");
+		if (! ctx) {
+			return false;
+		}
+		this.ctx = ctx;
+
+		this.key = 0;
+
 		this.xSize = 50;
 		this.ySize = 50;
-		
+
 		this.map = new MazeMap(this.xSize, this.ySize);
 		this.xPos = 1;
 		this.yPos = 1;
 	},
-	setCanvasContext: function(ctx) {
-		this.ctx = ctx;
+	loop: function() {
+		if (this.update()) {
+			this.draw();		
+		}
+	},
+	update: function() {
+		switch(this.key) {
+			case 0:
+				return false;
+			case 37:
+				game.move(2);
+				break;
+			case 38:
+				game.move(0);
+				break;
+			case 39:
+				game.move(3);
+				break;
+			case 40:
+				game.move(1);
+				break;
+		}
+
+		this.key = 0;
+		
+		return true;
 	},
 	draw: function() {
 		var w = 600;
@@ -424,21 +459,22 @@ Game.prototype = {
 		var yWidth = h / this.ySize;
 
 		this.ctx.beginPath();
-		
+
 		this.map.draw(this.ctx, xWidth, yWidth);
 
 		this.ctx.fillStyle = "Red";
-			
+
 		var xCenter = (this.xPos+0.5) * xWidth;
 		var yCenter = (this.yPos+0.5) * yWidth;
-			
+
 		this.ctx.arc(xCenter, yCenter, xWidth/2, 0, Math.PI*2, false);
 		this.ctx.fill();
+		
 	},
 	move: function(d) {
 		var x = this.xPos;
 		var y = this.yPos;
-		
+
 		switch(d) {
 			case 0:
 				y--;
@@ -456,43 +492,26 @@ Game.prototype = {
 		if(! this.map.isWall(x, y)) {
 			this.xPos = x;
 			this.yPos = y;
-			
+
 			this.draw();
 		}
 	}
 }
 
-var game = new Game();
+var game;
 
 function keyDown(e) {
-	var keyCode = e.which;
-	switch(keyCode) {
-		case 37:
-			game.move(2);
-			break;
-		case 38:
-			game.move(0);
-			break;
-		case 39:
-			game.move(3);
-			break;
-		case 40:
-			game.move(1);
-			break;
-	}
-
+	var key = e.keyCode;
+	game.key = key;
 }
-function main() {
-	var canvas = document.getElementById("canvas");
-	if (! canvas) {
-		return false;
-	}
-	var ctx = canvas.getContext("2d");
-	if (! ctx) {
-		return false;
-	}
 
-	game.setCanvasContext(ctx);
+function main() {
+	game = new Game();
+
+	setInterval("game.loop()", 1000/60);
+
+	document.onkeydown = keyDown;		
+
 	game.draw();
-	
+
 }
