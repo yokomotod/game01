@@ -496,64 +496,85 @@ MazeMap.prototype = {
 	},
 	initBuffers: function() {
 
-		vertices = [
-		// Front face
-		-0.5, -0.5,  0.5,
-		0.5, -0.5,  0.5,
-		0.5,  0.5,  0.5,
-		-0.5,  0.5,  0.5,
+		var vertices = [];
+		var cubeVertexIndices = [];
 
-		// Back face
-		-0.5, -0.5, -0.5,
-		-0.5,  0.5, -0.5,
-		0.5,  0.5, -0.5,
-		0.5, -0.5, -0.5,
+		var n = 0;
+		for (var x=0; x < this.xSize; x++) {
+			for (var y=0; y < this.ySize; y++) {
+				vertices = vertices.concat([
+				x,     y,     0,
+				x+1.0, y,     0,
+				x+1.0, y+1.0, 0,
+				x,     y+1.0, 0,
+				]);
 
-		// Top face
-		-0.5,  0.5, -0.5,
-		-0.5,  0.5,  0.5,
-		0.5,  0.5,  0.5,
-		0.5,  0.5, -0.5,
+				cubeVertexIndices = cubeVertexIndices.concat([
+				n, n+1, n+2,
+				n, n+2, n+3,
+				]);
 
-		// Bottom face
-		-0.5, -0.5, -0.5,
-		0.5, -0.5, -0.5,
-		0.5, -0.5,  0.5,
-		-0.5, -0.5,  0.5,
+				n += 4;
+			}
+		}
 
-		// Right face
-		0.5, -0.5, -0.5,
-		0.5,  0.5, -0.5,
-		0.5,  0.5,  0.5,
-		0.5, -0.5,  0.5,
+		// vertices = [
+		// // Front face
+		// -0.5, -0.5,  0.5,
+		// 0.5, -0.5,  0.5,
+		// 0.5,  0.5,  0.5,
+		// -0.5,  0.5,  0.5,
+		//
+		// // Back face
+		// -0.5, -0.5, -0.5,
+		// -0.5,  0.5, -0.5,
+		// 0.5,  0.5, -0.5,
+		// 0.5, -0.5, -0.5,
+		//
+		// // Top face
+		// -0.5,  0.5, -0.5,
+		// -0.5,  0.5,  0.5,
+		// 0.5,  0.5,  0.5,
+		// 0.5,  0.5, -0.5,
+		//
+		// // Bottom face
+		// -0.5, -0.5, -0.5,
+		// 0.5, -0.5, -0.5,
+		// 0.5, -0.5,  0.5,
+		// -0.5, -0.5,  0.5,
+		//
+		// // Right face
+		// 0.5, -0.5, -0.5,
+		// 0.5,  0.5, -0.5,
+		// 0.5,  0.5,  0.5,
+		// 0.5, -0.5,  0.5,
+		//
+		// // Left face
+		// -0.5, -0.5, -0.5,
+		// -0.5, -0.5,  0.5,
+		// -0.5,  0.5,  0.5,
+		// -0.5,  0.5, -0.5
+		// ];
 
-		// Left face
-		-0.5, -0.5, -0.5,
-		-0.5, -0.5,  0.5,
-		-0.5,  0.5,  0.5,
-		-0.5,  0.5, -0.5
-		];
-
-		var cubeVertexIndices = [
-		0, 1, 2,      0, 2, 3,    // Front face
-		4, 5, 6,      4, 6, 7,    // Back face
-		8, 9, 10,     8, 10, 11,  // Top face
-		12, 13, 14,   12, 14, 15, // Bottom face
-		16, 17, 18,   16, 18, 19, // Right face
-		20, 21, 22,   20, 22, 23  // Left face
-		];
+		// var cubeVertexIndices = [
+		// 0, 1, 2,      0, 2, 3,    // Front face
+		// 4, 5, 6,      4, 6, 7,    // Back face
+		// 8, 9, 10,     8, 10, 11,  // Top face
+		// 12, 13, 14,   12, 14, 15, // Bottom face
+		// 16, 17, 18,   16, 18, 19, // Right face
+		// 20, 21, 22,   20, 22, 23  // Left face
+		// ];
 
 		var unpackedColors = [];
 		for (var i=0; i < vertices.length/3; i++) {
 			unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
 		}
-		
+
 		cubeVertexColorBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
 		cubeVertexColorBuffer.itemSize = 4;
 		cubeVertexColorBuffer.numItems = vertices.length/3;
-
 
 		cubeVertexPositionBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
