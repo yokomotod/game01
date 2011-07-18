@@ -540,19 +540,10 @@ MazeMap.prototype = {
 
 		cubeVertexColorBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
-		colors = [
-		[0.5, 0.5, 0.5, 1.0], // Front face
-		[0.5, 0.5, 0.5, 1.0], // Back face
-		[0.5, 0.5, 0.5, 1.0], // Top face
-		[0.5, 0.5, 0.5, 1.0], // Bottom face
-		[0.5, 0.5, 0.5, 1.0], // Right face
-		[0.5, 0.5, 0.5, 1.0]  // Left face
-		];
 		var unpackedColors = [];
-		for (var i in colors) {
-			var color = colors[i];
+		for (var i=0; i < 6; i++) {
 			for (var j=0; j < 4; j++) {
-				unpackedColors = unpackedColors.concat(color);
+				unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
 			}
 		}
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
