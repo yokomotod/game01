@@ -495,8 +495,7 @@ MazeMap.prototype = {
 		}
 	},
 	initBuffers: function() {
-		cubeVertexPositionBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+
 		vertices = [
 		// Front face
 		-0.5, -0.5,  0.5,
@@ -534,22 +533,7 @@ MazeMap.prototype = {
 		-0.5,  0.5,  0.5,
 		-0.5,  0.5, -0.5
 		];
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-		cubeVertexPositionBuffer.itemSize = 3;
-		cubeVertexPositionBuffer.numItems = 24;
 
-		var unpackedColors = [];
-		for (var i in vertices) {
-			unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
-		}
-		cubeVertexColorBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
-		cubeVertexColorBuffer.itemSize = 4;
-		cubeVertexColorBuffer.numItems = vertices.length;
-
-		cubeVertexIndexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
 		var cubeVertexIndices = [
 		0, 1, 2,      0, 2, 3,    // Front face
 		4, 5, 6,      4, 6, 7,    // Back face
@@ -558,9 +542,30 @@ MazeMap.prototype = {
 		16, 17, 18,   16, 18, 19, // Right face
 		20, 21, 22,   20, 22, 23  // Left face
 		];
+
+		var unpackedColors = [];
+		for (var i=0; i < vertices.length/3; i++) {
+			unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
+		}
+		
+		cubeVertexColorBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
+		cubeVertexColorBuffer.itemSize = 4;
+		cubeVertexColorBuffer.numItems = vertices.length/3;
+
+
+		cubeVertexPositionBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+		cubeVertexPositionBuffer.itemSize = 3;
+		cubeVertexPositionBuffer.numItems = vertices.length/3;
+
+		cubeVertexIndexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
 		cubeVertexIndexBuffer.itemSize = 1;
-		cubeVertexIndexBuffer.numItems = 36;
+		cubeVertexIndexBuffer.numItems = cubeVertexIndices.length;
 
 		// cubeLineColorBuffer = gl.createBuffer();
 		// gl.bindBuffer(gl.ARRAY_BUFFER, cubeLineColorBuffer);
