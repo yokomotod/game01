@@ -498,21 +498,36 @@ MazeMap.prototype = {
 
 		var vertices = [];
 		var cubeVertexIndices = [];
+		var unpackedColors = [];
 
 		var n = 0;
 		for (var x=0; x < this.xSize; x++) {
 			for (var y=0; y < this.ySize; y++) {
+				var z;
+				var color;
+
+				if (this.isWall(x, y)) {
+					z = -1.0;
+					color = [0.5, 0.5, 0.5, 1.0];
+				} else {
+					z = 0.0;
+					color = [0.25, 0.25, 0.25, 1.0];
+				}
 				vertices = vertices.concat([
-				x,     y,     0,
-				x+1.0, y,     0,
-				x+1.0, y+1.0, 0,
-				x,     y+1.0, 0,
+				x,     y,     z,
+				x+1.0, y,     z,
+				x+1.0, y+1.0, z,
+				x,     y+1.0, z,
 				]);
 
 				cubeVertexIndices = cubeVertexIndices.concat([
 				n, n+1, n+2,
 				n, n+2, n+3,
 				]);
+
+				for (var i=0; i < 4; i++) {
+					unpackedColors = unpackedColors.concat(color);
+				}
 
 				n += 4;
 			}
@@ -565,10 +580,10 @@ MazeMap.prototype = {
 		// 20, 21, 22,   20, 22, 23  // Left face
 		// ];
 
-		var unpackedColors = [];
-		for (var i=0; i < vertices.length/3; i++) {
-			unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
-		}
+		// var unpackedColors = [];
+		// for (var i=0; i < vertices.length/3; i++) {
+		// unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
+		// }
 
 		cubeVertexColorBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
