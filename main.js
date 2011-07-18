@@ -155,7 +155,7 @@ MazeMap.prototype = {
 				}
 			}
 		}
-		
+
 		this.initBuffers();
 	},
 	random: function(x) {
@@ -541,10 +541,8 @@ MazeMap.prototype = {
 		cubeVertexColorBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
 		var unpackedColors = [];
-		for (var i=0; i < 6; i++) {
-			for (var j=0; j < 4; j++) {
-				unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
-			}
+		for (var i=0; i < 24; i++) {
+			unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
 		}
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
 		cubeVertexColorBuffer.itemSize = 4;
