@@ -538,16 +538,15 @@ MazeMap.prototype = {
 		cubeVertexPositionBuffer.itemSize = 3;
 		cubeVertexPositionBuffer.numItems = 24;
 
-		cubeVertexColorBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
 		var unpackedColors = [];
-
-		for (var i=0; i < vertices.length; i++) {
+		for (var i in vertices) {
 			unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
 		}
+		cubeVertexColorBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
 		cubeVertexColorBuffer.itemSize = 4;
-		cubeVertexColorBuffer.numItems = 24;
+		cubeVertexColorBuffer.numItems = vertices.length;
 
 		cubeVertexIndexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
