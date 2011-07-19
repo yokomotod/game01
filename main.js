@@ -100,10 +100,10 @@ function degToRad(degrees) {
 	return degrees * Math.PI / 180;
 }
 
-var cubeVertexPositionBuffer;
-var cubeVertexColorBuffer;
-var cubeVertexIndexBuffer;
-
+// var cubeVertexPositionBuffer;
+// var cubeVertexColorBuffer;
+// var cubeVertexIndexBuffer;
+//
 var MazeMap = function() {
 	this.initialize.apply(this, arguments);
 }
@@ -599,36 +599,36 @@ MazeMap.prototype = {
 			}
 		}
 
-		cubeVertexColorBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
+		this.modelColorBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
-		cubeVertexColorBuffer.itemSize = 4;
-		cubeVertexColorBuffer.numItems = vertices.length/3;
+		this.modelColorBuffer.itemSize = 4;
+		this.modelColorBuffer.numItems = vertices.length/3;
 
-		cubeVertexPositionBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+		this.modelPositionBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-		cubeVertexPositionBuffer.itemSize = 3;
-		cubeVertexPositionBuffer.numItems = vertices.length/3;
+		this.modelPositionBuffer.itemSize = 3;
+		this.modelPositionBuffer.numItems = vertices.length/3;
 
-		cubeVertexIndexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+		this.modelIndexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
-		cubeVertexIndexBuffer.itemSize = 1;
-		cubeVertexIndexBuffer.numItems = cubeVertexIndices.length;
+		this.modelIndexBuffer.itemSize = 1;
+		this.modelIndexBuffer.numItems = cubeVertexIndices.length;
 
 	},
 	draw: function () {
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
+		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, this.modelPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
-		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
+		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, this.modelColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
 		setMatrixUniforms();
-		gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.TRIANGLES, this.modelIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
 	}
 }
@@ -655,6 +655,8 @@ Game.prototype = {
 		this.map = new MazeMap(this.xSize, this.ySize);
 		this.xPos = 1;
 		this.yPos = 1;
+		
+		this.initBuffers();
 	},
 	loop: function() {
 		if (this.update()) {
@@ -683,6 +685,41 @@ Game.prototype = {
 
 		return true;
 	},
+	initBuffers: function() {
+
+		var vertices = [
+		0.0, 0.0, 0.01,
+		1.0, 0.0, 0.01,
+		1.0, 1.0, 0.01,
+		0.0, 1.0, 0.01,
+		];
+		var cubeVertexIndices = [
+		0, 1, 2,   0, 2, 3];
+
+		var color = [1.0, 0.0, 0.0, 1.0];
+		var unpackedColors = [];
+		for (var i=0; i < 4; i++) {
+			unpackedColors = unpackedColors.concat(color);
+		}
+
+		this.modelColorBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
+		this.modelColorBuffer.itemSize = 4;
+		this.modelColorBuffer.numItems = vertices.length/3;
+
+		this.modelPositionBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+		this.modelPositionBuffer.itemSize = 3;
+		this.modelPositionBuffer.numItems = vertices.length/3;
+
+		this.modelIndexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
+		this.modelIndexBuffer.itemSize = 1;
+		this.modelIndexBuffer.numItems = cubeVertexIndices.length;
+	},
 	draw: function() {
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -692,8 +729,20 @@ Game.prototype = {
 		mat4.identity(mvMatrix);
 
 		mat4.translate(mvMatrix, [0, 0, -10.0]);
-		mat4.rotate(mvMatrix, degToRad(20), [1, 0, 0]);
-		mat4.rotate(mvMatrix, degToRad(-20), [0, 1, 0]);
+
+		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
+		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
+		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, this.modelPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
+		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, this.modelColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
+		setMatrixUniforms();
+		gl.drawElements(gl.TRIANGLES, this.modelIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
 		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
 
 		this.map.draw();
