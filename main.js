@@ -488,6 +488,10 @@ MazeMap.prototype = {
 		}
 	},
 	isWall: function(x, y) {
+		if (x < 0 || x >= this.xSize || y < 0 || y >= this.ySize) {
+			return false;
+		}
+
 		if (this.map[x][y] == 1) {
 			return true;
 		} else {
@@ -543,262 +547,57 @@ MazeMap.prototype = {
 		//
 		color = [0.25, 0.25, 0.25, 1.0];
 
-		// Left Bottom
-		vertices = vertices.concat([
-		0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 1.0,
-		0.0, 0.0, 1.0,
-		]);
-
-		cubeVertexIndices = cubeVertexIndices.concat([
-		n, n+1, n+2,
-		n, n+2, n+3,
-		]);
-
-		for (var i=0; i < 4; i++) {
-			unpackedColors = unpackedColors.concat(color);
-		}
-
-		n += 4;
-
-		vertices = vertices.concat([
-		0.0, 0.0, 0.0,
-		1.0, 0.0, 0.0,
-		1.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		]);
-
-		cubeVertexIndices = cubeVertexIndices.concat([
-		n, n+1, n+2,
-		n, n+2, n+3,
-		]);
-
-		for (var i=0; i < 4; i++) {
-			unpackedColors = unpackedColors.concat(color);
-		}
-
-		n += 4;
-
-		// Left
-		for (var y=1; y < this.ySize; y++) {
-			vertices = vertices.concat([
-			0.0, y+0.0, 0.0,
-			0.0, y+1.0, 0.0,
-			0.0, y+1.0, 1.0,
-			0.0, y+0.0, 1.0,
-			]);
-
-			cubeVertexIndices = cubeVertexIndices.concat([
-			n, n+1, n+2,
-			n, n+2, n+3,
-			]);
-
-			for (var i=0; i < 4; i++) {
-				unpackedColors = unpackedColors.concat(color);
-			}
-
-			n += 4;
-
-		}
-
-		for (var x=1; x < this.xSize; x++) {
-
-			// Bottom
-			vertices = vertices.concat([
-			x+0.0, 0.0, 0.0,
-			x+1.0, 0.0, 0.0,
-			x+1.0, 0.0, 1.0,
-			x+0.0, 0.0, 1.0,
-			]);
-
-			cubeVertexIndices = cubeVertexIndices.concat([
-			n, n+1, n+2,
-			n, n+2, n+3,
-			]);
-
-			for (var i=0; i < 4; i++) {
-				unpackedColors = unpackedColors.concat(color);
-			}
-
-			n += 4;
-
-			for (var y=1; y < this.ySize; y++) {
+		for (var x=0; x <= this.xSize; x++) {
+			for (var y=0; y <= this.ySize; y++) {
 
 				// Normal Side
-				if (this.isWall(x-1, y) != this.isWall(x, y)) {
-					vertices = vertices.concat([
-					x, y,     0.0,
-					x, y+1.0, 0.0,
-					x, y+1.0, 1.0,
-					x, y,     1.0,
-					]);
+				if (y != this.ySize) {
+					if ((x == 0) || (x == this.xSize) || (this.isWall(x-1, y) != this.isWall(x, y))) {
 
-					cubeVertexIndices = cubeVertexIndices.concat([
-					n, n+1, n+2,
-					n, n+2, n+3,
-					]);
+						vertices = vertices.concat([
+						x, y,     0.0,
+						x, y+1.0, 0.0,
+						x, y+1.0, 1.0,
+						x, y,     1.0,
+						]);
 
-					for (var i=0; i < 4; i++) {
-						unpackedColors = unpackedColors.concat(color);
+						cubeVertexIndices = cubeVertexIndices.concat([
+						n, n+1, n+2,
+						n, n+2, n+3,
+						]);
+
+						for (var i=0; i < 4; i++) {
+							unpackedColors = unpackedColors.concat(color);
+						}
+
+						n += 4;
 					}
-
-					n += 4;
 				}
-
 				// Normal Ahead
-				if (this.isWall(x, y-1) != this.isWall(x, y)) {
-					vertices = vertices.concat([
-					x,   y, 0.0,
-					x+1, y, 0.0,
-					x+1, y, 1.0,
-					x,   y, 1.0,
-					]);
+				if (x != this.xSize) {
+					if ((y == 0) || (y == this.ySize) || (this.isWall(x, y-1) != this.isWall(x, y))) {
+						vertices = vertices.concat([
+						x,     y, 0.0,
+						x+1.0, y, 0.0,
+						x+1.0, y, 1.0,
+						x,     y, 1.0,
+						]);
 
-					cubeVertexIndices = cubeVertexIndices.concat([
-					n, n+1, n+2,
-					n, n+2, n+3,
-					]);
+						cubeVertexIndices = cubeVertexIndices.concat([
+						n, n+1, n+2,
+						n, n+2, n+3,
+						]);
 
-					for (var i=0; i < 4; i++) {
-						unpackedColors = unpackedColors.concat(color);
+						for (var i=0; i < 4; i++) {
+							unpackedColors = unpackedColors.concat(color);
+						}
+
+						n += 4;
 					}
-
-					n += 4;
 				}
-
-				// Top
-				vertices = vertices.concat([
-				x+0.0, this.ySize, 0.0,
-				x+1.0, this.ySize, 0.0,
-				x+1.0, this.ySize, 1.0,
-				x+0.0, this.ySize, 1.0,
-				]);
-
-				cubeVertexIndices = cubeVertexIndices.concat([
-				n, n+1, n+2,
-				n, n+2, n+3,
-				]);
-
-				for (var i=0; i < 4; i++) {
-					unpackedColors = unpackedColors.concat(color);
-				}
-
-				n += 4;
 
 			}
 		}
-
-		// Right Top
-		vertices = vertices.concat([
-		this.xSize, 0.0, 0.0,
-		this.xSize, 1.0, 0.0,
-		this.xSize, 1.0, 1.0,
-		this.xSize, 0.0, 1.0,
-		]);
-
-		cubeVertexIndices = cubeVertexIndices.concat([
-		n, n+1, n+2,
-		n, n+2, n+3,
-		]);
-
-		for (var i=0; i < 4; i++) {
-			unpackedColors = unpackedColors.concat(color);
-		}
-
-		n += 4;
-
-		vertices = vertices.concat([
-		0.0, this.ySize, 0.0,
-		1.0, this.ySize, 0.0,
-		1.0, this.ySize, 1.0,
-		0.0, this.ySize, 1.0,
-		]);
-
-		cubeVertexIndices = cubeVertexIndices.concat([
-		n, n+1, n+2,
-		n, n+2, n+3,
-		]);
-
-		for (var i=0; i < 4; i++) {
-			unpackedColors = unpackedColors.concat(color);
-		}
-
-		n += 4;
-
-		// Right
-		for (var y=1; y < this.ySize; y++) {
-			vertices = vertices.concat([
-			this.xSize, y+0.0, 0.0,
-			this.xSize, y+1.0, 0.0,
-			this.xSize, y+1.0, 1.0,
-			this.xSize, y+0.0, 1.0,
-			]);
-
-			cubeVertexIndices = cubeVertexIndices.concat([
-			n, n+1, n+2,
-			n, n+2, n+3,
-			]);
-
-			for (var i=0; i < 4; i++) {
-				unpackedColors = unpackedColors.concat(color);
-			}
-
-			n += 4;
-
-		}
-		
-		// vertices = [
-		// // Front face
-		// -0.5, -0.5,  0.5,
-		// 0.5, -0.5,  0.5,
-		// 0.5,  0.5,  0.5,
-		// -0.5,  0.5,  0.5,
-		//
-		// // Back face
-		// -0.5, -0.5, -0.5,
-		// -0.5,  0.5, -0.5,
-		// 0.5,  0.5, -0.5,
-		// 0.5, -0.5, -0.5,
-		//
-		// // Top face
-		// -0.5,  0.5, -0.5,
-		// -0.5,  0.5,  0.5,
-		// 0.5,  0.5,  0.5,
-		// 0.5,  0.5, -0.5,
-		//
-		// // Bottom face
-		// -0.5, -0.5, -0.5,
-		// 0.5, -0.5, -0.5,
-		// 0.5, -0.5,  0.5,
-		// -0.5, -0.5,  0.5,
-		//
-		// // Right face
-		// 0.5, -0.5, -0.5,
-		// 0.5,  0.5, -0.5,
-		// 0.5,  0.5,  0.5,
-		// 0.5, -0.5,  0.5,
-		//
-		// // Left face
-		// -0.5, -0.5, -0.5,
-		// -0.5, -0.5,  0.5,
-		// -0.5,  0.5,  0.5,
-		// -0.5,  0.5, -0.5
-		// ];
-
-		// var cubeVertexIndices = [
-		// 0, 1, 2,      0, 2, 3,    // Front face
-		// 4, 5, 6,      4, 6, 7,    // Back face
-		// 8, 9, 10,     8, 10, 11,  // Top face
-		// 12, 13, 14,   12, 14, 15, // Bottom face
-		// 16, 17, 18,   16, 18, 19, // Right face
-		// 20, 21, 22,   20, 22, 23  // Left face
-		// ];
-
-		// var unpackedColors = [];
-		// for (var i=0; i < vertices.length/3; i++) {
-		// unpackedColors = unpackedColors.concat([0.5, 0.5, 0.5, 1.0]);
-		// }
 
 		cubeVertexColorBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
@@ -818,44 +617,8 @@ MazeMap.prototype = {
 		cubeVertexIndexBuffer.itemSize = 1;
 		cubeVertexIndexBuffer.numItems = cubeVertexIndices.length;
 
-		// cubeLineColorBuffer = gl.createBuffer();
-		// gl.bindBuffer(gl.ARRAY_BUFFER, cubeLineColorBuffer);
-		// colors = []
-		// for (var i=0; i < 24; i++) {
-		// colors = colors.concat([0.0, 0.0, 0.0, 1.0]);
-		// }
-		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-		// cubeLineColorBuffer.itemSize = 4;
-		// cubeLineColorBuffer.numItems = 24;
-		//
-		// cubeLineIndexBuffer = gl.createBuffer();
-		// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeLineIndexBuffer);
-		// var cubeLineIndices = [
-		// 0, 1,
-		// 1, 2,
-		// 2, 3,
-		// 3, 0,
-		// 4, 5,
-		// 5, 6,
-		// 6, 7,
-		// 7, 4,
-		// 0, 4,
-		// 1, 7,
-		// 2, 6,
-		// 3, 5
-		// ];
-		// gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeLineIndices), gl.STATIC_DRAW);
-		// cubeLineIndexBuffer.itemSize = 1;
-		// cubeLineIndexBuffer.numItems = 24;
 	},
 	draw: function () {
-
-		// for (var x=0; x < this.xSize; x++) {
-		// for (var y=0; y < this.ySize; y++) {
-		// if (this.map[x][y] == 1) {
-		// mvPushMatrix();
-		//
-		// mat4.translate(mvMatrix, [x, y, 0]);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -867,28 +630,6 @@ MazeMap.prototype = {
 		setMatrixUniforms();
 		gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
-		// gl.bindBuffer(gl.ARRAY_BUFFER, cubeLineColorBuffer);
-		// gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeLineColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		//
-		// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeLineIndexBuffer);
-		// gl.drawElements(gl.LINES, cubeLineIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-
-		// mvPopMatrix();
-		// } else {
-		// }
-		// };
-		// };
-
-		// for (var x=0; x < this.xSize; x++) {
-		// for (var y=0; y < this.ySize; y++) {
-		// if (this.map[x][y] == 0) {
-		// ctx.fillStyle = "Gray";
-		// } else {
-		// ctx.fillStyle = "Black";
-		// }
-		// ctx.fillRect(x*xWidth, y*yWidth, xWidth, yWidth);
-		// };
-		// };
 	}
 }
 var Game = function() {
@@ -908,8 +649,8 @@ Game.prototype = {
 		//
 		this.key = 0;
 
-		this.xSize = 30;
-		this.ySize = 30;
+		this.xSize = 10;
+		this.ySize = 10;
 
 		this.map = new MazeMap(this.xSize, this.ySize);
 		this.xPos = 1;
@@ -951,26 +692,9 @@ Game.prototype = {
 		mat4.identity(mvMatrix);
 
 		mat4.translate(mvMatrix, [0, 0, -10.0]);
-		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
+		mat4.rotate(mvMatrix, degToRad(20), [1, 0, 0]);
+		mat4.rotate(mvMatrix, degToRad(-20), [0, 1, 0]);
 		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
-
-		// var w = 600;
-		// var h = 600;
-		//
-		// var xWidth = w / this.xSize;
-		// var yWidth = h / this.ySize;
-		//
-		// this.ctx.beginPath();
-		//
-		// this.map.draw(this.ctx, xWidth, yWidth);
-		//
-		// this.ctx.fillStyle = "Red";
-		//
-		// var xCenter = (this.xPos+0.5) * xWidth;
-		// var yCenter = (this.yPos+0.5) * yWidth;
-		//
-		// this.ctx.arc(xCenter, yCenter, xWidth/2, 0, Math.PI*2, false);
-		// this.ctx.fill();
 
 		this.map.draw();
 
