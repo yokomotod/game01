@@ -74,6 +74,35 @@ function initShaders() {
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 }
 
+var neheTexture;
+function initTexture() {
+	neheTexture = gl.createTexture();
+	neheTexture.image = new Image();
+	neheTexture.image.onload = function () {
+		if (neheTexture.image == null) {
+			alert("can't open image");
+		}
+		handleLoadedTexture(neheTexture);
+	}
+	neheTexture.image.src = "crate.gif";
+}
+
+function handleLoadedTexture(texture) {
+
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+
+	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+
+	gl.bindTexture(gl.TEXTURE_2D, null);
+
+}
+
 var mvMatrix = mat4.create();
 var mvMatrixStack = [];
 var pMatrix = mat4.create();
@@ -105,6 +134,8 @@ var GLModel = function() {
 }
 GLModel.prototype = {
 	initialize: function(vertices, vertexIndecies, colors) {
+	// initialize: function(vertices, vertexIndecies, textureCoods) {
+
 		this.modelPositionBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -122,6 +153,12 @@ GLModel.prototype = {
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 		this.modelColorBuffer.itemSize = 4;
 		this.modelColorBuffer.numItems = vertices.length/3;
+
+		// this.modelTextureCoordBuffer = gl.createBuffer();
+		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
+		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoods), gl.STATIC_DRAW);
+		// this.modelTextureCoordBuffer.itemSize = 2;
+		// this.modelTextureCoordBuffer.numItems = textureCoods.length/2;
 	},
 	draw: function() {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
@@ -130,12 +167,18 @@ GLModel.prototype = {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, this.modelColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+		// gl.activeTexture(gl.TEXTURE0);
+		// gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+		//
+		// gl.uniform1i(shaderProgram.samplerUniform, 0);
+
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
 		setMatrixUniforms();
 		gl.drawElements(gl.TRIANGLES, this.modelIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 	}
 }
 var MazeMap = function() {
+
 	this.initialize.apply(this, arguments);
 }
 MazeMap.prototype = {
@@ -534,6 +577,18 @@ MazeMap.prototype = {
 		var vertices = [];
 		var vertexIndices = [];
 		var unpackedColors = [];
+		// var textureCoords = [];
+
+		texture = [
+		1.0, 1.0,
+		1.0, 1.0,
+		1.0, 1.0,
+		1.0, 1.0,
+		// 0.0, 0.0,
+		// 1.0, 0.0,
+		// 1.0, 1.0,
+		// 0.0, 1.0
+		];
 
 		var n = 0;
 
@@ -568,6 +623,7 @@ MazeMap.prototype = {
 				for (var i=0; i < 4; i++) {
 					unpackedColors = unpackedColors.concat(color);
 				}
+				// textureCoords = textureCoords.concat(texture);
 
 				n += 4;
 			}
@@ -600,6 +656,7 @@ MazeMap.prototype = {
 						for (var i=0; i < 4; i++) {
 							unpackedColors = unpackedColors.concat(color);
 						}
+						// textureCoords = textureCoords.concat(texture);
 
 						n += 4;
 					}
@@ -622,6 +679,7 @@ MazeMap.prototype = {
 						for (var i=0; i < 4; i++) {
 							unpackedColors = unpackedColors.concat(color);
 						}
+						// textureCoords = textureCoords.concat(texture);
 
 						n += 4;
 					}
@@ -631,6 +689,7 @@ MazeMap.prototype = {
 		}
 
 		this.model = new GLModel(vertices, vertexIndices, unpackedColors);
+		//this.model = new GLModel(vertices, vertexIndices, textureCoords);
 	},
 	draw: function () {
 		this.model.draw();
@@ -698,16 +757,23 @@ Game.prototype = {
 		1.0, 1.0, 0.01,
 		0.0, 1.0, 0.01,
 		];
-		var vertexIndices = [0, 1, 2,   0, 2, 3];
+		var vertexIndices = [0, 1, 2,   0, 3, 2];
 
 		var color = [1.0, 0.0, 0.0, 1.0];
 		var unpackedColors = [];
 		for (var i=0; i < 4; i++) {
-			unpackedColors = unpackedColors.concat(color);
+		unpackedColors = unpackedColors.concat(color);
 		}
+		// var textureCoords = [
+		// 0.0, 0.0,
+		// 1.0, 0.0,
+		// 1.0, 1.0,
+		// 0.0, 1.0
+		// ];
 
 		this.model = new GLModel(vertices, vertexIndices, unpackedColors);
-		
+		// this.model = new GLModel(vertices, vertexIndices, textureCoords);
+
 	},
 	draw: function() {
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
@@ -723,7 +789,7 @@ Game.prototype = {
 		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
 
 		this.model.draw();
-		
+
 		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
 
 		this.map.draw();
@@ -767,6 +833,7 @@ function main() {
 	var canvas = document.getElementById("canvas");
 	initGL(canvas);
 	initShaders()
+	initTexture();
 	// initBuffers();
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
