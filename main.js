@@ -67,14 +67,19 @@ function initShaders() {
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
-	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+	// shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+	// gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 
+	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+	gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+	
 	// shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
 	// gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 	
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	
+	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 	// shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
 	// shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
 	// shaderProgram.ambientColoruniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
@@ -147,8 +152,8 @@ var GLModel = function() {
 	this.initialize.apply(this, arguments);
 }
 GLModel.prototype = {
-	initialize: function(vertices, vertexIndecies, colors) {
-	// initialize: function(vertices, vertexIndecies, textureCoods) {
+	// initialize: function(vertices, vertexIndecies, colors) {
+	initialize: function(vertices, vertexIndecies, textureCoods) {
 	// initialize: function(vertices, vertexIndecies, colors, vertexNormals) {
 
 		this.modelPositionBuffer = gl.createBuffer();
@@ -163,29 +168,29 @@ GLModel.prototype = {
 		this.modelIndexBuffer.itemSize = 1;
 		this.modelIndexBuffer.numItems = vertexIndecies.length;
 
-		this.modelColorBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-		this.modelColorBuffer.itemSize = 4;
-		this.modelColorBuffer.numItems = vertices.length/3;
+		// this.modelColorBuffer = gl.createBuffer();
+		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
+		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+		// this.modelColorBuffer.itemSize = 4;
+		// this.modelColorBuffer.numItems = vertices.length/3;
 
 		// this.modelVertexNormalBuffer = gl.createBuffer();
 		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertexNormals), gl.STATIC_DRAW);
 		// this.modelVertexNormalBuffer.itemSize = 3;
 		// this.modelVertexNormalBuffer.numItems = vertexNormals.length/3;
-// 		
-		// this.modelTextureCoordBuffer = gl.createBuffer();
-		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
-		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoods), gl.STATIC_DRAW);
-		// this.modelTextureCoordBuffer.itemSize = 2;
-		// this.modelTextureCoordBuffer.numItems = textureCoods.length/2;
+		
+		this.modelTextureCoordBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoods), gl.STATIC_DRAW);
+		this.modelTextureCoordBuffer.itemSize = 2;
+		this.modelTextureCoordBuffer.numItems = textureCoods.length/2;
 	},
 	draw: function() {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, this.modelPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
-		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, this.modelColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
+		// gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, this.modelColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
 		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelVertexNormalBuffer);
 		// gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, this.modelVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -204,10 +209,13 @@ GLModel.prototype = {
 // 		
 		// gl.uniform3f(shaderProgram.directionalColorUniform, 1.0, 1.0, 1.0);
 		
-		// gl.activeTexture(gl.TEXTURE0);
-		// gl.bindTexture(gl.TEXTURE_2D, neheTexture);
-		//
-		// gl.uniform1i(shaderProgram.samplerUniform, 0);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
+		gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, this.modelTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+		
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+		
+		gl.uniform1i(shaderProgram.samplerUniform, 0);
 
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
 		setMatrixUniforms();
@@ -796,20 +804,20 @@ Game.prototype = {
 		];
 		var vertexIndices = [0, 1, 2,   0, 3, 2];
 
-		var color = [1.0, 0.0, 0.0, 1.0];
-		var unpackedColors = [];
-		for (var i=0; i < 4; i++) {
-		unpackedColors = unpackedColors.concat(color);
-		}
-		// var textureCoords = [
-		// 0.0, 0.0,
-		// 1.0, 0.0,
-		// 1.0, 1.0,
-		// 0.0, 1.0
-		// ];
+		// var color = [1.0, 0.0, 0.0, 1.0];
+		// var unpackedColors = [];
+		// for (var i=0; i < 4; i++) {
+		// unpackedColors = unpackedColors.concat(color);
+		// }
+		var textureCoords = [
+		0.0, 0.0,
+		1.0, 0.0,
+		1.0, 1.0,
+		0.0, 1.0
+		];
 
-		this.model = new GLModel(vertices, vertexIndices, unpackedColors);
-		// this.model = new GLModel(vertices, vertexIndices, textureCoords);
+		// this.model = new GLModel(vertices, vertexIndices, unpackedColors);
+		this.model = new GLModel(vertices, vertexIndices, textureCoords);
 
 	},
 	draw: function() {
@@ -827,9 +835,9 @@ Game.prototype = {
 
 		this.model.draw();
 
-		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
-
-		this.map.draw();
+		// mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
+// 
+		// this.map.draw();
 
 	},
 	move: function(d) {
