@@ -67,9 +67,6 @@ function initShaders() {
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-	// shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
-	// gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
-
 	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
 	gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 	
@@ -152,7 +149,6 @@ var GLModel = function() {
 	this.initialize.apply(this, arguments);
 }
 GLModel.prototype = {
-	// initialize: function(vertices, vertexIndecies, colors) {
 	initialize: function(vertices, vertexIndecies, textureCoods) {
 	// initialize: function(vertices, vertexIndecies, colors, vertexNormals) {
 
@@ -168,12 +164,6 @@ GLModel.prototype = {
 		this.modelIndexBuffer.itemSize = 1;
 		this.modelIndexBuffer.numItems = vertexIndecies.length;
 
-		// this.modelColorBuffer = gl.createBuffer();
-		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
-		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-		// this.modelColorBuffer.itemSize = 4;
-		// this.modelColorBuffer.numItems = vertices.length/3;
-
 		// this.modelVertexNormalBuffer = gl.createBuffer();
 		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertexNormals), gl.STATIC_DRAW);
 		// this.modelVertexNormalBuffer.itemSize = 3;
@@ -188,9 +178,6 @@ GLModel.prototype = {
 	draw: function() {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, this.modelPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelColorBuffer);
-		// gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, this.modelColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
 		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelVertexNormalBuffer);
 		// gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, this.modelVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -621,7 +608,6 @@ MazeMap.prototype = {
 
 		var vertices = [];
 		var vertexIndices = [];
-		// var unpackedColors = [];
 		var textureCoords = [];
 
 		texture = [
@@ -661,9 +647,6 @@ MazeMap.prototype = {
 				n, n+2, n+3,
 				]);
 
-				// for (var i=0; i < 4; i++) {
-					// unpackedColors = unpackedColors.concat(color);
-				// }
 				textureCoords = textureCoords.concat(texture);
 
 				n += 4;
@@ -673,8 +656,6 @@ MazeMap.prototype = {
 		//
 		// Wall
 		//
-		// color = [0.25, 0.25, 0.25, 1.0];
-
 		for (var x=0; x <= this.xSize; x++) {
 			for (var y=0; y <= this.ySize; y++) {
 
@@ -694,9 +675,6 @@ MazeMap.prototype = {
 						n, n+2, n+3,
 						]);
 
-						// for (var i=0; i < 4; i++) {
-							// unpackedColors = unpackedColors.concat(color);
-						// }
 						textureCoords = textureCoords.concat(texture);
 
 						n += 4;
@@ -717,9 +695,6 @@ MazeMap.prototype = {
 						n, n+2, n+3,
 						]);
 
-						// for (var i=0; i < 4; i++) {
-							// unpackedColors = unpackedColors.concat(color);
-						// }
 						textureCoords = textureCoords.concat(texture);
 
 						n += 4;
@@ -729,7 +704,6 @@ MazeMap.prototype = {
 			}
 		}
 
-		// this.model = new GLModel(vertices, vertexIndices, unpackedColors);
 		this.model = new GLModel(vertices, vertexIndices, textureCoords);
 	},
 	draw: function () {
@@ -800,11 +774,6 @@ Game.prototype = {
 		];
 		var vertexIndices = [0, 1, 2,   0, 3, 2];
 
-		// var color = [1.0, 0.0, 0.0, 1.0];
-		// var unpackedColors = [];
-		// for (var i=0; i < 4; i++) {
-		// unpackedColors = unpackedColors.concat(color);
-		// }
 		var textureCoords = [
 		0.0, 0.0,
 		1.0, 0.0,
@@ -812,7 +781,6 @@ Game.prototype = {
 		0.0, 1.0
 		];
 
-		// this.model = new GLModel(vertices, vertexIndices, unpackedColors);
 		this.model = new GLModel(vertices, vertexIndices, textureCoords);
 
 	},
