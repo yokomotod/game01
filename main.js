@@ -621,18 +621,14 @@ MazeMap.prototype = {
 
 		var vertices = [];
 		var vertexIndices = [];
-		var unpackedColors = [];
-		// var textureCoords = [];
+		// var unpackedColors = [];
+		var textureCoords = [];
 
 		texture = [
+		0.0, 0.0,
+		1.0, 0.0,
 		1.0, 1.0,
-		1.0, 1.0,
-		1.0, 1.0,
-		1.0, 1.0,
-		// 0.0, 0.0,
-		// 1.0, 0.0,
-		// 1.0, 1.0,
-		// 0.0, 1.0
+		0.0, 1.0
 		];
 
 		var n = 0;
@@ -665,10 +661,10 @@ MazeMap.prototype = {
 				n, n+2, n+3,
 				]);
 
-				for (var i=0; i < 4; i++) {
-					unpackedColors = unpackedColors.concat(color);
-				}
-				// textureCoords = textureCoords.concat(texture);
+				// for (var i=0; i < 4; i++) {
+					// unpackedColors = unpackedColors.concat(color);
+				// }
+				textureCoords = textureCoords.concat(texture);
 
 				n += 4;
 			}
@@ -677,7 +673,7 @@ MazeMap.prototype = {
 		//
 		// Wall
 		//
-		color = [0.25, 0.25, 0.25, 1.0];
+		// color = [0.25, 0.25, 0.25, 1.0];
 
 		for (var x=0; x <= this.xSize; x++) {
 			for (var y=0; y <= this.ySize; y++) {
@@ -698,10 +694,10 @@ MazeMap.prototype = {
 						n, n+2, n+3,
 						]);
 
-						for (var i=0; i < 4; i++) {
-							unpackedColors = unpackedColors.concat(color);
-						}
-						// textureCoords = textureCoords.concat(texture);
+						// for (var i=0; i < 4; i++) {
+							// unpackedColors = unpackedColors.concat(color);
+						// }
+						textureCoords = textureCoords.concat(texture);
 
 						n += 4;
 					}
@@ -721,10 +717,10 @@ MazeMap.prototype = {
 						n, n+2, n+3,
 						]);
 
-						for (var i=0; i < 4; i++) {
-							unpackedColors = unpackedColors.concat(color);
-						}
-						// textureCoords = textureCoords.concat(texture);
+						// for (var i=0; i < 4; i++) {
+							// unpackedColors = unpackedColors.concat(color);
+						// }
+						textureCoords = textureCoords.concat(texture);
 
 						n += 4;
 					}
@@ -733,8 +729,8 @@ MazeMap.prototype = {
 			}
 		}
 
-		this.model = new GLModel(vertices, vertexIndices, unpackedColors);
-		//this.model = new GLModel(vertices, vertexIndices, textureCoords);
+		// this.model = new GLModel(vertices, vertexIndices, unpackedColors);
+		this.model = new GLModel(vertices, vertexIndices, textureCoords);
 	},
 	draw: function () {
 		this.model.draw();
@@ -835,9 +831,9 @@ Game.prototype = {
 
 		this.model.draw();
 
-		// mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
-// 
-		// this.map.draw();
+		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
+
+		this.map.draw();
 
 	},
 	move: function(d) {
