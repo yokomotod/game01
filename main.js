@@ -67,21 +67,19 @@ function initShaders() {
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+	shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
+	gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+	
 	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
 	gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 	
-	// shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
-	// gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-	
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-	
+	shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
 	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
-	// shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
-	// shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
-	// shaderProgram.ambientColoruniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
-	// shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
-	// shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+	shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
+	shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
+	shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
 	
 }
 
@@ -91,7 +89,7 @@ function initTexture() {
 	neheTexture.image = new Image();
 	neheTexture.image.onload = function () {
 		if (neheTexture.image == null) {
-			alert("can't open image");
+			alert("can't open image");w
 		}
 		handleLoadedTexture(neheTexture);
 	}
@@ -137,10 +135,14 @@ function setMatrixUniforms() {
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 	
+	var normalMatrix = mat3.create();
+	mat4.toInverseMat3(mvMatrix,normalMatrix);
+	mat3.transpose(normalMatrix);
+	gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
+	
 	// var normalMatrix = mvMatrix.inverse();
 	// normalMatrix = normalMatrix.transpose();
-// 	
-	// gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, new Float32Array(normalMatrix.flatten()));
+	// gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, new Float32Array(normalMatrix.flatten()));	
 }
 
 function degToRad(degrees) {
@@ -151,8 +153,8 @@ var GLModel = function() {
 	this.initialize.apply(this, arguments);
 }
 GLModel.prototype = {
-	initialize: function(vertices, vertexIndecies, textureCoods) {
-	// initialize: function(vertices, vertexIndecies, colors, vertexNormals) {
+	// initialize: function(vertices, vertexIndecies, textureCoods) {
+	initialize: function(vertices, vertexIndecies, textureCoods, vertexNormals) {
 
 		this.modelPositionBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
@@ -166,10 +168,11 @@ GLModel.prototype = {
 		this.modelIndexBuffer.itemSize = 1;
 		this.modelIndexBuffer.numItems = vertexIndecies.length;
 
-		// this.modelVertexNormalBuffer = gl.createBuffer();
-		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertexNormals), gl.STATIC_DRAW);
-		// this.modelVertexNormalBuffer.itemSize = 3;
-		// this.modelVertexNormalBuffer.numItems = vertexNormals.length/3;
+		this.modelVertexNormalBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelVertexNormalBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
+		this.modelVertexNormalBuffer.itemSize = 3;
+		this.modelVertexNormalBuffer.numItems = vertexNormals.length/3;
 		
 		this.modelTextureCoordBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
@@ -181,23 +184,9 @@ GLModel.prototype = {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, this.modelPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		// gl.bindBuffer(gl.ARRAY_BUFFER, this.modelVertexNormalBuffer);
-		// gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, this.modelVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
-// 		
-		// gl.uniform1i(shaderProgram.useLightingUniform, 0);
-// 		
-		// gl.uniform3f(
-			// shaderProgram.ambientColorUniform(0, 0, 0)
-		// );
-// 		
-		// var lightningDirection = Vector.create([1, 1, 1]);
-		// var adjustedLD = lightningDirection.toUnitVector().x(-1);
-		// var flatLD = adjustedLD.flatten();
-// 		
-		// gl.uniform3fv(shaderProgram.lightningDirectionUniform, flatLD);
-// 		
-		// gl.uniform3f(shaderProgram.directionalColorUniform, 1.0, 1.0, 1.0);
-		
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelVertexNormalBuffer);
+		gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, this.modelVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, this.modelTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 		
@@ -205,7 +194,22 @@ GLModel.prototype = {
 		gl.bindTexture(gl.TEXTURE_2D, neheTexture);
 		
 		gl.uniform1i(shaderProgram.samplerUniform, 0);
-
+		
+		gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
+		
+		// var lightingDirection = Vector.create([0.0, 0.0, 1.0]);
+		// var adjustLD = lightingDirection.toUnitVector().x(-1);
+		// var flatLD = adjustLD.flatten();
+		// gl.uniform3fv(shaderProgram.lightingDirectionUniform, flatLD);
+		
+		var lightningDirection = [0, 0, -1];
+		var adjustedLD = vec3.create();
+		vec3.normalize(lightningDirection, adjustedLD);
+		vec3.scale(adjustedLD, -1);
+		gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
+		
+		gl.uniform3f(shaderProgram.directionalColorUniform, 1.0, 1.0, 1.0);
+		
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
 		setMatrixUniforms();
 		gl.drawElements(gl.TRIANGLES, this.modelIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
@@ -706,7 +710,7 @@ MazeMap.prototype = {
 			}
 		}
 
-		this.model = new GLModel(vertices, vertexIndices, textureCoords);
+		// this.model = new GLModel(vertices, vertexIndices, textureCoords);
 	},
 	draw: function () {
 		this.model.draw();
@@ -783,7 +787,14 @@ Game.prototype = {
 		0.0, 1.0
 		];
 
-		this.model = new GLModel(vertices, vertexIndices, textureCoords);
+		var vertexNormals = [
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0
+		];
+		
+		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
 
 	},
 	draw: function() {
@@ -801,9 +812,9 @@ Game.prototype = {
 
 		this.model.draw();
 
-		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
-
-		this.map.draw();
+		// mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
+// 
+		// this.map.draw();
 
 	},
 	move: function(d) {
