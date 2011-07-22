@@ -69,10 +69,10 @@ function initShaders() {
 
 	shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
 	gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-	
+
 	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
 	gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-	
+
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 	shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
@@ -80,7 +80,7 @@ function initShaders() {
 	shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
 	shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
 	shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
-	
+
 }
 
 var neheTexture;
@@ -109,7 +109,7 @@ function handleLoadedTexture(texture) {
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
 
 	gl.generateMipmap(gl.TEXTURE_2D);
-	
+
 	gl.bindTexture(gl.TEXTURE_2D, null);
 
 }
@@ -134,15 +134,15 @@ function mvPopMatrix() {
 function setMatrixUniforms() {
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-	
+
 	var normalMatrix = mat3.create();
 	mat4.toInverseMat3(mvMatrix,normalMatrix);
 	mat3.transpose(normalMatrix);
 	gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
-	
+
 	// var normalMatrix = mvMatrix.inverse();
 	// normalMatrix = normalMatrix.transpose();
-	// gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, new Float32Array(normalMatrix.flatten()));	
+	// gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, new Float32Array(normalMatrix.flatten()));
 }
 
 function degToRad(degrees) {
@@ -155,6 +155,8 @@ var GLModel = function() {
 GLModel.prototype = {
 	// initialize: function(vertices, vertexIndecies, textureCoods) {
 	initialize: function(vertices, vertexIndecies, textureCoods, vertexNormals) {
+
+		//alert("model : "+vertices.length+" "+vertexNormals.length);
 
 		this.modelPositionBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
@@ -173,7 +175,7 @@ GLModel.prototype = {
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
 		this.modelVertexNormalBuffer.itemSize = 3;
 		this.modelVertexNormalBuffer.numItems = vertexNormals.length/3;
-		
+
 		this.modelTextureCoordBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoods), gl.STATIC_DRAW);
@@ -189,27 +191,27 @@ GLModel.prototype = {
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, this.modelTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		
+
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, neheTexture);
-		
+
 		gl.uniform1i(shaderProgram.samplerUniform, 0);
-		
+
 		gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
-		
+
 		// var lightingDirection = Vector.create([0.0, 0.0, 1.0]);
 		// var adjustLD = lightingDirection.toUnitVector().x(-1);
 		// var flatLD = adjustLD.flatten();
 		// gl.uniform3fv(shaderProgram.lightingDirectionUniform, flatLD);
-		
-		var lightingDirection = [0, 0, -1];
+
+		var lightingDirection = [-1, -1, -1];
 		var adjustedLD = vec3.create();
 		vec3.normalize(lightingDirection, adjustedLD);
 		vec3.scale(adjustedLD, -1);
 		gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
-		
+
 		gl.uniform3f(shaderProgram.directionalColorUniform, 1.0, 1.0, 1.0);
-		
+
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
 		setMatrixUniforms();
 		gl.drawElements(gl.TRIANGLES, this.modelIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
@@ -615,6 +617,7 @@ MazeMap.prototype = {
 		var vertices = [];
 		var vertexIndices = [];
 		var textureCoords = [];
+		var vertexNormals = [];
 
 		texture = [
 		0.0, 0.0,
@@ -624,7 +627,8 @@ MazeMap.prototype = {
 		];
 
 		var n = 0;
-
+		var n1 = 0;
+		var n2 = 0;
 		//
 		// Floor and Roof
 		//
@@ -633,6 +637,12 @@ MazeMap.prototype = {
 
 				var z;
 				var color;
+				var normal = [
+				0.0, 0.0, 1.0,
+				0.0, 0.0, 1.0,
+				0.0, 0.0, 1.0,
+				0.0, 0.0, 1.0,
+				];
 
 				if (this.isWall(x, y)) {
 					z = 1.0;
@@ -641,6 +651,7 @@ MazeMap.prototype = {
 					z = 0.0;
 					color = [0.85, 0.85, 0.85, 1.0];
 				}
+				n1+=4;
 				vertices = vertices.concat([
 				x,     y,     z,
 				x+1.0, y,     z,
@@ -654,9 +665,14 @@ MazeMap.prototype = {
 				]);
 
 				textureCoords = textureCoords.concat(texture);
+				n2+=4;
+				vertexNormals = vertexNormals.concat(normal);
 
 				n += 4;
 			}
+		}
+		if (vertices.length != vertexNormals.length) {
+			alert("error");
 		}
 
 		//
@@ -669,6 +685,8 @@ MazeMap.prototype = {
 				if (y != this.ySize) {
 					if ((x == 0) || (x == this.xSize) || (this.isWall(x-1, y) != this.isWall(x, y))) {
 
+						n1 += 4;
+						///alert("side:"+x+" "+y+"("+vertexNormals.length+")");
 						vertices = vertices.concat([
 						x, y,     0.0,
 						x, y+1.0, 0.0,
@@ -683,12 +701,42 @@ MazeMap.prototype = {
 
 						textureCoords = textureCoords.concat(texture);
 
+						var normal;
+						if ((x == 0) || (this.isWall(x, y))) {
+							// alert(x+" "+y);
+							n2+=4;
+							normal = [
+							1.0, 0.0, 0.0,
+							1.0, 0.0, 0.0,
+							1.0, 0.0, 0.0,
+							1.0, 0.0, 0.0,
+							];
+							///alert("side 1 : add "+normal.length);
+						} else {
+							// alert(x+" "+y);
+							n2+=4;
+							normal = [
+							-1.0, 0.0, 0.0,
+							-1.0, 0.0, 0.0,
+							-1.0, 0.0, 0.0,
+							-1.0, 0.0, 0.0,
+							];
+							///alert("side 2 : add "+normal.length);
+						}
+						vertexNormals = vertexNormals.concat(normal);
+						// alert("now:"+vertexNormals.length);
 						n += 4;
+						if (vertices.length != vertexNormals.length) {
+							alert("error in side "+x + ", "+y+":"+vertices.length+" != "+vertexNormals.length);
+						}
 					}
 				}
+
 				// Normal Ahead
 				if (x != this.xSize) {
 					if ((y == 0) || (y == this.ySize) || (this.isWall(x, y-1) != this.isWall(x, y))) {
+						n1+=4;
+						///alert("ahead:"+x+" "+y+"("+vertexNormals.length+")");
 						vertices = vertices.concat([
 						x,     y, 0.0,
 						x+1.0, y, 0.0,
@@ -703,14 +751,45 @@ MazeMap.prototype = {
 
 						textureCoords = textureCoords.concat(texture);
 
+						var normal;
+						if ((y == 0) || (this.isWall(x, y))) {
+							///alert(x+" "+y);
+							n2+=4;
+							normal = [
+							0.0, 1.0, 0.0,
+							0.0, 1.0, 0.0,
+							0.0, 1.0, 0.0,
+							0.0, 1.0, 0.0,
+							];
+							///alert("ahead 1 : add "+normal.length);
+
+						} else {
+							///alert(x+" "+y);
+							n2+=4;
+							normal = [
+							0.0, -1.0, 0.0,
+							0.0, -1.0, 0.0,
+							0.0, -1.0, 0.0,
+							0.0, -1.0, 0.0,
+							];
+							///alert("ahead 2 : add "+normal.length);
+
+						}
+						vertexNormals = vertexNormals.concat(normal);
+						if (vertices.length != vertexNormals.length) {
+							alert("error in ahead "+x + ", "+y+":"+vertices.length+" != "+vertexNormals.length);
+						}
+
 						n += 4;
 					}
 				}
 
 			}
 		}
-
+		//alert(n1+" "+n2);
+		//alert("maze : "+vertices.length+" "+vertexNormals.length+" "+n*3);
 		// this.model = new GLModel(vertices, vertexIndices, textureCoords);
+		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
 	},
 	draw: function () {
 		this.model.draw();
@@ -733,8 +812,8 @@ Game.prototype = {
 		//
 		this.key = 0;
 
-		this.xSize = 10;
-		this.ySize = 10;
+		this.xSize = 8;
+		this.ySize = 8;
 
 		this.xPos = 1;
 		this.yPos = 1;
@@ -793,7 +872,7 @@ Game.prototype = {
 		0.0, 0.0, 1.0,
 		0.0, 0.0, 1.0
 		];
-		
+
 		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
 
 	},
@@ -812,9 +891,9 @@ Game.prototype = {
 
 		this.model.draw();
 
-		// mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
-// 
-		// this.map.draw();
+		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
+
+		this.map.draw();
 
 	},
 	move: function(d) {
