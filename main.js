@@ -202,9 +202,9 @@ GLModel.prototype = {
 		// var flatLD = adjustLD.flatten();
 		// gl.uniform3fv(shaderProgram.lightingDirectionUniform, flatLD);
 		
-		var lightningDirection = [0, 0, -1];
+		var lightingDirection = [0, 0, -1];
 		var adjustedLD = vec3.create();
-		vec3.normalize(lightningDirection, adjustedLD);
+		vec3.normalize(lightingDirection, adjustedLD);
 		vec3.scale(adjustedLD, -1);
 		gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
 		
