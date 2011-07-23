@@ -78,8 +78,10 @@ function initShaders() {
 	shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
 	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 	shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
-	shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
-	shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+	shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
+	shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
+	// shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
+	// shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
 
 }
 
@@ -829,7 +831,7 @@ Game.prototype = {
 		mat4.translate(mvMatrix, [0, 0, -10.0]);
 
 		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
-		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
+		//mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
 
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, neheTexture);
@@ -838,14 +840,16 @@ Game.prototype = {
 
 		gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
 
-		var lightingDirection = [-0.7, -0.7, -1];
-		var adjustedLD = vec3.create();
-		vec3.normalize(lightingDirection, adjustedLD);
-		vec3.scale(adjustedLD, -1);
-		gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
+		// var lightingDirection = [-0.7, -0.7, -1];
+		// var adjustedLD = vec3.create();
+		// vec3.normalize(lightingDirection, adjustedLD);
+		// vec3.scale(adjustedLD, -1);
+		// gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
+		gl.uniform3f(shaderProgram.pointLightingLocationUniform, 1, 1, -8.4);
 
-		gl.uniform3f(shaderProgram.directionalColorUniform, 1.0, 1.0, 1.0);
-
+		// gl.uniform3f(shaderProgram.directionalColorUniform, 1.0, 1.0, 1.0);
+		gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
+        
 		this.model.draw();
 
 		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
