@@ -140,9 +140,6 @@ function setMatrixUniforms() {
 	mat3.transpose(normalMatrix);
 	gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
 
-	// var normalMatrix = mvMatrix.inverse();
-	// normalMatrix = normalMatrix.transpose();
-	// gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, new Float32Array(normalMatrix.flatten()));
 }
 
 function degToRad(degrees) {
@@ -153,10 +150,7 @@ var GLModel = function() {
 	this.initialize.apply(this, arguments);
 }
 GLModel.prototype = {
-	// initialize: function(vertices, vertexIndecies, textureCoods) {
 	initialize: function(vertices, vertexIndecies, textureCoods, vertexNormals) {
-
-		//alert("model : "+vertices.length+" "+vertexNormals.length);
 
 		this.modelPositionBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
@@ -191,26 +185,6 @@ GLModel.prototype = {
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, this.modelTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, neheTexture);
-
-		gl.uniform1i(shaderProgram.samplerUniform, 0);
-
-		gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
-
-		// var lightingDirection = Vector.create([0.0, 0.0, 1.0]);
-		// var adjustLD = lightingDirection.toUnitVector().x(-1);
-		// var flatLD = adjustLD.flatten();
-		// gl.uniform3fv(shaderProgram.lightingDirectionUniform, flatLD);
-
-		var lightingDirection = [-1, -1, -1];
-		var adjustedLD = vec3.create();
-		vec3.normalize(lightingDirection, adjustedLD);
-		vec3.scale(adjustedLD, -1);
-		gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
-
-		gl.uniform3f(shaderProgram.directionalColorUniform, 1.0, 1.0, 1.0);
 
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
 		setMatrixUniforms();
@@ -627,8 +601,7 @@ MazeMap.prototype = {
 		];
 
 		var n = 0;
-		var n1 = 0;
-		var n2 = 0;
+
 		//
 		// Floor and Roof
 		//
@@ -651,7 +624,7 @@ MazeMap.prototype = {
 					z = 0.0;
 					color = [0.85, 0.85, 0.85, 1.0];
 				}
-				n1+=4;
+
 				vertices = vertices.concat([
 				x,     y,     z,
 				x+1.0, y,     z,
@@ -665,14 +638,10 @@ MazeMap.prototype = {
 				]);
 
 				textureCoords = textureCoords.concat(texture);
-				n2+=4;
 				vertexNormals = vertexNormals.concat(normal);
 
 				n += 4;
 			}
-		}
-		if (vertices.length != vertexNormals.length) {
-			alert("error");
 		}
 
 		//
@@ -685,8 +654,6 @@ MazeMap.prototype = {
 				if (y != this.ySize) {
 					if ((x == 0) || (x == this.xSize) || (this.isWall(x-1, y) != this.isWall(x, y))) {
 
-						n1 += 4;
-						///alert("side:"+x+" "+y+"("+vertexNormals.length+")");
 						vertices = vertices.concat([
 						x, y,     0.0,
 						x, y+1.0, 0.0,
@@ -703,40 +670,29 @@ MazeMap.prototype = {
 
 						var normal;
 						if ((x == 0) || (this.isWall(x, y))) {
-							// alert(x+" "+y);
-							n2+=4;
 							normal = [
 							1.0, 0.0, 0.0,
 							1.0, 0.0, 0.0,
 							1.0, 0.0, 0.0,
 							1.0, 0.0, 0.0,
 							];
-							///alert("side 1 : add "+normal.length);
 						} else {
-							// alert(x+" "+y);
-							n2+=4;
 							normal = [
 							-1.0, 0.0, 0.0,
 							-1.0, 0.0, 0.0,
 							-1.0, 0.0, 0.0,
 							-1.0, 0.0, 0.0,
 							];
-							///alert("side 2 : add "+normal.length);
 						}
 						vertexNormals = vertexNormals.concat(normal);
-						// alert("now:"+vertexNormals.length);
+
 						n += 4;
-						if (vertices.length != vertexNormals.length) {
-							alert("error in side "+x + ", "+y+":"+vertices.length+" != "+vertexNormals.length);
-						}
 					}
 				}
 
 				// Normal Ahead
 				if (x != this.xSize) {
 					if ((y == 0) || (y == this.ySize) || (this.isWall(x, y-1) != this.isWall(x, y))) {
-						n1+=4;
-						///alert("ahead:"+x+" "+y+"("+vertexNormals.length+")");
 						vertices = vertices.concat([
 						x,     y, 0.0,
 						x+1.0, y, 0.0,
@@ -753,32 +709,21 @@ MazeMap.prototype = {
 
 						var normal;
 						if ((y == 0) || (this.isWall(x, y))) {
-							///alert(x+" "+y);
-							n2+=4;
 							normal = [
 							0.0, 1.0, 0.0,
 							0.0, 1.0, 0.0,
 							0.0, 1.0, 0.0,
 							0.0, 1.0, 0.0,
 							];
-							///alert("ahead 1 : add "+normal.length);
-
 						} else {
-							///alert(x+" "+y);
-							n2+=4;
 							normal = [
 							0.0, -1.0, 0.0,
 							0.0, -1.0, 0.0,
 							0.0, -1.0, 0.0,
 							0.0, -1.0, 0.0,
 							];
-							///alert("ahead 2 : add "+normal.length);
-
 						}
 						vertexNormals = vertexNormals.concat(normal);
-						if (vertices.length != vertexNormals.length) {
-							alert("error in ahead "+x + ", "+y+":"+vertices.length+" != "+vertexNormals.length);
-						}
 
 						n += 4;
 					}
@@ -786,9 +731,6 @@ MazeMap.prototype = {
 
 			}
 		}
-		//alert(n1+" "+n2);
-		//alert("maze : "+vertices.length+" "+vertexNormals.length+" "+n*3);
-		// this.model = new GLModel(vertices, vertexIndices, textureCoords);
 		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
 	},
 	draw: function () {
@@ -888,6 +830,21 @@ Game.prototype = {
 
 		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
 		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
+
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+
+		gl.uniform1i(shaderProgram.samplerUniform, 0);
+
+		gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
+
+		var lightingDirection = [-0.7, -0.7, -1];
+		var adjustedLD = vec3.create();
+		vec3.normalize(lightingDirection, adjustedLD);
+		vec3.scale(adjustedLD, -1);
+		gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
+
+		gl.uniform3f(shaderProgram.directionalColorUniform, 1.0, 1.0, 1.0);
 
 		this.model.draw();
 
