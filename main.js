@@ -671,17 +671,17 @@ MazeMap.prototype = {
 						var normal;
 						if ((x == 0) || (this.isWall(x, y))) {
 							normal = [
-							1.0, 0.0, 0.0,
-							1.0, 0.0, 0.0,
-							1.0, 0.0, 0.0,
-							1.0, 0.0, 0.0,
+							-1.0, 0.0, 0.0,
+							-1.0, 0.0, 0.0,
+							-1.0, 0.0, 0.0,
+							-1.0, 0.0, 0.0,
 							];
 						} else {
 							normal = [
-							-1.0, 0.0, 0.0,
-							-1.0, 0.0, 0.0,
-							-1.0, 0.0, 0.0,
-							-1.0, 0.0, 0.0,
+							1.0, 0.0, 0.0,
+							1.0, 0.0, 0.0,
+							1.0, 0.0, 0.0,
+							1.0, 0.0, 0.0,
 							];
 						}
 						vertexNormals = vertexNormals.concat(normal);
@@ -710,17 +710,17 @@ MazeMap.prototype = {
 						var normal;
 						if ((y == 0) || (this.isWall(x, y))) {
 							normal = [
-							0.0, 1.0, 0.0,
-							0.0, 1.0, 0.0,
-							0.0, 1.0, 0.0,
-							0.0, 1.0, 0.0,
+							0.0, -1.0, 0.0,
+							0.0, -1.0, 0.0,
+							0.0, -1.0, 0.0,
+							0.0, -1.0, 0.0,
 							];
 						} else {
 							normal = [
-							0.0, -1.0, 0.0,
-							0.0, -1.0, 0.0,
-							0.0, -1.0, 0.0,
-							0.0, -1.0, 0.0,
+							0.0, 1.0, 0.0,
+							0.0, 1.0, 0.0,
+							0.0, 1.0, 0.0,
+							0.0, 1.0, 0.0,
 							];
 						}
 						vertexNormals = vertexNormals.concat(normal);
@@ -828,7 +828,7 @@ Game.prototype = {
 
 		mat4.identity(mvMatrix);
 
-		mat4.translate(mvMatrix, [0, 0, -10.0]);
+		mat4.translate(mvMatrix, [0, 0, -3.0]);
 
 		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
 		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
@@ -840,7 +840,7 @@ Game.prototype = {
 
 		gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
 
-		gl.uniform3f(shaderProgram.pointLightingLocationUniform, 1, 1, -8.4);
+		gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0.1, 0.1, -2.999);
 
 		gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
 
