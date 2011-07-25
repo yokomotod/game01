@@ -77,9 +77,12 @@ function initShaders() {
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 	shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
 	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+	        shaderProgram.materialShininessUniform = gl.getUniformLocation(shaderProgram, "uMaterialShininess");
 	shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
 	shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
-	shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
+	// shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
+	        shaderProgram.pointLightingSpecularColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingSpecularColor");
+        shaderProgram.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingDiffuseColor");
 
 }
 
@@ -828,7 +831,7 @@ Game.prototype = {
 
 		mat4.identity(mvMatrix);
 
-		mat4.translate(mvMatrix, [0, 0, -3.0]);
+		mat4.translate(mvMatrix, [0, 0, -5.0]);
 
 		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
 		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
@@ -838,9 +841,13 @@ Game.prototype = {
 
 		gl.uniform1i(shaderProgram.samplerUniform, 0);
 
-		gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
+		gl.uniform1f(shaderProgram.materialShininessUniform, 5.0);
 
-		gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0.1, 0.1, -2.999);
+		gl.uniform3f(shaderProgram.ambientColorUniform, 0.2, 0.2, 0.2);
+		gl.uniform3f(shaderProgram.pointLightingSpecularColorUniform, 0.8, 0.8, 0.8);
+		gl.uniform3f(shaderProgram.pointLightingDiffuseColorUniform, 0.8, 0.8, 0.8);
+
+		gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0.0, 0.0, -4.9);
 
 		gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
 
