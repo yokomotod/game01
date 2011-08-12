@@ -833,7 +833,6 @@ Game.prototype = {
 
 		mat4.translate(mvMatrix, [0, 0, -5.0]);
 
-		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
 		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
 
 		gl.activeTexture(gl.TEXTURE0);
@@ -841,15 +840,19 @@ Game.prototype = {
 
 		gl.uniform1i(shaderProgram.samplerUniform, 0);
 
+		var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.0, 0.5]);
+		
 		gl.uniform1f(shaderProgram.materialShininessUniform, 5.0);
 
 		gl.uniform3f(shaderProgram.ambientColorUniform, 0.2, 0.2, 0.2);
 		gl.uniform3f(shaderProgram.pointLightingSpecularColorUniform, 0.8, 0.8, 0.8);
 		gl.uniform3f(shaderProgram.pointLightingDiffuseColorUniform, 0.8, 0.8, 0.8);
 
-		gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0.0, 0.0, -4.9);
+		gl.uniform3f(shaderProgram.pointLightingLocationUniform, vCamera[0], vCamera[1], vCamera[2]);
 
 		gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
+
+		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
 
 		this.model.draw();
 
