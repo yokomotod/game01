@@ -842,7 +842,7 @@ Game.prototype = {
 
 		gl.uniform1i(shaderProgram.samplerUniform, 0);
 
-		var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.0, 0.5]);
+		var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.3, 0.5]);
 		
 		gl.uniform1f(shaderProgram.materialShininessUniform, 5.0);
 
