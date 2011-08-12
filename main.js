@@ -740,6 +740,9 @@ MazeMap.prototype = {
 		this.model.draw();
 	}
 }
+
+var cameraPos, cameraRotX, cameraRotY, cameraRotZ;
+
 var Game = function() {
 	this.initialize.apply(this, arguments);
 }
@@ -762,7 +765,8 @@ Game.prototype = {
 
 		this.xPos = 1;
 		this.yPos = 1;
-
+		this.direction = 0;
+		
 		this.map = new MazeMap(this.xSize, this.ySize);
 
 		this.initModel();
@@ -776,19 +780,19 @@ Game.prototype = {
 	},
 	update: function() {
 		switch(this.key) {
-			case 0:
+			case 0: 
 				return false;
-			case 37:
-				game.move(2);
+			case 37: // left
+				game.turn(-1);
 				break;
-			case 38:
+			case 38: // up
 				game.move(1);
 				break;
-			case 39:
-				game.move(3);
+			case 39: // right
+				game.turn(1);
 				break;
-			case 40:
-				game.move(0);
+			case 40: // down
+				game.move(-1);
 				break;
 		}
 
@@ -822,21 +826,19 @@ Game.prototype = {
 
 		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
 
-	},
-	draw: function() {
-		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		mat4.perspective(60, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
-		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-
+		cameraPos = [0.0, 0.0, -0.5];
+		cameraRotX = -90;
+		cameraRotY = 0;
+		cameraRotZ = 0;
+		
 		mat4.identity(mvMatrix);
 
-		mat4.translate(mvMatrix, [0, 0, -5.0]);
-
-		mat4.rotate(mvMatrix, degToRad(-20), [1, 0, 0]);
-
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+		mat4.rotate(mvMatrix, degToRad(cameraRotX), [1, 0, 0]);
+		mat4.rotate(mvMatrix, degToRad(cameraRotY), [0, 1, 0]);
+		mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
+		mat4.translate(mvMatrix, cameraPos);
 
 		gl.uniform1i(shaderProgram.samplerUniform, 0);
 
@@ -852,6 +854,37 @@ Game.prototype = {
 
 		gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
 
+	},
+	draw: function() {
+		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+
+		mat4.identity(mvMatrix);
+
+		mat4.rotate(mvMatrix, degToRad(cameraRotX), [1, 0, 0]);
+		mat4.rotate(mvMatrix, degToRad(cameraRotY), [0, 1, 0]);
+		mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
+		mat4.translate(mvMatrix, cameraPos);
+
+		// switch(this.direction) {
+			// case 0: // forward
+				// mat4.rotate(mvMatrix, degToRad(0), [0, 0, 1]);
+				// break;
+			// case 1: // right
+				// mat4.rotate(mvMatrix, degToRad(90), [0, 0, 1]);
+				// break;
+			// case 2: // backward
+				// mat4.rotate(mvMatrix, degToRad(180), [0, 0, 1]);
+				// break;
+			// case 3: // left
+				// mat4.rotate(mvMatrix, degToRad(-90), [0, 0, 1]);
+				// break;
+		// }
+		mat4.rotate(mvMatrix, this.direction, [0, 0, 1]);
+
 		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
 
 		this.model.draw();
@@ -865,26 +898,43 @@ Game.prototype = {
 		var x = this.xPos;
 		var y = this.yPos;
 
-		switch(d) {
-			case 0:
-				y--;
-				break;
-			case 1:
-				y++;
-				break;
-			case 2:
-				x--;
-				break;
-			case 3:
-				x++;
-				break;
-		}
-		if(! this.map.isWall(x, y)) {
+		// switch(this.direction) {
+			// case 0: // forward
+				// y+=d;
+				// break;
+			// case 1: // right
+				// x+=d;// x--;
+				// break;
+			// case 2: // backward
+				// y-=d;
+				// break;
+			// case 3: // left
+				// x-=d;// x++;
+				// break;
+		// }
+		var dx = d*Math.sin(this.direction)*0.1;
+		var dy = d*Math.cos(this.direction)*0.1;
+		x += dx;
+		y += dy;
+		var xSign = dx >= 0 ? 1 : -1;
+		var ySign = dy >= 0 ? 1 : -1;
+		
+		if(! this.map.isWall(Math.round(x+0.3*xSign), Math.round(y+0.3*ySign))) {
 			this.xPos = x;
 			this.yPos = y;
 
 			this.draw();
 		}
+	},
+	turn: function(d) {
+		
+		this.direction += d*Math.PI*0.02;
+		
+		if(this.direction < 0)
+			this.direction = 2*Math.PI;
+		else if(this.direction > 2*Math.PI)
+			this.direction = 0;
+			
 	}
 }
 
