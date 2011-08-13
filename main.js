@@ -77,25 +77,35 @@ function initShaders() {
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 	shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
 	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
-	        shaderProgram.materialShininessUniform = gl.getUniformLocation(shaderProgram, "uMaterialShininess");
+	shaderProgram.materialShininessUniform = gl.getUniformLocation(shaderProgram, "uMaterialShininess");
 	shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
 	shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
 	// shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
-	        shaderProgram.pointLightingSpecularColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingSpecularColor");
-        shaderProgram.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingDiffuseColor");
+	shaderProgram.pointLightingSpecularColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingSpecularColor");
+	shaderProgram.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingDiffuseColor");
 
 }
 
 var neheTexture;
 function initTexture() {
 	neheTexture = gl.createTexture();
-	neheTexture.image = new Image();
+  	neheTexture.image = new Image();
 	neheTexture.image.onload = function () {
 		if (neheTexture.image == null) {
 			alert("can't open image");w
 		}
 		handleLoadedTexture(neheTexture);
 	}
+
+	// var reader = new FileReader();
+// 
+	// reader.onload = function(e) {
+			// neheTexture.image.src = e.target.result;
+	// }
+// 
+	// // Read in the image file as a data URL.
+	// reader.readAsDataURL("bric.png");
+  
 	// neheTexture.image.src = "crate.gif";
 	neheTexture.image.src = "bric.png";
 }
@@ -612,39 +622,45 @@ MazeMap.prototype = {
 		for (var x=0; x < this.xSize; x++) {
 			for (var y=0; y < this.ySize; y++) {
 
-				var z;
-				var color;
+				if (this.isWall(x, y)) continue;
+				
 				var normal = [
 				0.0, 0.0, 1.0,
 				0.0, 0.0, 1.0,
 				0.0, 0.0, 1.0,
 				0.0, 0.0, 1.0,
+
+				0.0, 0.0, -1.0,
+				0.0, 0.0, -1.0,
+				0.0, 0.0, -1.0,
+				0.0, 0.0, -1.0,
 				];
 
-				if (this.isWall(x, y)) {
-					z = 1.0;
-					color = [0.5, 0.5, 0.5, 1.0];
-				} else {
-					z = 0.0;
-					color = [0.85, 0.85, 0.85, 1.0];
-				}
-
 				vertices = vertices.concat([
-				x,     y,     z,
-				x+1.0, y,     z,
-				x+1.0, y+1.0, z,
-				x,     y+1.0, z,
+				x,     y,     0.0,
+				x+1.0, y,     0.0,
+				x+1.0, y+1.0, 0.0,
+				x,     y+1.0, 0.0,
+
+				x,     y,     1.0,
+				x+1.0, y,     1.0,
+				x+1.0, y+1.0, 1.0,
+				x,     y+1.0, 1.0,
 				]);
 
 				vertexIndices = vertexIndices.concat([
 				n, n+1, n+2,
 				n, n+2, n+3,
+
+				n+4, n+5, n+6,
+				n+4, n+6, n+7,
 				]);
 
 				textureCoords = textureCoords.concat(texture);
+				textureCoords = textureCoords.concat(texture); // we need concat twice
 				vertexNormals = vertexNormals.concat(normal);
 
-				n += 4;
+				n += 8;
 			}
 		}
 
