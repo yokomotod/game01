@@ -96,7 +96,8 @@ function initTexture() {
 		}
 		handleLoadedTexture(neheTexture);
 	}
-	neheTexture.image.src = "crate.gif";
+	// neheTexture.image.src = "crate.gif";
+	neheTexture.image.src = "bric.png";
 }
 
 function handleLoadedTexture(texture) {
@@ -598,9 +599,9 @@ MazeMap.prototype = {
 
 		texture = [
 		0.0, 0.0,
-		1.0, 0.0,
-		1.0, 1.0,
-		0.0, 1.0
+		2.0, 0.0,
+		2.0, 2.0,
+		0.0, 2.0
 		];
 
 		var n = 0;
@@ -844,9 +845,9 @@ Game.prototype = {
 
 		var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.3, 0.5]);
 		
-		gl.uniform1f(shaderProgram.materialShininessUniform, 5.0);
+		gl.uniform1f(shaderProgram.materialShininessUniform, 1.0);
 
-		gl.uniform3f(shaderProgram.ambientColorUniform, 0.2, 0.2, 0.2);
+		gl.uniform3f(shaderProgram.ambientColorUniform, 0.6, 0.6, 0.6);
 		gl.uniform3f(shaderProgram.pointLightingSpecularColorUniform, 0.8, 0.8, 0.8);
 		gl.uniform3f(shaderProgram.pointLightingDiffuseColorUniform, 0.8, 0.8, 0.8);
 
