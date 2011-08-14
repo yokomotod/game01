@@ -961,8 +961,8 @@ MazeMap.prototype = {
 				}
 
 				// Normal Side
-				if (y != this.ySize) {
-					if ((x == 0) || (x == this.xSize) || (this.isWall(x-1, y) != this.isWall(x, y))) {
+				if (y != this.ySize-1) {
+					if ((x == 0) || (x == this.xSize-1) || (this.isWall(x-1, y) != this.isWall(x, y))) {
 
 						vertices = vertices.concat([
 							x, y,     0.0,
@@ -999,8 +999,8 @@ MazeMap.prototype = {
 				}
 
 				// Normal Ahead
-				if (x != this.xSize) {
-					if ((y == 0) || (y == this.ySize) || (this.isWall(x, y-1) != this.isWall(x, y))) {
+				if (x != this.xSize-1) {
+					if ((y == 0) || (y == this.ySize-1) || (this.isWall(x, y-1) != this.isWall(x, y))) {
 						vertices = vertices.concat([
 						x,     y, 0.0,
 						x+1.0, y, 0.0,
