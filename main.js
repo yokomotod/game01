@@ -1281,30 +1281,6 @@ Game.prototype = {
 	},
 	initModel: function() {
 
-		var vertices = [
-		0.0, 0.0, 0.01,
-		1.0, 0.0, 0.01,
-		1.0, 1.0, 0.01,
-		0.0, 1.0, 0.01,
-		];
-		var vertexIndices = [0, 1, 2,   0, 3, 2];
-
-		var textureCoords = [
-		0.0, 0.0,
-		1.0, 0.0,
-		1.0, 1.0,
-		0.0, 1.0
-		];
-
-		var vertexNormals = [
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0
-		];
-
-		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
-
 		mat4.perspective(60, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
 		cameraPos = [0.0, 0.0, -0.5];
@@ -1348,25 +1324,7 @@ Game.prototype = {
 		mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
 		mat4.translate(mvMatrix, cameraPos);
 
-		// switch(this.direction) {
-			// case 0: // forward
-				// mat4.rotate(mvMatrix, degToRad(0), [0, 0, 1]);
-				// break;
-			// case 1: // right
-				// mat4.rotate(mvMatrix, degToRad(90), [0, 0, 1]);
-				// break;
-			// case 2: // backward
-				// mat4.rotate(mvMatrix, degToRad(180), [0, 0, 1]);
-				// break;
-			// case 3: // left
-				// mat4.rotate(mvMatrix, degToRad(-90), [0, 0, 1]);
-				// break;
-		// }
 		mat4.rotate(mvMatrix, this.direction, [0, 0, 1]);
-
-		// mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
-
-		this.model.draw();
 
 		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, -this.zPos]);
 
