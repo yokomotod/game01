@@ -1211,17 +1211,21 @@ Game.prototype = {
 		// }
 		var dx = d*Math.sin(this.direction)*0.1;
 		var dy = d*Math.cos(this.direction)*0.1;
-		x += dx;
-		y += dy;
 		var xSign = dx >= 0 ? 1 : -1;
 		var ySign = dy >= 0 ? 1 : -1;
-		
-		if(! this.map.isWall(Math.round(x+0.3*xSign), Math.round(y+0.3*ySign))) {
-			this.xPos = x;
-			this.yPos = y;
 
-			this.draw();
+		if (this.map.isWall(Math.round(this.xPos+dx+0.3*xSign), Math.round(this.yPos+0.3*ySign)) == 0) {
+			this.xPos += dx;
 		}
+
+		if (this.map.isWall(Math.round(this.xPos+0.3*xSign), Math.round(this.yPos+dy+0.3*ySign)) == 0) {
+			this.yPos += dy;
+		}
+		
+		// if(! this.map.isWall(Math.round(x+0.3*xSign), Math.round(y+0.3*ySign))) {
+			// this.xPos = x;
+			// this.yPos = y;
+// 
 	},
 	turn: function(d) {
 		
