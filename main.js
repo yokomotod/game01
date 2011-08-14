@@ -237,6 +237,7 @@ MazeMap.prototype = {
 		while (this.make()) {
 		};
 
+		this.map[1][2] = 2;
 		// for (var x = 0; x < this.xSize; x++) {
 			// for (var y = 0; y < this.ySize; y++) {
 				// if ((this.data[x][y] & 0x1) != 0) {
@@ -887,104 +888,104 @@ MazeMap.prototype = {
 		var textureCoords = [];
 		var vertexNormals = [];
 
-		texture = [
+		var n = 0;
+
+		var steps = 8;
+		var h = 1/steps;
+
+		var texture = [
 		0.0, 0.0,
 		2.0, 0.0,
 		2.0, 2.0,
 		0.0, 2.0
 		];
 
-		var n = 0;
+		var textureForStep = [
+			0.0, 0.0,
+			2.0, 0.0,
+			2.0, 2.0*h,
+			0.0, 2.0*h,
+		];
 
 		//
 		// Floor and Roof
 		//
 		for (var x=0; x < this.xSize; x++) {
-			for (var y=0; y < this.ySize; y++) {
+		for (var y=0; y < this.ySize; y++) {
 
-				if (this.map[x][y] != 0) continue;
+				if (this.map[x][y] == 0) {
 				
-				var normal = [
-				0.0, 0.0, 1.0,
-				0.0, 0.0, 1.0,
-				0.0, 0.0, 1.0,
-				0.0, 0.0, 1.0,
+					vertices = vertices.concat([
+						x,     y,     0.0,
+						x+1.0, y,     0.0,
+						x+1.0, y+1.0, 0.0,
+						x,     y+1.0, 0.0,
 
-				0.0, 0.0, -1.0,
-				0.0, 0.0, -1.0,
-				0.0, 0.0, -1.0,
-				0.0, 0.0, -1.0,
-				];
+						x,     y,     1.0,
+						x+1.0, y,     1.0,
+						x+1.0, y+1.0, 1.0,
+						x,     y+1.0, 1.0,
+					]);
+	
+					vertexIndices = vertexIndices.concat([
+						n, n+1, n+2,
+						n, n+2, n+3,
 
-				vertices = vertices.concat([
-				x,     y,     0.0,
-				x+1.0, y,     0.0,
-				x+1.0, y+1.0, 0.0,
-				x,     y+1.0, 0.0,
+						n+4, n+5, n+6,
+						n+4, n+6, n+7,
+					]);
 
-				x,     y,     1.0,
-				x+1.0, y,     1.0,
-				x+1.0, y+1.0, 1.0,
-				x,     y+1.0, 1.0,
-				]);
+					vertexNormals = vertexNormals.concat([
+						0.0, 0.0, 1.0,
+						0.0, 0.0, 1.0,
+						0.0, 0.0, 1.0,
+						0.0, 0.0, 1.0,
 
-				vertexIndices = vertexIndices.concat([
-				n, n+1, n+2,
-				n, n+2, n+3,
+						0.0, 0.0, -1.0,
+						0.0, 0.0, -1.0,
+						0.0, 0.0, -1.0,
+						0.0, 0.0, -1.0,
+					]);
 
-				n+4, n+5, n+6,
-				n+4, n+6, n+7,
-				]);
+					textureCoords = textureCoords.concat(texture);
+					textureCoords = textureCoords.concat(texture); // we need concat twice
 
-				textureCoords = textureCoords.concat(texture);
-				textureCoords = textureCoords.concat(texture); // we need concat twice
-				vertexNormals = vertexNormals.concat(normal);
-
-				n += 8;
-			}
-		}
-
-		//
-		// Wall
-		//
-		for (var x=0; x <= this.xSize; x++) {
-			for (var y=0; y <= this.ySize; y++) {
+					n += 8;
+				}
 
 				// Normal Side
 				if (y != this.ySize) {
 					if ((x == 0) || (x == this.xSize) || (this.isWall(x-1, y) != this.isWall(x, y))) {
 
 						vertices = vertices.concat([
-						x, y,     0.0,
-						x, y+1.0, 0.0,
-						x, y+1.0, 1.0,
-						x, y,     1.0,
+							x, y,     0.0,
+							x, y+1.0, 0.0,
+							x, y+1.0, 1.0,
+							x, y,     1.0,
 						]);
 
 						vertexIndices = vertexIndices.concat([
-						n, n+1, n+2,
-						n, n+2, n+3,
+							n, n+1, n+2,
+							n, n+2, n+3,
 						]);
 
-						textureCoords = textureCoords.concat(texture);
-
-						var normal;
 						if ((x == 0) || (this.isWall(x, y))) {
-							normal = [
+							vertexNormals = vertexNormals.concat([
 							-1.0, 0.0, 0.0,
 							-1.0, 0.0, 0.0,
 							-1.0, 0.0, 0.0,
 							-1.0, 0.0, 0.0,
-							];
+							]);
 						} else {
-							normal = [
+							vertexNormals = vertexNormals.concat([
 							1.0, 0.0, 0.0,
 							1.0, 0.0, 0.0,
 							1.0, 0.0, 0.0,
 							1.0, 0.0, 0.0,
-							];
+							]);
 						}
-						vertexNormals = vertexNormals.concat(normal);
+
+						textureCoords = textureCoords.concat(texture);
 
 						n += 4;
 					}
@@ -1005,110 +1006,72 @@ MazeMap.prototype = {
 						n, n+2, n+3,
 						]);
 
-						textureCoords = textureCoords.concat(texture);
-
 						var normal;
 						if ((y == 0) || (this.isWall(x, y))) {
-							normal = [
+							vertexNormals = vertexNormals.concat([
 							0.0, -1.0, 0.0,
 							0.0, -1.0, 0.0,
 							0.0, -1.0, 0.0,
 							0.0, -1.0, 0.0,
-							];
+							]);
 						} else {
-							normal = [
+							vertexNormals = vertexNormals.concat([
 							0.0, 1.0, 0.0,
 							0.0, 1.0, 0.0,
 							0.0, 1.0, 0.0,
 							0.0, 1.0, 0.0,
-							];
+							]);
 						}
-						vertexNormals = vertexNormals.concat(normal);
+						textureCoords = textureCoords.concat(texture);
+
 
 						n += 4;
 					}
 				}
 
-			}			
+				if (this.map[x][y] == 2) {
+					for (var i=0; i<steps; i++) {
+						vertices = vertices.concat([
+						x,     y+h*i,     h*i,
+						x+1.0, y+h*i,     h*i,
+						x+1.0, y+h*(i+1), h*i,
+						x    , y+h*(i+1), h*i,
+
+						x,     y+h*(i+1), h*i,
+						x+1.0, y+h*(i+1), h*i,
+						x+1.0, y+h*(i+1), h*(i+1),
+						x,     y+h*(i+1), h*(i+1),
+						]);	
+
+						vertexIndices = vertexIndices.concat([
+						n, n+1, n+2,
+						n, n+2, n+3,
+	
+						n+4, n+5, n+6,
+						n+4, n+6, n+7,
+						]);
+
+						vertexNormals = vertexNormals.concat([
+						0.0, 0.0, 1.0,
+						0.0, 0.0, 1.0,
+						0.0, 0.0, 1.0,
+						0.0, 0.0, 1.0,
+
+						0.0, 1.0, 0.0,
+						0.0, 1.0, 0.0,
+						0.0, 1.0, 0.0,
+						0.0, 1.0, 0.0,
+						]);
+
+						n += 8;
+
+						textureCoords = textureCoords.concat(textureForStep);
+						textureCoords = textureCoords.concat(textureForStep);
+					}
+					
+				}
+			}
 		}
-
-			
-		// step
-		var normal = [
-			0.0, 0.0, 1.0,
-			0.0, 0.0, 1.0,
-			0.0, 0.0, 1.0,
-			0.0, 0.0, 1.0,
-
-			0.0, 1.0, 0.0,
-			0.0, 1.0, 0.0,
-			0.0, 1.0, 0.0,
-			0.0, 1.0, 0.0,
-		];
-
-		var x = 1;
-		var y = 2;
-		
-		var steps = 8;
-		var h = 1/steps;
-
-		texture = [
-			0.0, 0.0,
-			2.0, 0.0,
-			2.0, 2.0*h,
-			0.0, 2.0*h,
-		];
-
-		for (var i=0; i<steps; i++) {
-			vertices = vertices.concat([
-				x,     y+h*i,     h*i,
-				x+1.0, y+h*i,     h*i,
-				x+1.0, y+h*(i+1), h*i,
-				x    , y+h*(i+1), h*i,
-
-				x,     y+h*(i+1), h*i,
-				x+1.0, y+h*(i+1), h*i,
-				x+1.0, y+h*(i+1), h*(i+1),
-				x,     y+h*(i+1), h*(i+1),
-			]);	
-			vertexIndices = vertexIndices.concat([
-				n, n+1, n+2,
-				n, n+2, n+3,
-
-				n+4, n+5, n+6,
-				n+4, n+6, n+7,
-			]);
-
-			n += 8;
-
-			textureCoords = textureCoords.concat(texture);
-			textureCoords = textureCoords.concat(texture);
-			vertexNormals = vertexNormals.concat(normal);
-		}
-
-
-
-				// vertices = vertices.concat([
-				// x,      y,      0.0,
-				// x+0.25, y,      0.0,
-				// x+0.25, y+0.25, 0.0,
-				// x,      y+0.25, 0.0,
-// 
-				// x+0.25, y+0.25, 0.25,
-				// x+0.5 , y+0.25, 0.25,
-				// x+0.5,  y+0.5,  0.25,
-				// x+0.25, y+0.5,  0.25,
-// 
-				// x+0.5,  y+0.5,  0.5,
-				// x+0.75, y+0.5,  0.5,
-				// x+0.75, y+0.75, 0.5,
-				// x+0.5,  y+0.75, 0.5,
-// 
-				// x+0.75, y+0.75, 0.75,
-				// x+1.0 , y+0.75, 0.75,
-				// x+1.0,  y+1.0,  0.75,
-				// x+0.75, y+1.0,  0.75,
-				// ]);
 
 		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
 	},
