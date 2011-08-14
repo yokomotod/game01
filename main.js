@@ -438,7 +438,7 @@ MazeMap.prototype = {
 		}
 
 		// return c;
-		return [x, y];
+		return {x: x, y: y};
 	},
 	step1: function() {
 		var x, y;
@@ -512,8 +512,10 @@ MazeMap.prototype = {
 					// default:
 						// alert("error2");
 				// }
-				[x, y] = this.extend(x, y, c);
-
+				var p = this.extend(x, y, c);
+				x = p.x;
+				y = p.y;
+				
 				d = this.gocheck(x, y);
 				//alert("expanded. now (x,y)=("+x+","+y+") and d="+d+" and n="+n);
 				if (d == 0)
