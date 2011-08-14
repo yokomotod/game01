@@ -902,7 +902,7 @@ MazeMap.prototype = {
 		for (var x=0; x < this.xSize; x++) {
 			for (var y=0; y < this.ySize; y++) {
 
-				if (this.isWall(x, y)) continue;
+				if (this.map[x][y] != 0) continue;
 				
 				var normal = [
 				0.0, 0.0, 1.0,
@@ -1029,8 +1029,87 @@ MazeMap.prototype = {
 					}
 				}
 
-			}
+			}			
 		}
+
+			
+		// step
+		var normal = [
+			0.0, 0.0, 1.0,
+			0.0, 0.0, 1.0,
+			0.0, 0.0, 1.0,
+			0.0, 0.0, 1.0,
+
+			0.0, 1.0, 0.0,
+			0.0, 1.0, 0.0,
+			0.0, 1.0, 0.0,
+			0.0, 1.0, 0.0,
+		];
+
+		var x = 1;
+		var y = 2;
+		
+		var steps = 8;
+		var h = 1/steps;
+
+		texture = [
+			0.0, 0.0,
+			2.0, 0.0,
+			2.0, 2.0*h,
+			0.0, 2.0*h,
+		];
+
+		for (var i=0; i<steps; i++) {
+			vertices = vertices.concat([
+				x,     y+h*i,     h*i,
+				x+1.0, y+h*i,     h*i,
+				x+1.0, y+h*(i+1), h*i,
+				x    , y+h*(i+1), h*i,
+
+				x,     y+h*(i+1), h*i,
+				x+1.0, y+h*(i+1), h*i,
+				x+1.0, y+h*(i+1), h*(i+1),
+				x,     y+h*(i+1), h*(i+1),
+			]);	
+			vertexIndices = vertexIndices.concat([
+				n, n+1, n+2,
+				n, n+2, n+3,
+
+				n+4, n+5, n+6,
+				n+4, n+6, n+7,
+			]);
+
+			n += 8;
+
+			textureCoords = textureCoords.concat(texture);
+			textureCoords = textureCoords.concat(texture);
+			vertexNormals = vertexNormals.concat(normal);
+		}
+
+
+
+				// vertices = vertices.concat([
+				// x,      y,      0.0,
+				// x+0.25, y,      0.0,
+				// x+0.25, y+0.25, 0.0,
+				// x,      y+0.25, 0.0,
+// 
+				// x+0.25, y+0.25, 0.25,
+				// x+0.5 , y+0.25, 0.25,
+				// x+0.5,  y+0.5,  0.25,
+				// x+0.25, y+0.5,  0.25,
+// 
+				// x+0.5,  y+0.5,  0.5,
+				// x+0.75, y+0.5,  0.5,
+				// x+0.75, y+0.75, 0.5,
+				// x+0.5,  y+0.75, 0.5,
+// 
+				// x+0.75, y+0.75, 0.75,
+				// x+1.0 , y+0.75, 0.75,
+				// x+1.0,  y+1.0,  0.75,
+				// x+0.75, y+1.0,  0.75,
+				// ]);
+
 		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
 	},
 	draw: function () {
