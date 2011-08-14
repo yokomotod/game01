@@ -238,7 +238,10 @@ MazeMap.prototype = {
 		};
 
 		this.map[1][2] = 0;
-		this.map[2][2] = 5;
+		this.map[2][2] = 2;
+		this.map[3][2] = 2;
+		this.map[1][3] = 0;
+		this.map[2][3] = 0;
 		this.map[2][1] = 0;
 		// for (var x = 0; x < this.xSize; x++) {
 			// for (var y = 0; y < this.ySize; y++) {
@@ -1238,8 +1241,9 @@ Game.prototype = {
 		this.xSize = 30;
 		this.ySize = 30	;
 
-		this.xPos = 1;
-		this.yPos = 1;
+		this.xPos = 1.5;
+		this.yPos = 1.5;
+		this.zPos = 0.0;
 		this.direction = 0;
 		
 		this.map = new MazeMap(this.xSize, this.ySize);
@@ -1360,11 +1364,11 @@ Game.prototype = {
 		// }
 		mat4.rotate(mvMatrix, this.direction, [0, 0, 1]);
 
-		mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
+		// mat4.translate(mvMatrix, [-0.5, -0.5, 0.0]);
 
 		this.model.draw();
 
-		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, 0]);
+		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, -this.zPos]);
 
 		this.map.draw();
 
@@ -1373,31 +1377,63 @@ Game.prototype = {
 		var x = this.xPos;
 		var y = this.yPos;
 
-		// switch(this.direction) {
-			// case 0: // forward
-				// y+=d;
-				// break;
-			// case 1: // right
-				// x+=d;// x--;
-				// break;
-			// case 2: // backward
-				// y-=d;
-				// break;
-			// case 3: // left
-				// x-=d;// x++;
-				// break;
-		// }
 		var dx = d*Math.sin(this.direction)*0.1;
 		var dy = d*Math.cos(this.direction)*0.1;
-		var xSign = dx >= 0 ? 1 : -1;
-		var ySign = dy >= 0 ? 1 : -1;
 
-		if (this.map.isWall(Math.round(this.xPos+dx+0.3*xSign), Math.round(this.yPos+0.3*ySign)) == 0) {
-			this.xPos += dx;
+		var xOffset = 0;
+		var yOffset = 0;
+		if (dx > 0) xOffset = 0.3;
+			else xOffset = -0.3;
+		if (dy > 0) yOffset = 0.3;
+			else yOffset = -0.3;
+		 
+		var xCurr = Math.floor(this.xPos);
+		var yCurr = Math.floor(this.yPos);
+		var xNext = Math.floor(this.xPos+dx+xOffset);
+		var yNext = Math.floor(this.yPos+dy+yOffset);
+		
+		if (this.map.map[xCurr][yCurr] == 0) {
+			if (this.map.map[xNext][yCurr] == 0
+				|| (this.map.map[xNext][yCurr] == 3 && dx > 0)
+				|| (this.map.map[xNext][yCurr] == 4 && dx < 0) ) {
+				this.xPos += dx;
+			}
+
+			if (this.map.map[xCurr][yNext] == 0
+				|| (this.map.map[xCurr][yNext] == 2 && dy > 0)
+				|| (this.map.map[xCurr][yNext] == 3 && dy < 0)) {
+				this.yPos += dy;
+			}
 		}
-
-		if (this.map.isWall(Math.round(this.xPos+0.3*xSign), Math.round(this.yPos+dy+0.3*ySign)) == 0) {
-			this.yPos += dy;
+		else {
+			if (this.map.map[xNext][yCurr] == 4 || this.map.map[xNext][yCurr] == 5) {
+				this.xPos += dx;
+				this.zPos += dx;
+			}
+			else if (this.map.map[xNext][yCurr] == 2 || this.map.map[xNext][yCurr] == 3) {
+				this.xPos += dx;
+			}
+			else if (this.map.map[xNext][yCurr] == 0) {
+				if (this.map.map[xCurr][yCurr] == 4 || this.map.map[xCurr][yCurr] == 5) {
+					this.xPos += dx;
+					this.zPos += dx;			
+				}
+			}
+			
+			if (this.map.map[xCurr][yNext] == 2 || this.map.map[xCurr][yNext] == 3) {
+				this.yPos += dy;
+				this.zPos += dy;
+			}
+			else if (this.map.map[xCurr][yNext] == 4 || this.map.map[xCurr][yNext] == 5) {
+				this.yPos += dy;
+			}
+			else if (this.map.map[xCurr][yNext] == 0) {
+				if (this.map.map[xCurr][yCurr] == 2 || this.map.map[xCurr][yNext] == 3) {
+					this.yPos += dy;
+					this.zPos += dy;			
+				}
+			}
+			
 		}
 		
 		// if(! this.map.isWall(Math.round(x+0.3*xSign), Math.round(y+0.3*ySign))) {
@@ -1438,6 +1474,7 @@ function main() {
 	// tick();
 
 	game = new Game();
+
 
 	setInterval("game.loop()", 1000/60);
 
