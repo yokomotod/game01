@@ -286,6 +286,7 @@ MazeMap.prototype = {
 		return c;
 	},
 	gocheck: function(x, y) {
+		if (x >= this.xSize-1 || y >= this.ySize-1) alert("error !!!");
 		var r = 0;
 		if ((x < this.xSize - 2)
 		&& (this.map[x + 1][y] == 1)
@@ -326,29 +327,45 @@ MazeMap.prototype = {
 		return r;
 	},
 	extend: function(x, y, c) {
-		if (this.random(10) > 1) {
-		switch (c) {
-			case 1:
-				x++;
-				break;
-			case 2:
-				x--;
-				break;
-			case 4:
-				y++;
-				break;
-			case 8:
-				y--;
-				break;
-			default:
-				alert("error expand("+c+")");
+
+		flag = true;
+
+		while (flag) {
+
+			flag = false;
+
+			switch (c) {
+				case 1:
+					x++;
+					break;
+				case 2:
+					x--;
+					break;
+				case 4:
+					y++;
+					break;
+				case 8:
+					y--;
+					break;
+				default:
+					alert("error expand("+c+")");
+			}
+			this.map[x][y] = 0;
+			this.stack[this.numRoad] = y*this.ySize + x;
+			this.numRoad++;
+
+			d = this.gocheck(x, y);
+			//alert("expanded. now (x,y)=("+x+","+y+") and d="+d+" and n="+n);
+			// if (d == 0)
+			// 	return {result: true, x:x, y:y, d:d};
+			if ((n-- > 0) && ((c & d) != 0))
+				flag = true;
 		}
-		this.map[x][y] = 0;
-		this.stack[this.numRoad] = y*this.ySize + x;
-		this.numRoad++;
-		}
-		else {
-			var dx = 0; dy = 0;
+		
+		return {x:x, y:y, d:d};
+	},
+	createRoom: function(x, y, c) {
+		var dx = 0; dy = 0;
 		switch (c) {
 			case 1:
 				dx++;
@@ -396,52 +413,50 @@ MazeMap.prototype = {
 					break;
 				}
 				// alert(ix+","+iy+" ("+w+","+h+")");
-			};
-		};
+			}
+		}
 		w--;h--;
-		if (w <= 0 || h <= 0) return [x, y];
+		if (w <= 0 || h <= 0) return {x: x, y: y, d:this.gocheck(x, y)};
 		
 		// alert("making room "+[x, y, w, h]);
 		for (var i=0; i < w; i++) {
-			for (var j=0; j < h; j++) {
-				var ix = x+i*dx;
-				var iy = y+j*dy;
-				this.map[ix][iy] = 0;
-				this.stack[this.numRoad] = iy*this.ySize + ix;
-				this.numRoad++;
-			}	
+		for (var j=0; j < h; j++) {
+			var ix = x+i*dx;
+			var iy = y+j*dy;
+			this.map[ix][iy] = 0;
+			this.stack[this.numRoad] = iy*this.ySize + ix;
+			this.numRoad++;
+		}	
 		}
 		
-			ty = this.random((w + h) * 2);
-			tx = ty / (w + h);
+		ty = this.random((w + h) * 2);
+		tx = ty / (w + h);
+		if (tx != 0) {
+			ty = ty % (w + h);
+			tx = ty / w;
 			if (tx != 0) {
-				ty = ty % (w + h);
-				tx = ty / w;
-				if (tx != 0) {
-					tx = ty % w;
-					ty = h - 1;
-				} else {
-					tx = ty % w;
-					ty = 0;
-				}
+				tx = ty % w;
+				ty = h - 1;
 			} else {
-				ty = ty % (w + h);
-				tx = ty / w;
-				if (tx != 0) {
-					tx = w - 1;
-					ty = ty % h;
-				} else {
-					tx = 0;
-					ty = ty % h;
-				}
+				tx = ty % w;
+				ty = 0;
 			}
-			x += dx*tx;
-			y += dy*ty;
-			if ( x < 2 || y < 2) alert(x+" ,"+y);
+		} else {
+			ty = ty % (w + h);
+			tx = ty / w;
+			if (tx != 0) {
+				tx = w - 1;
+				ty = ty % h;
+			} else {
+				tx = 0;
+				ty = ty % h;
+			}
 		}
+		x += dx*tx;
+		y += dy*ty;
+		if ( x < 2 || y < 2) alert(x+" ,"+y);
 
-		// return c;
-		return {x: x, y: y};
+		return {x: x, y: y, d: this.gocheck(x, y)};
 	},
 	step1: function() {
 		var x, y;
@@ -492,41 +507,18 @@ MazeMap.prototype = {
 			else if (c == 4 || c == 8) n = this.random(this.ySize / 8 + 1);
 			else alert("error step2() first c="+c);
 
-			flag = true;
-
-			while (flag) {
-
-				flag = false;
-				// this.extend(x, y, c);
-
-				// switch (this.extend(x, y, c)) {
-					// case 1:
-						// x++;
-						// break;
-					// case 2:
-						// x--;
-						// break;
-					// case 4:
-						// y++;
-						// break;
-					// case 8:
-						// y--;
-						// break;
-					// default:
-						// alert("error2");
-				// }
-				var p = this.extend(x, y, c);
-				x = p.x;
-				y = p.y;
-				
-				d = this.gocheck(x, y);
-				//alert("expanded. now (x,y)=("+x+","+y+") and d="+d+" and n="+n);
-				if (d == 0)
-					return true;
-				if ((n-- > 0) && ((c & d) != 0))
-					flag = true;
+			var r;
+			if (this.random(10) > 2) {
+				r = this.extend(x, y, c); 
 			}
-			//alert("break");
+			else {
+				r = this.createRoom(x, y, c);
+			}
+			x = r.x;
+			y = r.y;
+			d = r.d;
+			
+			if (d == 0) return true;
 		}
 	},
 	make: function() {
