@@ -1261,15 +1261,31 @@ Game.prototype = {
 		switch(this.key) {
 			case 0: 
 				return false;
+			// case 37: // left
+				// game.turn(-1);
+				// break;
+			// case 38: // up
+				// game.move(1);
+				// break;
+			// case 39: // right
+				// game.turn(1);
+				// break;
+			// case 40: // down
+				// game.move(-1);
+				// break;
+			case 65: // a:left
 			case 37: // left
 				game.turn(-1);
 				break;
+			case 87: // w:up
 			case 38: // up
 				game.move(1);
 				break;
+			case 68: // d:right
 			case 39: // right
 				game.turn(1);
 				break;
+			case 83: // s:down
 			case 40: // down
 				game.move(-1);
 				break;
@@ -1281,7 +1297,7 @@ Game.prototype = {
 	},
 	initModel: function() {
 
-		mat4.perspective(60, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
 		cameraPos = [0.0, 0.0, -0.5];
 		cameraRotX = -90;
