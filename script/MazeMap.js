@@ -851,7 +851,7 @@ MazeMap.prototype = {
 		for (var x=0; x < this.xSize; x++) {
 
 			//
-			// Floor and Roof
+			// Floor
 			//
 			if (this.map[z][y][x] == 0) {
 				vertices = vertices.concat([
@@ -859,7 +859,30 @@ MazeMap.prototype = {
 					x+1.0, y,     z+0.0,
 					x+1.0, y+1.0, z+0.0,
 					x,     y+1.0, z+0.0,
+				]);
 
+				vertexIndices = vertexIndices.concat([
+					n, n+1, n+2,
+					n, n+2, n+3,
+				]);
+
+				vertexNormals = vertexNormals.concat([
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+				]);
+
+				textureCoords = textureCoords.concat(texture);
+
+				n += 4;
+			}
+			
+			//
+			// Roof
+			//
+			if (this.map[z][y][x] == 0 || (6 <= this.map[z][y][x] && this.map[z][y][x] <= 9)) {
+				vertices = vertices.concat([
 					x,     y,     z+1.0,
 					x+1.0, y,     z+1.0,
 					x+1.0, y+1.0, z+1.0,
@@ -869,17 +892,9 @@ MazeMap.prototype = {
 				vertexIndices = vertexIndices.concat([
 					n, n+1, n+2,
 					n, n+2, n+3,
-
-					n+4, n+5, n+6,
-					n+4, n+6, n+7,
 				]);
 
 				vertexNormals = vertexNormals.concat([
-					0.0, 0.0, 1.0,
-					0.0, 0.0, 1.0,
-					0.0, 0.0, 1.0,
-					0.0, 0.0, 1.0,
-
 					0.0, 0.0, -1.0,
 					0.0, 0.0, -1.0,
 					0.0, 0.0, -1.0,
@@ -887,11 +902,10 @@ MazeMap.prototype = {
 				]);
 
 				textureCoords = textureCoords.concat(texture);
-				textureCoords = textureCoords.concat(texture); // we need concat twice
 
-				n += 8;
+				n += 4;
 			}
-
+			
 			//
 			// Wall : Side
 			//
