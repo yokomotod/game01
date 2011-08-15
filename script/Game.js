@@ -5,9 +5,11 @@ Game.prototype = {
 	initialize : function() {
 		this.key = 0;
 
+		this.scale = 2.0;
+		
 		this.xSize = 8;
 		this.ySize = 8;
-		this.zSize = 3;
+		this.zSize = 8;
 
 		this.xPos = 1.5;
 		this.yPos = 1.5;
@@ -16,7 +18,7 @@ Game.prototype = {
 
 		this.floor = 0;
 		
-		this.map = new MazeMap(this.xSize, this.ySize, this.zSize);
+		this.map = new MazeMap(this.xSize, this.ySize, this.zSize, this.scale);
 
 		this.initModel();
 	},
@@ -61,7 +63,7 @@ Game.prototype = {
 	initModel : function() {
 
 		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-		cameraPos = [0.0, 0.0, -0.5];
+		cameraPos = [0.0, 0.0, -0.3];
 		cameraRotX = -90;
 		cameraRotY = 0;
 		cameraRotZ = 0;
@@ -103,7 +105,7 @@ Game.prototype = {
 		mat4.translate(mvMatrix, cameraPos);
 
 		mat4.rotate(mvMatrix, this.direction, [0, 0, 1]);
-		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, -this.zPos]);
+		mat4.translate(mvMatrix, [-this.xPos*this.scale, -this.yPos*this.scale, -this.zPos*this.scale]);
 
 		this.map.draw();
 
@@ -113,8 +115,8 @@ Game.prototype = {
 		var y = this.yPos;
 		var z = this.zPos;
 
-		var dx = d * Math.sin(this.direction) * 0.1;
-		var dy = d * Math.cos(this.direction) * 0.1;
+		var dx = d * Math.sin(this.direction) * 0.05;
+		var dy = d * Math.cos(this.direction) * 0.05;
 
 		var xOffset = 0;
 		var yOffset = 0;

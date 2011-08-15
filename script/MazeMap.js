@@ -3,11 +3,13 @@ var MazeMap = function() {
 	this.initialize.apply(this, arguments);
 }
 MazeMap.prototype = {
-	initialize : function(xSize, ySize, zSize) {
+	initialize : function(xSize, ySize, zSize, scale) {
 		this.xSize = xSize;
 		this.ySize = ySize;
 		this.zSize = zSize;
 
+		this.scale = scale;
+		
 		this.data = undefined;
 		this.map = undefined;
 
@@ -829,8 +831,10 @@ MazeMap.prototype = {
 
 		var n = 0;
 
+		var scale = this.scale;
+		
 		var steps = 8;
-		var h = 1/steps;
+		var h = scale/steps;
 
 		var texture = [
 		0.0, 0.0,
@@ -846,19 +850,23 @@ MazeMap.prototype = {
 			0.0, 2.0*h,
 		];
 
-		for (var z=0; z < this.zSize; z++) {
-		for (var y=0; y < this.ySize; y++) {
-		for (var x=0; x < this.xSize; x++) {
+		for (var iz=0; iz < this.zSize; iz++) {
+		for (var iy=0; iy < this.ySize; iy++) {
+		for (var ix=0; ix < this.xSize; ix++) {
 
+			var x = ix*scale;
+			var y = iy*scale;
+			var z = iz*scale;
+			
 			//
 			// Floor
 			//
-			if (this.map[z][y][x] == 0) {
+			if (this.map[iz][iy][ix] == 0) {
 				vertices = vertices.concat([
-					x,     y,     z+0.0,
-					x+1.0, y,     z+0.0,
-					x+1.0, y+1.0, z+0.0,
-					x,     y+1.0, z+0.0,
+					x,       y,       z,
+					x+scale, y,       z,
+					x+scale, y+scale, z,
+					x,       y+scale, z,
 				]);
 
 				vertexIndices = vertexIndices.concat([
@@ -881,12 +889,12 @@ MazeMap.prototype = {
 			//
 			// Roof
 			//
-			if (this.map[z][y][x] == 0 || (6 <= this.map[z][y][x] && this.map[z][y][x] <= 9)) {
+			if (this.map[iz][iy][ix] == 0 || (6 <= this.map[iz][iy][ix] && this.map[iz][iy][ix] <= 9)) {
 				vertices = vertices.concat([
-					x,     y,     z+1.0,
-					x+1.0, y,     z+1.0,
-					x+1.0, y+1.0, z+1.0,
-					x,     y+1.0, z+1.0,
+					x,       y,       z+scale,
+					x+scale, y,       z+scale,
+					x+scale, y+scale, z+scale,
+					x,       y+scale, z+scale,
 				]);
 
 				vertexIndices = vertexIndices.concat([
@@ -911,13 +919,13 @@ MazeMap.prototype = {
 			//
 			// if (y != this.ySize-1) {
 				// if ((x == 0) || (x == this.xSize-1) || (this.isWall(x-1, y) != this.isWall(x, y))) {
-			if (x != 0) {
-				if (this.isWall(x-1, y, z) != this.isWall(x, y, z)) {
+			if (ix != 0) {
+				if (this.isWall(ix-1, iy, iz) != this.isWall(ix, iy, iz)) {
 					vertices = vertices.concat([
-						x, y,     z+0.0,
-						x, y+1.0, z+0.0,
-						x, y+1.0, z+1.0,
-						x, y,     z+1.0,
+						x, y,       z,
+						x, y+scale, z,
+						x, y+scale, z+scale,
+						x, y,       z+scale,
 					]);
 
 					vertexIndices = vertexIndices.concat([
@@ -925,7 +933,7 @@ MazeMap.prototype = {
 						n, n+2, n+3,
 					]);
 
-					if ((x == 0) || (this.isWall(x, y, z))) {
+					if ((ix == 0) || (this.isWall(ix, iy, iz))) {
 						vertexNormals = vertexNormals.concat([
 						-1.0, 0.0, 0.0,
 						-1.0, 0.0, 0.0,
@@ -952,13 +960,13 @@ MazeMap.prototype = {
 			//
 			// if (x != this.xSize-1) {
 				// if ((y == 0) || (y == this.ySize-1) || (this.isWall(x, y-1) != this.isWall(x, y))) {
-			if (y != 0) {
-				if (this.isWall(x, y-1, z) != this.isWall(x, y, z)) {
+			if (iy != 0) {
+				if (this.isWall(ix, iy-1, iz) != this.isWall(ix, iy, iz)) {
 					vertices = vertices.concat([
-					x,     y, z+0.0,
-					x+1.0, y, z+0.0,
-					x+1.0, y, z+1.0,
-					x,     y, z+1.0,
+					x,       y, z,
+					x+scale, y, z,
+					x+scale, y, z+scale,
+					x,       y, z+scale,
 					]);
 
 					vertexIndices = vertexIndices.concat([
@@ -967,7 +975,7 @@ MazeMap.prototype = {
 					]);
 
 					var normal;
-					if ((y == 0) || (this.isWall(x, y, z))) {
+					if ((iy == 0) || (this.isWall(ix, iy, iz))) {
 						vertexNormals = vertexNormals.concat([
 						0.0, -1.0, 0.0,
 						0.0, -1.0, 0.0,
@@ -992,25 +1000,25 @@ MazeMap.prototype = {
 			//
 			// Step
 			//
-			if (2 <= this.map[z][y][x] && this.map[z][y][x] <= 5) {
+			if (2 <= this.map[iz][iy][ix] && this.map[iz][iy][ix] <= 5) {
 				for (var i=0; i<steps; i++) {
 					
-					if (this.map[z][y][x] == 2 || this.map[z][y][x] == 3) {
-						if (this.map[z][y][x] == 2) {
+					if (this.map[iz][iy][ix] == 2 || this.map[iz][iy][ix] == 3) {
+						if (this.map[iz][iy][ix] == 2) {
 							var x0 = 0.0;
-							var x1 = 1.0;
+							var x1 = scale;
 							var y0 = h*i;
 							var y1 = h*(i+1);
-							var y2 = 1.0						
+							var y2 = scale;						
 							var z0 = h*i;
 							var z1 = h*(i+1);
 						}
 						else {
 							var x0 = 0.0;
-							var x1 = 1.0;
+							var x1 = scale;
 							var x2 = 0.0;
-							var y0 = 1.0 - h*i;
-							var y1 = 1.0 - h*(i+1);
+							var y0 = scale - h*i;
+							var y1 = scale - h*(i+1);
 							var y2 = 0.0;
 							var z0 = h*i;
 							var z1 = h*(i+1);
@@ -1028,8 +1036,8 @@ MazeMap.prototype = {
 						
 						x+x0, y+y2, z,
 						x+x1, y+y2, z,
-						x+x1, y+y2, z+1.0,
-						x+x0, y+y2, z+1.0,
+						x+x1, y+y2, z+scale,
+						x+x0, y+y2, z+scale,
 
 						x+x1, y+y1, z+z0,
 						x+x1, y+y2, z+z0,
@@ -1043,23 +1051,23 @@ MazeMap.prototype = {
 						]);	
 					}	
 					else {
-						if (this.map[z][y][x] == 4) {
+						if (this.map[iz][iy][ix] == 4) {
 							var x0 = h*i;
 							var x1 = h*(i+1);
-							var x2 = 1.0;
+							var x2 = scale;
 							var y0 = 0.0;
-							var y1 = 1.0;
-							var y2 = 1.0						
+							var y1 = scale;
+							var y2 = scale;						
 							var z0 = h*i;
 							var z1 = h*(i+1);
 						}
 						else {
-							var x0 = 1.0 - h*i;
-							var x1 = 1.0 - h*(i+1);
+							var x0 = scale - h*i;
+							var x1 = scale - h*(i+1);
 							var x2 = 0.0;
 							var y0 = 0.0;
-							var y1 = 1.0;
-							var y2 = 1.0						
+							var y1 = scale;
+							var y2 = scale;						
 							var z0 = h*i;
 							var z1 = h*(i+1);
 						}
@@ -1077,8 +1085,8 @@ MazeMap.prototype = {
 					
 						x+x2, y+y0, z,
 						x+x2, y+y1, z,
-						x+x2, y+y1, z+1.0,
-						x+x2, y+y0, z+1.0,
+						x+x2, y+y1, z+scale,
+						x+x2, y+y0, z+scale,
 
 						x+x1, y+y1, z+z0,
 						x+x2, y+y1, z+z0,
