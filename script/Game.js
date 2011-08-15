@@ -3,16 +3,6 @@ var Game = function() {
 }
 Game.prototype = {
 	initialize: function() {
-		// var canvas = document.getElementById("canvas");
-		// if (! canvas) {
-		// return false;
-		// }
-		// var ctx = canvas.getContext("2d");
-		// if (! ctx) {
-		// return false;
-		// }
-		// this.ctx = ctx;
-		//
 		this.key = 0;
 
 		this.xSize = 30;
@@ -28,9 +18,6 @@ Game.prototype = {
 		this.initModel();
 	},
 	loop: function() {
-		// if (this.update()) {
-		// this.draw();
-		// }
 		this.update();
 		this.draw();
 	},
@@ -38,18 +25,6 @@ Game.prototype = {
 		switch(this.key) {
 			case 0: 
 				return false;
-			// case 37: // left
-				// game.turn(-1);
-				// break;
-			// case 38: // up
-				// game.move(1);
-				// break;
-			// case 39: // right
-				// game.turn(1);
-				// break;
-			// case 40: // down
-				// game.move(-1);
-				// break;
 			case 65: // a:left
 			case 37: // left
 				game.turn(-1);
@@ -118,7 +93,6 @@ Game.prototype = {
 		mat4.translate(mvMatrix, cameraPos);
 
 		mat4.rotate(mvMatrix, this.direction, [0, 0, 1]);
-
 		mat4.translate(mvMatrix, [-this.xPos, -this.yPos, -this.zPos]);
 
 		this.map.draw();
@@ -186,11 +160,6 @@ Game.prototype = {
 			}
 			
 		}
-		
-		// if(! this.map.isWall(Math.round(x+0.3*xSign), Math.round(y+0.3*ySign))) {
-			// this.xPos = x;
-			// this.yPos = y;
-// 
 	},
 	turn: function(d) {
 		

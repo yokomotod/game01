@@ -699,302 +699,302 @@ MazeMap.prototype = {
 			0.0, 2.0*h,
 		];
 
-		//
-		// Floor and Roof
-		//
 		for (var x=0; x < this.xSize; x++) {
 		for (var y=0; y < this.ySize; y++) {
 
-				if (this.map[x][y] == 0) {
-				
-					vertices = vertices.concat([
-						x,     y,     0.0,
-						x+1.0, y,     0.0,
-						x+1.0, y+1.0, 0.0,
-						x,     y+1.0, 0.0,
+			//
+			// Floor and Roof
+			//
+			if (this.map[x][y] == 0) {
+			
+				vertices = vertices.concat([
+					x,     y,     0.0,
+					x+1.0, y,     0.0,
+					x+1.0, y+1.0, 0.0,
+					x,     y+1.0, 0.0,
 
-						x,     y,     1.0,
-						x+1.0, y,     1.0,
-						x+1.0, y+1.0, 1.0,
-						x,     y+1.0, 1.0,
+					x,     y,     1.0,
+					x+1.0, y,     1.0,
+					x+1.0, y+1.0, 1.0,
+					x,     y+1.0, 1.0,
+				]);
+
+				vertexIndices = vertexIndices.concat([
+					n, n+1, n+2,
+					n, n+2, n+3,
+
+					n+4, n+5, n+6,
+					n+4, n+6, n+7,
+				]);
+
+				vertexNormals = vertexNormals.concat([
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+
+					0.0, 0.0, -1.0,
+					0.0, 0.0, -1.0,
+					0.0, 0.0, -1.0,
+					0.0, 0.0, -1.0,
+				]);
+
+				textureCoords = textureCoords.concat(texture);
+				textureCoords = textureCoords.concat(texture); // we need concat twice
+
+				n += 8;
+			}
+
+			//
+			// Wall : Side
+			//
+			if (y != this.ySize-1) {
+				if ((x == 0) || (x == this.xSize-1) || (this.isWall(x-1, y) != this.isWall(x, y))) {
+
+					vertices = vertices.concat([
+						x, y,     0.0,
+						x, y+1.0, 0.0,
+						x, y+1.0, 1.0,
+						x, y,     1.0,
 					]);
-	
+
 					vertexIndices = vertexIndices.concat([
 						n, n+1, n+2,
 						n, n+2, n+3,
+					]);
 
-						n+4, n+5, n+6,
-						n+4, n+6, n+7,
+					if ((x == 0) || (this.isWall(x, y))) {
+						vertexNormals = vertexNormals.concat([
+						-1.0, 0.0, 0.0,
+						-1.0, 0.0, 0.0,
+						-1.0, 0.0, 0.0,
+						-1.0, 0.0, 0.0,
+						]);
+					} else {
+						vertexNormals = vertexNormals.concat([
+						1.0, 0.0, 0.0,
+						1.0, 0.0, 0.0,
+						1.0, 0.0, 0.0,
+						1.0, 0.0, 0.0,
+						]);
+					}
+
+					textureCoords = textureCoords.concat(texture);
+
+					n += 4;
+				}
+			}
+			
+			// 
+			// Wall : Ahead
+			//
+			if (x != this.xSize-1) {
+				if ((y == 0) || (y == this.ySize-1) || (this.isWall(x, y-1) != this.isWall(x, y))) {
+					vertices = vertices.concat([
+					x,     y, 0.0,
+					x+1.0, y, 0.0,
+					x+1.0, y, 1.0,
+					x,     y, 1.0,
+					]);
+
+					vertexIndices = vertexIndices.concat([
+					n, n+1, n+2,
+					n, n+2, n+3,
+					]);
+
+					var normal;
+					if ((y == 0) || (this.isWall(x, y))) {
+						vertexNormals = vertexNormals.concat([
+						0.0, -1.0, 0.0,
+						0.0, -1.0, 0.0,
+						0.0, -1.0, 0.0,
+						0.0, -1.0, 0.0,
+						]);
+					} else {
+						vertexNormals = vertexNormals.concat([
+						0.0, 1.0, 0.0,
+						0.0, 1.0, 0.0,
+						0.0, 1.0, 0.0,
+						0.0, 1.0, 0.0,
+						]);
+					}
+					textureCoords = textureCoords.concat(texture);
+
+
+					n += 4;
+				}
+			}
+
+			//
+			// Step
+			//
+			if (2 <= this.map[x][y] && this.map[x][y] <= 5) {
+				for (var i=0; i<steps; i++) {
+					
+					if (this.map[x][y] == 2 || this.map[x][y] == 3) {
+						if (this.map[x][y] == 2) {
+							var x0 = 0.0;
+							var x1 = 1.0;
+							var y0 = h*i;
+							var y1 = h*(i+1);
+							var y2 = 1.0						
+							var z0 = h*i;
+							var z1 = h*(i+1);
+						}
+						else {
+							var x0 = 0.0;
+							var x1 = 1.0;
+							var x2 = 0.0;
+							var y0 = 1.0 - h*i;
+							var y1 = 1.0 - h*(i+1);
+							var y2 = 0.0;
+							var z0 = h*i;
+							var z1 = h*(i+1);
+						}
+						vertices = vertices.concat([
+						x+x0, y+y0, z0,
+						x+x1, y+y0, z0,
+						x+x1, y+y1, z0,
+						x+x0, y+y1, z0,
+
+						x+x0, y+y1, z0,
+						x+x1, y+y1, z0,
+						x+x1, y+y1, z1,
+						x+x0, y+y1, z1,
+						
+						x+x0, y+y2, 0.0,
+						x+x1, y+y2, 0.0,
+						x+x1, y+y2, 1.0,
+						x+x0, y+y2, 1.0,
+
+						x+x1, y+y1, z0,
+						x+x1, y+y2, z0,
+						x+x1, y+y2, z1,
+						x+x1, y+y1, z1,
+
+						x+x0, y+y1, z0,
+						x+x0, y+y2, z0,
+						x+x0, y+y2, z1,
+						x+x0, y+y1, z1,
+						]);	
+					}	
+					else {
+						if (this.map[x][y] == 4) {
+							var x0 = h*i;
+							var x1 = h*(i+1);
+							var x2 = 1.0;
+							var y0 = 0.0;
+							var y1 = 1.0;
+							var y2 = 1.0						
+							var z0 = h*i;
+							var z1 = h*(i+1);
+						}
+						else {
+							var x0 = 1.0 - h*i;
+							var x1 = 1.0 - h*(i+1);
+							var x2 = 0.0;
+							var y0 = 0.0;
+							var y1 = 1.0;
+							var y2 = 1.0						
+							var z0 = h*i;
+							var z1 = h*(i+1);
+						}
+
+						vertices = vertices.concat([
+						x+x0, y+y0, z0,
+						x+x0, y+y1, z0,
+						x+x1, y+y1, z0,
+						x+x1, y+y0, z0,
+
+						x+x1, y+y0, z0,
+						x+x1, y+y1, z0,
+						x+x1, y+y1, z1,
+						x+x1, y+y0, z1,
+					
+						x+x2, y+y0, 0.0,
+						x+x2, y+y1, 0.0,
+						x+x2, y+y1, 1.0,
+						x+x2, y+y0, 1.0,
+
+						x+x1, y+y1, z0,
+						x+x2, y+y1, z0,
+						x+x2, y+y1, z1,
+						x+x1, y+y1, z1,
+
+						x+x1, y+y0, z0,
+						x+x2, y+y0, z0,
+						x+x2, y+y0, z1,
+						x+x1, y+y0, z1,
+						]);	
+					}
+
+					vertexIndices = vertexIndices.concat([
+					n, n+1, n+2,
+					n, n+2, n+3,
+
+					n+4, n+5, n+6,
+					n+4, n+6, n+7,
+
+					n+8, n+9, n+10,
+					n+8, n+10, n+11,
+
+					n+12, n+13, n+14,
+					n+12, n+14, n+15,
+
+					n+16, n+17, n+18,
+					n+16, n+18, n+19,
 					]);
 
 					vertexNormals = vertexNormals.concat([
-						0.0, 0.0, 1.0,
-						0.0, 0.0, 1.0,
-						0.0, 0.0, 1.0,
-						0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
+					0.0, 0.0, 1.0,
 
-						0.0, 0.0, -1.0,
-						0.0, 0.0, -1.0,
-						0.0, 0.0, -1.0,
-						0.0, 0.0, -1.0,
+					0.0, 1.0, 0.0,
+					0.0, 1.0, 0.0,
+					0.0, 1.0, 0.0,
+					0.0, 1.0, 0.0,
+
+					0.0, 1.0, 0.0,
+					0.0, 1.0, 0.0,
+					0.0, 1.0, 0.0,
+					0.0, 1.0, 0.0,
+
+					1.0, 0.0, 0.0,
+					1.0, 0.0, 0.0,
+					1.0, 0.0, 0.0,
+					1.0, 0.0, 0.0,
+
+					-1.0, 0.0, 0.0,
+					-1.0, 0.0, 0.0,
+					-1.0, 0.0, 0.0,
+					-1.0, 0.0, 0.0,
 					]);
 
+					n += 16;
+
+					textureCoords = textureCoords.concat(textureForStep);
+					textureCoords = textureCoords.concat(textureForStep);
 					textureCoords = textureCoords.concat(texture);
-					textureCoords = textureCoords.concat(texture); // we need concat twice
+		
+					textureCoords = textureCoords.concat([
+					2.0*h*(i+1), 2.0*h*(steps-1-i),
+					2.0, 2.0*h*(steps-1-i),
+					2.0, 2.0*h*(steps-i),
+					2.0*h*(i+1), 2.0*h*(steps-i),	
+					]);
 
-					n += 8;
-				}
+					textureCoords = textureCoords.concat([
+					2.0*h*(i+1), 2.0*h*(steps-1-i),
+					2.0, 2.0*h*(steps-1-i),
+					2.0, 2.0*h*(steps-i),
+					2.0*h*(i+1), 2.0*h*(steps-i),	
+					]);
 
-				// Normal Side
-				if (y != this.ySize-1) {
-					if ((x == 0) || (x == this.xSize-1) || (this.isWall(x-1, y) != this.isWall(x, y))) {
-
-						vertices = vertices.concat([
-							x, y,     0.0,
-							x, y+1.0, 0.0,
-							x, y+1.0, 1.0,
-							x, y,     1.0,
-						]);
-
-						vertexIndices = vertexIndices.concat([
-							n, n+1, n+2,
-							n, n+2, n+3,
-						]);
-
-						if ((x == 0) || (this.isWall(x, y))) {
-							vertexNormals = vertexNormals.concat([
-							-1.0, 0.0, 0.0,
-							-1.0, 0.0, 0.0,
-							-1.0, 0.0, 0.0,
-							-1.0, 0.0, 0.0,
-							]);
-						} else {
-							vertexNormals = vertexNormals.concat([
-							1.0, 0.0, 0.0,
-							1.0, 0.0, 0.0,
-							1.0, 0.0, 0.0,
-							1.0, 0.0, 0.0,
-							]);
-						}
-
-						textureCoords = textureCoords.concat(texture);
-
-						n += 4;
-					}
-				}
-
-				// Normal Ahead
-				if (x != this.xSize-1) {
-					if ((y == 0) || (y == this.ySize-1) || (this.isWall(x, y-1) != this.isWall(x, y))) {
-						vertices = vertices.concat([
-						x,     y, 0.0,
-						x+1.0, y, 0.0,
-						x+1.0, y, 1.0,
-						x,     y, 1.0,
-						]);
-
-						vertexIndices = vertexIndices.concat([
-						n, n+1, n+2,
-						n, n+2, n+3,
-						]);
-
-						var normal;
-						if ((y == 0) || (this.isWall(x, y))) {
-							vertexNormals = vertexNormals.concat([
-							0.0, -1.0, 0.0,
-							0.0, -1.0, 0.0,
-							0.0, -1.0, 0.0,
-							0.0, -1.0, 0.0,
-							]);
-						} else {
-							vertexNormals = vertexNormals.concat([
-							0.0, 1.0, 0.0,
-							0.0, 1.0, 0.0,
-							0.0, 1.0, 0.0,
-							0.0, 1.0, 0.0,
-							]);
-						}
-						textureCoords = textureCoords.concat(texture);
-
-
-						n += 4;
-					}
-				}
-
-				if (2 <= this.map[x][y] && this.map[x][y] <= 5) {
-					for (var i=0; i<steps; i++) {
-						
-						if (this.map[x][y] == 2 || this.map[x][y] == 3) {
-							if (this.map[x][y] == 2) {
-								var x0 = 0.0;
-								var x1 = 1.0;
-								var y0 = h*i;
-								var y1 = h*(i+1);
-								var y2 = 1.0						
-								var z0 = h*i;
-								var z1 = h*(i+1);
-							}
-							else {
-								var x0 = 0.0;
-								var x1 = 1.0;
-								var x2 = 0.0;
-								var y0 = 1.0 - h*i;
-								var y1 = 1.0 - h*(i+1);
-								var y2 = 0.0;
-								var z0 = h*i;
-								var z1 = h*(i+1);
-							}
-							vertices = vertices.concat([
-							x+x0, y+y0, z0,
-							x+x1, y+y0, z0,
-							x+x1, y+y1, z0,
-							x+x0, y+y1, z0,
-
-							x+x0, y+y1, z0,
-							x+x1, y+y1, z0,
-							x+x1, y+y1, z1,
-							x+x0, y+y1, z1,
-							
-							x+x0, y+y2, 0.0,
-							x+x1, y+y2, 0.0,
-							x+x1, y+y2, 1.0,
-							x+x0, y+y2, 1.0,
-
-							x+x1, y+y1, z0,
-							x+x1, y+y2, z0,
-							x+x1, y+y2, z1,
-							x+x1, y+y1, z1,
-	
-							x+x0, y+y1, z0,
-							x+x0, y+y2, z0,
-							x+x0, y+y2, z1,
-							x+x0, y+y1, z1,
-							]);	
-						}	
-						else {
-							if (this.map[x][y] == 4) {
-								var x0 = h*i;
-								var x1 = h*(i+1);
-								var x2 = 1.0;
-								var y0 = 0.0;
-								var y1 = 1.0;
-								var y2 = 1.0						
-								var z0 = h*i;
-								var z1 = h*(i+1);
-							}
-							else {
-								var x0 = 1.0 - h*i;
-								var x1 = 1.0 - h*(i+1);
-								var x2 = 0.0;
-								var y0 = 0.0;
-								var y1 = 1.0;
-								var y2 = 1.0						
-								var z0 = h*i;
-								var z1 = h*(i+1);
-							}
-
-							vertices = vertices.concat([
-							x+x0, y+y0, z0,
-							x+x0, y+y1, z0,
-							x+x1, y+y1, z0,
-							x+x1, y+y0, z0,
-
-							x+x1, y+y0, z0,
-							x+x1, y+y1, z0,
-							x+x1, y+y1, z1,
-							x+x1, y+y0, z1,
-						
-							x+x2, y+y0, 0.0,
-							x+x2, y+y1, 0.0,
-							x+x2, y+y1, 1.0,
-							x+x2, y+y0, 1.0,
-
-							x+x1, y+y1, z0,
-							x+x2, y+y1, z0,
-							x+x2, y+y1, z1,
-							x+x1, y+y1, z1,
-
-							x+x1, y+y0, z0,
-							x+x2, y+y0, z0,
-							x+x2, y+y0, z1,
-							x+x1, y+y0, z1,
-							]);	
-						}
-
-						vertexIndices = vertexIndices.concat([
-						n, n+1, n+2,
-						n, n+2, n+3,
-	
-						n+4, n+5, n+6,
-						n+4, n+6, n+7,
-
-						n+8, n+9, n+10,
-						n+8, n+10, n+11,
-
-						n+12, n+13, n+14,
-						n+12, n+14, n+15,
-
-						n+16, n+17, n+18,
-						n+16, n+18, n+19,
-						]);
-
-						vertexNormals = vertexNormals.concat([
-						0.0, 0.0, 1.0,
-						0.0, 0.0, 1.0,
-						0.0, 0.0, 1.0,
-						0.0, 0.0, 1.0,
-
-						0.0, 1.0, 0.0,
-						0.0, 1.0, 0.0,
-						0.0, 1.0, 0.0,
-						0.0, 1.0, 0.0,
-
-						0.0, 1.0, 0.0,
-						0.0, 1.0, 0.0,
-						0.0, 1.0, 0.0,
-						0.0, 1.0, 0.0,
-
-						1.0, 0.0, 0.0,
-						1.0, 0.0, 0.0,
-						1.0, 0.0, 0.0,
-						1.0, 0.0, 0.0,
-
-						-1.0, 0.0, 0.0,
-						-1.0, 0.0, 0.0,
-						-1.0, 0.0, 0.0,
-						-1.0, 0.0, 0.0,
-						]);
-
-						n += 16;
-
-						textureCoords = textureCoords.concat(textureForStep);
-						textureCoords = textureCoords.concat(textureForStep);
-						textureCoords = textureCoords.concat(texture);
-			
-						textureCoords = textureCoords.concat([
-						2.0*h*(i+1), 2.0*h*(steps-1-i),
-						2.0, 2.0*h*(steps-1-i),
-						2.0, 2.0*h*(steps-i),
-						2.0*h*(i+1), 2.0*h*(steps-i),	
-						]);
-
-						textureCoords = textureCoords.concat([
-						2.0*h*(i+1), 2.0*h*(steps-1-i),
-						2.0, 2.0*h*(steps-1-i),
-						2.0, 2.0*h*(steps-i),
-						2.0*h*(i+1), 2.0*h*(steps-i),	
-						]);
-
-						// textureCoords = textureCoords.concat([
-						// 2.0*h*(i+1), 0.0,
-						// 2.0, 0.0,
-						// 2.0, 2.0*h,
-						// 2.0*h*(i+1), 2.0*h,	
-						// ]);
-					}
-					
 				}
 			}
+		}
 		}
 
 		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
