@@ -137,11 +137,17 @@ Game.prototype = {
 			//alert("zCurr = 1")
 		//if (this.map.map[zCurr][yCurr][xCurr]!=0)alert(this.map.map[zCurr][yCurr][xCurr]);
 		if(this.map.map[zCurr][yCurr][xCurr] == 0) {
-			if(this.map.map[zCurr][yCurr][xNext] == 0 || (this.map.map[zCurr][yCurr][xNext] == 4 && dx > 0) || (this.map.map[zCurr][yCurr][xNext] == 5 && dx < 0)) {
+			if(this.map.map[zCurr][yCurr][xNext] == 0
+				|| (this.map.map[zCurr][yCurr][xNext] == 4 && dx > 0)
+				|| (this.map.map[zCurr][yCurr][xNext] == 5 && dx < 0)
+				|| (6 <= this.map.map[zCurr][yCurr][xNext] && this.map.map[zCurr][yCurr][xNext] <= 9 )) {
 				this.xPos += dx;
 			}
 
-			if(this.map.map[zCurr][yNext][xCurr] == 0 || (this.map.map[zCurr][yNext][xCurr] == 2 && dy > 0) || (this.map.map[zCurr][yNext][xCurr] == 3 && dy < 0)) {
+			if(this.map.map[zCurr][yNext][xCurr] == 0
+				|| (this.map.map[zCurr][yNext][xCurr] == 2 && dy > 0)
+				|| (this.map.map[zCurr][yNext][xCurr] == 3 && dy < 0)
+				|| (6 <= this.map.map[zCurr][yNext][xCurr] && this.map.map[zCurr][yNext][xCurr] <= 9)) {
 				this.yPos += dy;
 			}
 		// } else {
@@ -159,7 +165,7 @@ Game.prototype = {
 			}
  		} else if(this.map.map[zCurr][yCurr][xCurr] == 5) {
 			this.xPos += dx;
-			this.zPos += dx;
+			this.zPos -= dx;
 			if(this.map.map[zCurr][yNext][xCurr] != 1) {
 				this.yPos += dy;				
 			}
@@ -183,7 +189,7 @@ Game.prototype = {
 			}
 		} else if(this.map.map[zCurr][yCurr][xCurr] == 3) {
 			this.yPos += dy;
-			this.zPos += dy;			
+			this.zPos -= dy;			
 			if(this.map.map[zCurr][yCurr][xNext] != 1) {
 				this.xPos += dx;				
 			}			
@@ -193,6 +199,9 @@ Game.prototype = {
 				this.floor++;
 				this.zPos = this.floor;
 			}
+		} else if(6 <= this.map.map[zCurr][yCurr][xCurr] && this.map.map[zCurr][yCurr][xCurr] <= 9) {
+			this.floor--;
+			this.zPos -= 0.01;
 		}
 			// var zNext = zCurr;
 			// switch (this.map.map[zCurr][yCurr][xCurr]) {
