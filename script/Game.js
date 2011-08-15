@@ -14,6 +14,8 @@ Game.prototype = {
 		this.zPos = 0.0;
 		this.direction = 0;
 
+		this.floor = 0;
+		
 		this.map = new MazeMap(this.xSize, this.ySize, this.zSize);
 
 		this.initModel();
@@ -109,7 +111,7 @@ Game.prototype = {
 	move : function(d) {
 		var x = this.xPos;
 		var y = this.yPos;
-		var z = 0;//this.zPos;
+		var z = this.zPos;
 
 		var dx = d * Math.sin(this.direction) * 0.1;
 		var dy = d * Math.cos(this.direction) * 0.1;
@@ -129,41 +131,140 @@ Game.prototype = {
 		var yCurr = Math.floor(this.yPos);
 		var xNext = Math.floor(this.xPos + dx + xOffset);
 		var yNext = Math.floor(this.yPos + dy + yOffset);
+		var zCurr = Math.floor(this.zPos);
 
-		if(this.map.map[z][yCurr][xCurr] == 0) {
-			if(this.map.map[z][yCurr][xNext] == 0 || (this.map.map[z][yCurr][xNext] == 4 && dx > 0) || (this.map.map[z][yCurr][xNext] == 5 && dx < 0)) {
+		//if (zCurr == 1)
+			//alert("zCurr = 1")
+		//if (this.map.map[zCurr][yCurr][xCurr]!=0)alert(this.map.map[zCurr][yCurr][xCurr]);
+		if(this.map.map[zCurr][yCurr][xCurr] == 0) {
+			if(this.map.map[zCurr][yCurr][xNext] == 0 || (this.map.map[zCurr][yCurr][xNext] == 4 && dx > 0) || (this.map.map[zCurr][yCurr][xNext] == 5 && dx < 0)) {
 				this.xPos += dx;
 			}
 
-			if(this.map.map[z][yNext][xCurr] == 0 || (this.map.map[z][yNext][xCurr] == 2 && dy > 0) || (this.map.map[z][yNext][xCurr] == 3 && dy < 0)) {
+			if(this.map.map[zCurr][yNext][xCurr] == 0 || (this.map.map[zCurr][yNext][xCurr] == 2 && dy > 0) || (this.map.map[zCurr][yNext][xCurr] == 3 && dy < 0)) {
 				this.yPos += dy;
 			}
-		} else {
-			if(this.map.map[z][yCurr][xNext] == 4 || this.map.map[z][yCurr][xNext] == 5) {
-				this.xPos += dx;
-				this.zPos += dx;
-			} else if(this.map.map[z][yCurr][xNext] == 2 || this.map.map[z][yCurr][xNext] == 3) {
-				this.xPos += dx;
-			} else if(this.map.map[z][yCurr][xNext] == 0) {
-				if(this.map.map[z][yCurr][xCurr] == 4 || this.map.map[z][yCurr][xCurr] == 5) {
-					this.xPos += dx;
-					this.zPos += dx;
-				}
+		// } else {
+		} else if(this.map.map[zCurr][yCurr][xCurr] == 4) {
+			this.xPos += dx;
+			this.zPos += dx;
+			if(this.map.map[zCurr][yNext][xCurr] != 1) {
+				this.yPos += dy;				
+			}			
+			if(this.zPos < this.floor)
+				this.zPos = this.floor;			
+			if(Math.floor(this.xPos) > xCurr) {
+				this.floor++;
+				this.zPos = this.floor;
 			}
-
-			if(this.map.map[z][yNext][xCurr] == 2 || this.map.map[z][yNext][xCurr] == 3) {
-				this.yPos += dy;
-				this.zPos += dy;
-			} else if(this.map.map[z][yNext][xCurr] == 4 || this.map.map[z][yNext][xCurr] == 5) {
-				this.yPos += dy;
-			} else if(this.map.map[z][yNext][xCurr] == 0) {
-				if(this.map.map[z][yCurr][xCurr] == 2 || this.map.map[z][yCurr][xCurr] == 3) {
-					this.yPos += dy;
-					this.zPos += dy;
-				}
+ 		} else if(this.map.map[zCurr][yCurr][xCurr] == 5) {
+			this.xPos += dx;
+			this.zPos += dx;
+			if(this.map.map[zCurr][yNext][xCurr] != 1) {
+				this.yPos += dy;				
 			}
-
+			if(this.zPos < this.floor)
+				this.zPos = this.floor;			
+			if(Math.floor(this.xPos) < xCurr) {
+				this.floor++;
+				this.zPos = this.floor;
+			}
+		} else if(this.map.map[zCurr][yCurr][xCurr] == 2) {
+			this.yPos += dy;
+			this.zPos += dy;
+			if(this.map.map[zCurr][yCurr][xNext] != 1) {
+				this.xPos += dx;				
+			}			
+			if(this.zPos < this.floor)
+				this.zPos = this.floor;			
+			if(Math.floor(this.yPos) > yCurr) {
+				this.floor++;
+				this.zPos = this.floor;
+			}
+		} else if(this.map.map[zCurr][yCurr][xCurr] == 3) {
+			this.yPos += dy;
+			this.zPos += dy;			
+			if(this.map.map[zCurr][yCurr][xNext] != 1) {
+				this.xPos += dx;				
+			}			
+			if(this.zPos < this.floor)
+				this.zPos = this.floor;			
+			if(Math.floor(this.yPos) < yCurr) {
+				this.floor++;
+				this.zPos = this.floor;
+			}
 		}
+			// var zNext = zCurr;
+			// switch (this.map.map[zCurr][yCurr][xCurr]) {
+				// case 4:
+					// if (dx > 0)
+						// zNext = Math.floor(this.zPos + dx);
+						// // alert([this.zPos+dx, zNext]);
+					// break;				
+				// case 5:
+					// if (dx < 0)
+						// zNext = Math.floor(this.zPos - dx);
+						// // alert([this.zPos-dx, zNext]);
+					// break;				
+				// case 2:
+					// if (dy > 0)
+						// zNext = Math.floor(this.zPos + dy);
+						// // alert([this.zPos+dy, zNext]);
+					// break;				
+				// case 3:
+					// if (dy < 0)
+						// zNext = Math.floor(this.zPos - dy);
+						// // alert([this.zPos-dy, zNext]);
+					// break;				
+			// }
+			
+			// if (this.map.map[zNext][yCurr][xNext] == 0
+				// || this.map.map[zNext][yCurr][xNext] == 4
+				// || this.map.map[zNext][yCurr][xNext] == 5) {
+				// this.xPos += dx;
+				// this.zPos += dx;
+				// //if (this.zPos < zCurr) this.zPos = zCurr;
+			// } else if(this.map.map[zNext][yCurr][xNext] == 2 || this.map.map[zNext][yCurr][xNext] == 3) {
+				// this.xPos += dx;
+			// }
+// 
+			// if (this.map.map[zNext][yNext][xCurr] == 0
+				// || this.map.map[zNext][yNext][xCurr] == 2
+				// || this.map.map[zNext][yNext][xCurr] == 3) {
+				// this.yPos += dy;
+				// this.zPos += dy;
+				// //if (this.zPos < zCurr) this.zPos = zCurr;
+			// } else if(this.map.map[zNext][yNext][xCurr] == 4 || this.map.map[zNext][yNext][xCurr] == 5) {
+				// this.yPos += dy;
+			// }
+
+
+			// if(this.map.map[zCurr][yCurr][xNext] == 4 || this.map.map[zCurr][yCurr][xNext] == 5) {
+				// this.xPos += dx;
+				// this.zPos += dx;
+			// } else if(this.map.map[zCurr][yCurr][xNext] == 2 || this.map.map[zCurr][yCurr][xNext] == 3) {
+				// this.xPos += dx;
+			// } else if(this.map.map[zCurr][yCurr][xNext] == 0) {
+				// if(this.map.map[zCurr][yCurr][xCurr] == 4 || this.map.map[zCurr][yCurr][xCurr] == 5) {
+					// this.xPos += dx;
+					// this.zPos += dx;
+				// }
+			// }
+
+			// if(this.map.map[zCurr][yNext][xCurr] == 2 || this.map.map[zCurr][yNext][xCurr] == 3) {
+				// this.yPos += dy;
+				// this.zPos += dy;
+			// } else if(this.map.map[zCurr][yNext][xCurr] == 4 || this.map.map[zCurr][yNext][xCurr] == 5) {
+				// this.yPos += dy;
+			// } else if(this.map.map[zCurr][yNext][xCurr] == 0) {
+				// if(this.map.map[zCurr][yCurr][xCurr] == 2 || this.map.map[zCurr][yCurr][xCurr] == 3) {
+					// this.yPos += dy;
+					// this.zPos += dy;
+				// }
+			// }
+
+		//
+		//alert([this.xPos, this.yPos, this.zPos, ])
 	},
 	turn : function(d) {
 

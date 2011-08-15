@@ -86,7 +86,7 @@ MazeMap.prototype = {
 	},
 	gocheck : function(x, y, z) {
 		if(x >= this.xSize - 1 || y >= this.ySize - 1)
-			alert("error !!!");
+			alert("error !!!"+[x, y, z]);
 		var r = 0;
 		if((x < this.xSize - 2) && (this.map[z][y][x + 1] == 1) && (this.map[z][y][x + 1] == 1) && (this.map[z][y - 1][x + 1] == 1) && (this.map[z][y + 1][x + 1] == 1) && (this.map[z][y - 1][x + 2] == 1) && (this.map[z][y + 1][x + 2] == 1))
 			r |= 1;
@@ -282,71 +282,106 @@ MazeMap.prototype = {
 		return r & d;
 		
 	},
-	extendUpDown : function(x, y, zCurr) {
+	extendUpDown : function(xCurr, yCurr, zCurr) {
 
 		// alert("extendUpDown("+x+","+y+","+zCurr+")");
 		
-		var cUp = this.staircheck(x, y, zCurr, 1);
-		var cDown = this.staircheck(x, y, zCurr, -1);
+		var cUp = this.staircheck(xCurr, yCurr, zCurr, 1);
+		var cDown = this.staircheck(xCurr, yCurr, zCurr, -1);
 		
-		if (cUp==0 && cDown==0) return {x:x, y:y, z:zCurr};
+		if (cUp==0 && cDown==0) return {x:xCurr, y:yCurr, z:zCurr};
 
-		var c, zNext;
+		var c, updown;
 		
 		if (cUp!=0) {
 			if (cDown!= 0) {
 				if (this.random(2) > 1) {
 					c = cUp;
-					zNext = zCurr+1;
+					updown = 1;
 				}
 				else {
 					c = cDown;
-					zNext = zCurr-1;
+					updown = -1;
 				}
 			}
 			else {
 				c = cUp;
-				zNext = zCurr+1;				
+				updown = 1;				
 			}
 		}
 		else {
 			c = cDown;
-			zNext = zCurr-1;			
+			updown = -1;			
 		}
 		
-		var xNext = x;
-		var yNext = y;
-
+		var xNext = xCurr;
+		var yNext = yCurr;
+		var zNext = zCurr + updown;
+		
 		// alert("make "+[xNext, yNext, zNext]);
-		switch (c) {
-			case 1:
-				xNext = x+1;
-				this.map[zCurr][y][x] = 4;
-				this.map[zNext][y][x] = 8;
-				this.map[zNext][y][xNext] = 0;
-				break;
-			case 2:
-				xNext = x-1;
-				this.map[zCurr][y][x] = 5;
-				this.map[zNext][y][x] = 9;
-				this.map[zNext][y][xNext] = 0;
-				break;
-			case 4:
-				yNext = y+1;
-				this.map[zCurr][y][x] = 2;
-				this.map[zNext][y][x] = 6;
-				this.map[zNext][yNext][x] = 0;
-				break;
-			case 8:
-				yNext = y-1;
-				this.map[zCurr][y][x] = 3;
-				this.map[zNext][y][x] = 7;
-				this.map[zNext][yNext][x] = 0;
-				break;
-			default:
-				alert("error extendUpDown() : c = "+c);
+		if (updown == 1) {
+			switch (c) {
+				case 1:
+					xNext = xCurr+1;
+					this.map[zCurr][yCurr][xCurr] = 4;
+					this.map[zNext][yCurr][xCurr] = 8;
+					this.map[zNext][yCurr][xNext] = 0;
+					break;
+				case 2:
+					xNext = xCurr-1;
+					this.map[zCurr][yCurr][xCurr] = 5;
+					this.map[zNext][yCurr][xCurr] = 9;
+					this.map[zNext][yCurr][xNext] = 0;
+					break;
+				case 4:
+					yNext = yCurr+1;
+					this.map[zCurr][yCurr][xCurr] = 2;
+					this.map[zNext][yCurr][xCurr] = 6;
+					this.map[zNext][yNext][xCurr] = 0;
+					break;
+				case 8:
+					yNext = yCurr-1;
+					this.map[zCurr][yCurr][xCurr] = 3;
+					this.map[zNext][yCurr][xCurr] = 7;
+					this.map[zNext][yNext][xCurr] = 0;
+					break;
+				default:
+					alert("error extendUpDown() : c = "+c);
+			}
+		}		
+		else {
+			switch (c) {
+				case 1:
+					xNext = xCurr+1;
+					this.map[zCurr][yCurr][xCurr] = 9;
+					this.map[zNext][yCurr][xCurr] = 5;
+					this.map[zNext][yCurr][xNext] = 0;
+					break;
+				case 2:
+					xNext = xCurr-1;
+					this.map[zCurr][yCurr][xCurr] = 8;
+					this.map[zNext][yCurr][xCurr] = 4;
+					this.map[zNext][yCurr][xNext] = 0;
+					break;
+				case 4:
+					yNext = yCurr+1;
+					this.map[zCurr][yCurr][xCurr] = 7;
+					this.map[zNext][yCurr][xCurr] = 3;
+					this.map[zNext][yNext][xCurr] = 0;
+					break;
+				case 8:
+					yNext = yCurr-1;
+					this.map[zCurr][yCurr][xCurr] = 6;
+					this.map[zNext][yCurr][xCurr] = 2;
+					this.map[zNext][yNext][xCurr] = 0;
+					break;
+				default:
+					alert("error extendUpDown() : c = "+c);
+			}
 		}
 		
+		if(xNext >= this.xSize - 1 || yNext >= this.ySize - 1)
+			alert("here");
 		// alert("success");
 		return {x:xNext, y:yNext, z:zNext};
 	},
