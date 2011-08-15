@@ -7,29 +7,29 @@ function initGL(canvas) {
 		gl.viewportHeight = canvas.height;
 	} catch (e) {
 	}
-	if (!gl) {
+	if(!gl) {
 		alert("Could not initialise WebGL, sorry :-(");
 	}
 }
 
 function getShader(gl, id) {
 	var shaderScript = document.getElementById(id);
-	if (!shaderScript) {
+	if(!shaderScript) {
 		return null;
 	}
 
 	var str = "";
 	var k = shaderScript.firstChild;
-	while (k) {
-		if (k.nodeType == 3) {
+	while(k) {
+		if(k.nodeType == 3) {
 			str += k.textContent;
 		}
 		k = k.nextSibling;
 	}
 	var shader;
-	if (shaderScript.type == "x-shader/x-fragment") {
+	if(shaderScript.type == "x-shader/x-fragment") {
 		shader = gl.createShader(gl.FRAGMENT_SHADER);
-	} else if (shaderScript.type == "x-shader/x-vertex") {
+	} else if(shaderScript.type == "x-shader/x-vertex") {
 		shader = gl.createShader(gl.VERTEX_SHADER);
 	} else {
 		return null;
@@ -38,7 +38,7 @@ function getShader(gl, id) {
 	gl.shaderSource(shader, str);
 	gl.compileShader(shader);
 
-	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+	if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
 		alert(gl.getShaderInfoLog(shader));
 		return null;
 	}
@@ -51,13 +51,12 @@ var shaderProgram;
 function initShaders() {
 	var fragmentShader = getShader(gl, "shader-fs");
 	var vertexShader = getShader(gl, "shader-vs");
-
 	shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);
 	gl.attachShader(shaderProgram, fragmentShader);
 	gl.linkProgram(shaderProgram);
 
-	if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+	if(!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
 		alert("Could not initialise shaders");
 	}
 
@@ -87,10 +86,11 @@ function initShaders() {
 var neheTexture;
 function initTexture() {
 	neheTexture = gl.createTexture();
-  	neheTexture.image = new Image();
-	neheTexture.image.onload = function () {
-		if (neheTexture.image == null) {
-			alert("can't open image");w
+	neheTexture.image = new Image();
+	neheTexture.image.onload = function() {
+		if(neheTexture.image == null) {
+			alert("can't open image");
+			w
 		}
 		handleLoadedTexture(neheTexture);
 	}
@@ -118,7 +118,7 @@ function mvPushMatrix() {
 }
 
 function mvPopMatrix() {
-	if (mvMatrixStack.length == 0) {
+	if(mvMatrixStack.length == 0) {
 		throw "Invalid popMatrix!";
 	}
 	mvMatrix = mvMatrixStack.pop();
@@ -129,7 +129,7 @@ function setMatrixUniforms() {
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 
 	var normalMatrix = mat3.create();
-	mat4.toInverseMat3(mvMatrix,normalMatrix);
+	mat4.toInverseMat3(mvMatrix, normalMatrix);
 	mat3.transpose(normalMatrix);
 	gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
 }
@@ -155,10 +155,9 @@ function main() {
 
 	gl.clearColor(0.0, 0.0, 1.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
-
 	game = new Game();
 
-	setInterval("game.loop()", 1000/60);
+	setInterval("game.loop()", 1000 / 60);
 	document.onkeydown = keyDown;
 
 	game.draw();
