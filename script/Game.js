@@ -7,13 +7,14 @@ Game.prototype = {
 
 		this.xSize = 30;
 		this.ySize = 30;
+		this.zSize = 1;
 
 		this.xPos = 1.5;
 		this.yPos = 1.5;
 		this.zPos = 0.0;
 		this.direction = 0;
 
-		this.map = new MazeMap(this.xSize, this.ySize);
+		this.map = new MazeMap(this.xSize, this.ySize, this.zSize);
 
 		this.initModel();
 	},
@@ -128,34 +129,34 @@ Game.prototype = {
 		var xNext = Math.floor(this.xPos + dx + xOffset);
 		var yNext = Math.floor(this.yPos + dy + yOffset);
 
-		if(this.map.map[xCurr][yCurr] == 0) {
-			if(this.map.map[xNext][yCurr] == 0 || (this.map.map[xNext][yCurr] == 3 && dx > 0) || (this.map.map[xNext][yCurr] == 4 && dx < 0)) {
+		if(this.map.map[yCurr][xCurr] == 0) {
+			if(this.map.map[yCurr][xNext] == 0 || (this.map.map[yCurr][xNext] == 3 && dx > 0) || (this.map.map[yCurr][xNext] == 4 && dx < 0)) {
 				this.xPos += dx;
 			}
 
-			if(this.map.map[xCurr][yNext] == 0 || (this.map.map[xCurr][yNext] == 2 && dy > 0) || (this.map.map[xCurr][yNext] == 3 && dy < 0)) {
+			if(this.map.map[yNext][xCurr] == 0 || (this.map.map[yNext][xCurr] == 2 && dy > 0) || (this.map.map[yNext][xCurr] == 3 && dy < 0)) {
 				this.yPos += dy;
 			}
 		} else {
-			if(this.map.map[xNext][yCurr] == 4 || this.map.map[xNext][yCurr] == 5) {
+			if(this.map.map[yCurr][xNext] == 4 || this.map.map[yCurr][xNext] == 5) {
 				this.xPos += dx;
 				this.zPos += dx;
-			} else if(this.map.map[xNext][yCurr] == 2 || this.map.map[xNext][yCurr] == 3) {
+			} else if(this.map.map[yCurr][xNext] == 2 || this.map.map[yCurr][xNext] == 3) {
 				this.xPos += dx;
-			} else if(this.map.map[xNext][yCurr] == 0) {
-				if(this.map.map[xCurr][yCurr] == 4 || this.map.map[xCurr][yCurr] == 5) {
+			} else if(this.map.map[yCurr][xNext] == 0) {
+				if(this.map.map[yCurr][xCurr] == 4 || this.map.map[yCurr][xCurr] == 5) {
 					this.xPos += dx;
 					this.zPos += dx;
 				}
 			}
 
-			if(this.map.map[xCurr][yNext] == 2 || this.map.map[xCurr][yNext] == 3) {
+			if(this.map.map[yNext][xCurr] == 2 || this.map.map[yxNext][Curr] == 3) {
 				this.yPos += dy;
 				this.zPos += dy;
-			} else if(this.map.map[xCurr][yNext] == 4 || this.map.map[xCurr][yNext] == 5) {
+			} else if(this.map.map[yNext][xCurr] == 4 || this.map.map[yNext][xCurr] == 5) {
 				this.yPos += dy;
-			} else if(this.map.map[xCurr][yNext] == 0) {
-				if(this.map.map[xCurr][yCurr] == 2 || this.map.map[xCurr][yNext] == 3) {
+			} else if(this.map.map[yNext][xCurr] == 0) {
+				if(this.map.map[yCurr][xCurr] == 2 || this.map.map[yCurr][xCurr] == 3) {
 					this.yPos += dy;
 					this.zPos += dy;
 				}

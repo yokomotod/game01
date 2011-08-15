@@ -3,9 +3,10 @@ var MazeMap = function() {
 	this.initialize.apply(this, arguments);
 }
 MazeMap.prototype = {
-	initialize : function(xSize, ySize) {
+	initialize : function(xSize, ySize, zSize) {
 		this.xSize = xSize;
 		this.ySize = ySize;
+		this.zSize = zSize;
 
 		this.data = undefined;
 		this.map = undefined;
@@ -19,11 +20,11 @@ MazeMap.prototype = {
 		// while (this.make()) {
 		// };
 
-		this.map = new Array(this.xSize);
-		for(var x = 0; x < this.xSize; x++) {
-			this.map[x] = new Array(this.ySize);
-			for(var y = 0; y < this.ySize; y++) {
-				this.map[x][y] = 1;
+		this.map = new Array(this.ySize);
+		for(var y = 0; y < this.ySize; y++) {
+			this.map[y] = new Array(this.xSize);
+			for(var x = 0; x < this.xSize; x++) {
+				this.map[y][x] = 1;
 				//0;
 			}
 		}
@@ -33,7 +34,7 @@ MazeMap.prototype = {
 
 		this.map[1][2] = 0;
 		this.map[2][2] = 2;
-		this.map[3][2] = 2;
+		this.map[2][3] = 2;
 		this.map[1][3] = 0;
 		this.map[2][3] = 0;
 		this.map[2][1] = 0;
@@ -83,16 +84,16 @@ MazeMap.prototype = {
 		if(x >= this.xSize - 1 || y >= this.ySize - 1)
 			alert("error !!!");
 		var r = 0;
-		if((x < this.xSize - 2) && (this.map[x + 1][y] == 1) && (this.map[x + 2][y] == 1) && (this.map[x + 1][ y - 1] == 1) && (this.map[x + 1][y + 1] == 1) && (this.map[x + 2][ y - 1] == 1) && (this.map[x + 2][y + 1] == 1))
+		if((x < this.xSize - 2) && (this.map[y][x + 1] == 1) && (this.map[y][x + 1] == 1) && (this.map[y - 1][x + 1] == 1) && (this.map[y + 1][x + 1] == 1) && (this.map[y - 1][x + 2] == 1) && (this.map[y + 1][x + 2] == 1))
 			r |= 1;
 
-		if((x >= 2) && (this.map[x - 1][y] == 1) && (this.map[x - 2][y] == 1) && (this.map[x - 1][ y - 1] == 1) && (this.map[x - 1][y + 1] == 1) && (this.map[x - 2][ y - 1] == 1) && (this.map[x - 2][y + 1] == 1))
+		if((x >= 2) && (this.map[y][x - 1] == 1) && (this.map[y][x - 2] == 1) && (this.map[y - 1][x - 1] == 1) && (this.map[y + 1][x - 1] == 1) && (this.map[y - 1][x - 2] == 1) && (this.map[y + 1][x - 2] == 1))
 			r |= 2;
 
-		if((y < this.ySize - 2) && (this.map[x][y + 1] == 1) && (this.map[x][y + 2] == 1) && (this.map[x - 1][y + 1] == 1) && (this.map[x + 1][y + 1] == 1) && (this.map[x - 1][y + 2] == 1) && (this.map[x + 1][y + 2] == 1))
+		if((y < this.ySize - 2) && (this.map[y + 1][x] == 1) && (this.map[y + 2][x] == 1) && (this.map[y + 1][x - 1] == 1) && (this.map[y + 1][x + 1] == 1) && (this.map[y + 2][x - 1] == 1) && (this.map[y + 2][x + 1] == 1))
 			r |= 4;
 
-		if((y >= 2) && (this.map[x][ y - 1] == 1) && (this.map[x][ y - 2] == 1) && (this.map[x - 1][ y - 1] == 1) && (this.map[x + 1][ y - 1] == 1) && (this.map[x - 1][ y - 2] == 1) && (this.map[x + 1][ y - 2] == 1))
+		if((y >= 2) && (this.map[y - 1][x] == 1) && (this.map[y - 2][x] == 1) && (this.map[y - 1][x - 1] == 1) && (this.map[y - 1][x + 1] == 1) && (this.map[y - 2][x - 1] == 1) && (this.map[y - 2][x + 1] == 1))
 			r |= 8;
 
 		return r;
@@ -119,7 +120,7 @@ MazeMap.prototype = {
 				default:
 					alert("error expand(" + c + ")");
 			}
-			this.map[x][y] = 0;
+			this.map[y][x] = 0;
 			this.stack[this.numRoad] = y * this.ySize + x;
 			this.numRoad++;
 			d = this.gocheck(x, y);
@@ -180,7 +181,7 @@ MazeMap.prototype = {
 				}
 				if(i == 0 && j == 0)
 					continue;
-				if(this.map[ix][iy] == 0) {
+				if(this.map[iy][ix] == 0) {
 					if(i >= j)
 						w = i - 1;
 					else
@@ -205,7 +206,7 @@ MazeMap.prototype = {
 			for(var j = 0; j < h; j++) {
 				var ix = x + i * dx;
 				var iy = y + j * dy;
-				this.map[ix][iy] = 0;
+				this.map[iy][ix] = 0;
 				this.stack[this.numRoad] = iy * this.ySize + ix;
 				this.numRoad++;
 			}
@@ -275,7 +276,7 @@ MazeMap.prototype = {
 			x = y % this.ySize;
 			y = ( y - x) / this.ySize;
 
-			if(this.map[x][y] == 1)
+			if(this.map[y][x] == 1)
 				alert("error stack broken");
 			d = this.gocheck(x, y);
 
@@ -663,7 +664,7 @@ MazeMap.prototype = {
 			return false;
 		}
 
-		if(this.map[x][y] == 1) {
+		if(this.map[y][x] == 1) {
 			return true;
 		} else {
 			return false;
@@ -701,7 +702,7 @@ MazeMap.prototype = {
 			//
 			// Floor and Roof
 			//
-			if (this.map[x][y] == 0) {
+			if (this.map[y][x] == 0) {
 				vertices = vertices.concat([
 					x,     y,     0.0,
 					x+1.0, y,     0.0,
@@ -826,11 +827,11 @@ MazeMap.prototype = {
 			//
 			// Step
 			//
-			if (2 <= this.map[x][y] && this.map[x][y] <= 5) {
+			if (2 <= this.map[y][x] && this.map[y][x] <= 5) {
 				for (var i=0; i<steps; i++) {
 					
-					if (this.map[x][y] == 2 || this.map[x][y] == 3) {
-						if (this.map[x][y] == 2) {
+					if (this.map[y][x] == 2 || this.map[y][x] == 3) {
+						if (this.map[y][x] == 2) {
 							var x0 = 0.0;
 							var x1 = 1.0;
 							var y0 = h*i;
@@ -877,7 +878,7 @@ MazeMap.prototype = {
 						]);	
 					}	
 					else {
-						if (this.map[x][y] == 4) {
+						if (this.map[y][x] == 4) {
 							var x0 = h*i;
 							var x1 = h*(i+1);
 							var x2 = 1.0;
