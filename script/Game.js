@@ -6,7 +6,7 @@ Game.prototype = {
 		this.key = 0;
 
 		this.xSize = 30;
-		this.ySize = 30	;
+		this.ySize = 30;
 
 		this.xPos = 1.5;
 		this.yPos = 1.5;

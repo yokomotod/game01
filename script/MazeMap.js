@@ -706,7 +706,6 @@ MazeMap.prototype = {
 			// Floor and Roof
 			//
 			if (this.map[x][y] == 0) {
-			
 				vertices = vertices.concat([
 					x,     y,     0.0,
 					x+1.0, y,     0.0,
@@ -748,9 +747,10 @@ MazeMap.prototype = {
 			//
 			// Wall : Side
 			//
-			if (y != this.ySize-1) {
-				if ((x == 0) || (x == this.xSize-1) || (this.isWall(x-1, y) != this.isWall(x, y))) {
-
+			// if (y != this.ySize-1) {
+				// if ((x == 0) || (x == this.xSize-1) || (this.isWall(x-1, y) != this.isWall(x, y))) {
+			if (x != 0) {
+				if (this.isWall(x-1, y) != this.isWall(x, y)) {
 					vertices = vertices.concat([
 						x, y,     0.0,
 						x, y+1.0, 0.0,
@@ -788,8 +788,10 @@ MazeMap.prototype = {
 			// 
 			// Wall : Ahead
 			//
-			if (x != this.xSize-1) {
-				if ((y == 0) || (y == this.ySize-1) || (this.isWall(x, y-1) != this.isWall(x, y))) {
+			// if (x != this.xSize-1) {
+				// if ((y == 0) || (y == this.ySize-1) || (this.isWall(x, y-1) != this.isWall(x, y))) {
+			if (y != 0) {
+				if (this.isWall(x, y-1) != this.isWall(x, y)) {
 					vertices = vertices.concat([
 					x,     y, 0.0,
 					x+1.0, y, 0.0,
@@ -972,7 +974,7 @@ MazeMap.prototype = {
 					-1.0, 0.0, 0.0,
 					]);
 
-					n += 16;
+					n += 20;
 
 					textureCoords = textureCoords.concat(textureForStep);
 					textureCoords = textureCoords.concat(textureForStep);
