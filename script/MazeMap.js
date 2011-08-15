@@ -124,7 +124,7 @@ MazeMap.prototype = {
 					alert("error expand(" + c + ")");
 			}
 			this.map[z][y][x] = 0;
-			this.stack[this.numRoad] = y * this.ySize + x;
+			this.stack[this.numRoad] = {x:x, y:y, z:z};
 			this.numRoad++;
 			d = this.gocheck(x, y, z);
 			//alert("expanded. now (x,y)=("+x+","+y+") and d="+d+" and n="+n);
@@ -212,7 +212,7 @@ MazeMap.prototype = {
 				var ix = x + i * dx;
 				var iy = y + j * dy;
 				this.map[z][iy][ix] = 0;
-				this.stack[this.numRoad] = iy * this.ySize + ix;
+				this.stack[this.numRoad] = {x:ix, y:iy, z:z};
 				this.numRoad++;
 			}
 		}
@@ -264,7 +264,7 @@ MazeMap.prototype = {
 		// }
 
 		this.map[0][1][1] = 0;
-		this.stack[this.numRoad] = 1 * this.ySize + 1;
+		this.stack[this.numRoad] = {x:1, y:1, z:0};
 		this.numRoad++;
 
 		// this.map[this.xSize - 1][this.ySize - 1] = 0;
@@ -280,9 +280,9 @@ MazeMap.prototype = {
 		for(var i = 0; ; i++) {
 			if(i >= 10)
 				return false;
-			y = this.stack[this.random(this.numRoad)];
-			x = y % this.ySize;
-			y = ( y - x) / this.ySize;
+			var p = this.stack[this.random(this.numRoad)];
+			x = p.x;
+			y = p.y;
 
 			if(this.map[z][y][x] == 1)
 				alert("error stack broken");
