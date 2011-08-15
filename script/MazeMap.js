@@ -293,7 +293,7 @@ MazeMap.prototype = {
 		
 		if (cUp!=0) {
 			if (cDown!= 0) {
-				if (this.random(2) > 1) {
+				if (this.random(5) > 1) {
 					c = cUp;
 					updown = 1;
 				}
@@ -450,7 +450,7 @@ MazeMap.prototype = {
 			if(d == 0)
 				return true;
 
-			if(this.random(10) > 1) {
+			if(this.random(10) < 5) {
 				r = this.extendUpDown(x, y, z, d);
 				x = r.x;
 				y = r.y;
@@ -1016,30 +1016,30 @@ MazeMap.prototype = {
 							var z1 = h*(i+1);
 						}
 						vertices = vertices.concat([
-						x+x0, y+y0, z0,
-						x+x1, y+y0, z0,
-						x+x1, y+y1, z0,
-						x+x0, y+y1, z0,
+						x+x0, y+y0, z+z0,
+						x+x1, y+y0, z+z0,
+						x+x1, y+y1, z+z0,
+						x+x0, y+y1, z+z0,
 
-						x+x0, y+y1, z0,
-						x+x1, y+y1, z0,
-						x+x1, y+y1, z1,
-						x+x0, y+y1, z1,
+						x+x0, y+y1, z+z0,
+						x+x1, y+y1, z+z0,
+						x+x1, y+y1, z+z1,
+						x+x0, y+y1, z+z1,
 						
-						x+x0, y+y2, 0.0,
-						x+x1, y+y2, 0.0,
-						x+x1, y+y2, 1.0,
-						x+x0, y+y2, 1.0,
+						x+x0, y+y2, z,
+						x+x1, y+y2, z,
+						x+x1, y+y2, z+1.0,
+						x+x0, y+y2, z+1.0,
 
-						x+x1, y+y1, z0,
-						x+x1, y+y2, z0,
-						x+x1, y+y2, z1,
-						x+x1, y+y1, z1,
+						x+x1, y+y1, z+z0,
+						x+x1, y+y2, z+z0,
+						x+x1, y+y2, z+z1,
+						x+x1, y+y1, z+z1,
 
-						x+x0, y+y1, z0,
-						x+x0, y+y2, z0,
-						x+x0, y+y2, z1,
-						x+x0, y+y1, z1,
+						x+x0, y+y1, z+z0,
+						x+x0, y+y2, z+z0,
+						x+x0, y+y2, z+z1,
+						x+x0, y+y1, z+z1,
 						]);	
 					}	
 					else {
@@ -1075,8 +1075,8 @@ MazeMap.prototype = {
 						x+x1, y+y1, z+z1,
 						x+x1, y+y0, z+z1,
 					
-						x+x2, y+y0, z+0.0,
-						x+x2, y+y1, z+0.0,
+						x+x2, y+y0, z,
+						x+x2, y+y1, z,
 						x+x2, y+y1, z+1.0,
 						x+x2, y+y0, z+1.0,
 
