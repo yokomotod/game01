@@ -109,7 +109,7 @@ Game.prototype = {
 	move : function(d) {
 		var x = this.xPos;
 		var y = this.yPos;
-		var z = this.zPos;
+		var z = 0;//this.zPos;
 
 		var dx = d * Math.sin(this.direction) * 0.1;
 		var dy = d * Math.cos(this.direction) * 0.1;
@@ -131,7 +131,7 @@ Game.prototype = {
 		var yNext = Math.floor(this.yPos + dy + yOffset);
 
 		if(this.map.map[z][yCurr][xCurr] == 0) {
-			if(this.map.map[z][yCurr][xNext] == 0 || (this.map.map[z][yCurr][xNext] == 3 && dx > 0) || (this.map.map[z][yCurr][xNext] == 4 && dx < 0)) {
+			if(this.map.map[z][yCurr][xNext] == 0 || (this.map.map[z][yCurr][xNext] == 4 && dx > 0) || (this.map.map[z][yCurr][xNext] == 5 && dx < 0)) {
 				this.xPos += dx;
 			}
 
