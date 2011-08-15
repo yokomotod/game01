@@ -814,7 +814,7 @@ MazeMap.prototype = {
 			0.0, 2.0*h,
 		];
 
-		for (var z=0; z < 1; z++) {
+		for (var z=0; z < this.zSize; z++) {
 		for (var y=0; y < this.ySize; y++) {
 		for (var x=0; x < this.xSize; x++) {
 
@@ -823,15 +823,15 @@ MazeMap.prototype = {
 			//
 			if (this.map[z][y][x] == 0) {
 				vertices = vertices.concat([
-					x,     y,     0.0,
-					x+1.0, y,     0.0,
-					x+1.0, y+1.0, 0.0,
-					x,     y+1.0, 0.0,
+					x,     y,     z+0.0,
+					x+1.0, y,     z+0.0,
+					x+1.0, y+1.0, z+0.0,
+					x,     y+1.0, z+0.0,
 
-					x,     y,     1.0,
-					x+1.0, y,     1.0,
-					x+1.0, y+1.0, 1.0,
-					x,     y+1.0, 1.0,
+					x,     y,     z+1.0,
+					x+1.0, y,     z+1.0,
+					x+1.0, y+1.0, z+1.0,
+					x,     y+1.0, z+1.0,
 				]);
 
 				vertexIndices = vertexIndices.concat([
@@ -868,10 +868,10 @@ MazeMap.prototype = {
 			if (x != 0) {
 				if (this.isWall(x-1, y, z) != this.isWall(x, y, z)) {
 					vertices = vertices.concat([
-						x, y,     0.0,
-						x, y+1.0, 0.0,
-						x, y+1.0, 1.0,
-						x, y,     1.0,
+						x, y,     z+0.0,
+						x, y+1.0, z+0.0,
+						x, y+1.0, z+1.0,
+						x, y,     z+1.0,
 					]);
 
 					vertexIndices = vertexIndices.concat([
@@ -909,10 +909,10 @@ MazeMap.prototype = {
 			if (y != 0) {
 				if (this.isWall(x, y-1, z) != this.isWall(x, y, z)) {
 					vertices = vertices.concat([
-					x,     y, 0.0,
-					x+1.0, y, 0.0,
-					x+1.0, y, 1.0,
-					x,     y, 1.0,
+					x,     y, z+0.0,
+					x+1.0, y, z+0.0,
+					x+1.0, y, z+1.0,
+					x,     y, z+1.0,
 					]);
 
 					vertexIndices = vertexIndices.concat([
@@ -1019,30 +1019,30 @@ MazeMap.prototype = {
 						}
 
 						vertices = vertices.concat([
-						x+x0, y+y0, z0,
-						x+x0, y+y1, z0,
-						x+x1, y+y1, z0,
-						x+x1, y+y0, z0,
+						x+x0, y+y0, z+z0,
+						x+x0, y+y1, z+z0,
+						x+x1, y+y1, z+z0,
+						x+x1, y+y0, z+z0,
 
-						x+x1, y+y0, z0,
-						x+x1, y+y1, z0,
-						x+x1, y+y1, z1,
-						x+x1, y+y0, z1,
+						x+x1, y+y0, z+z0,
+						x+x1, y+y1, z+z0,
+						x+x1, y+y1, z+z1,
+						x+x1, y+y0, z+z1,
 					
-						x+x2, y+y0, 0.0,
-						x+x2, y+y1, 0.0,
-						x+x2, y+y1, 1.0,
-						x+x2, y+y0, 1.0,
+						x+x2, y+y0, z+0.0,
+						x+x2, y+y1, z+0.0,
+						x+x2, y+y1, z+1.0,
+						x+x2, y+y0, z+1.0,
 
-						x+x1, y+y1, z0,
-						x+x2, y+y1, z0,
-						x+x2, y+y1, z1,
-						x+x1, y+y1, z1,
+						x+x1, y+y1, z+z0,
+						x+x2, y+y1, z+z0,
+						x+x2, y+y1, z+z1,
+						x+x1, y+y1, z+z1,
 
-						x+x1, y+y0, z0,
-						x+x2, y+y0, z0,
-						x+x2, y+y0, z1,
-						x+x1, y+y0, z1,
+						x+x1, y+y0, z+z0,
+						x+x2, y+y0, z+z0,
+						x+x2, y+y0, z+z1,
+						x+x1, y+y0, z+z1,
 						]);	
 					}
 
