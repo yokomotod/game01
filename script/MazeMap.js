@@ -252,7 +252,7 @@ MazeMap.prototype = {
 			d : this.gocheck(x, y, z)
 		};
 	},
-	staircheck : function(x, y, z, updown) {
+	staircheck : function(x, y, z, d, updown) {
 		var zNext = z + updown;
 		
 		if (zNext < 0 || zNext >= this.zSize)
@@ -277,19 +277,17 @@ MazeMap.prototype = {
 		else
 			return 0; //alert("staircheck error");
 		
-		var d = this.gocheck(x, y, zNext);
-		
 		return r & d;
 		
 	},
-	extendUpDown : function(xCurr, yCurr, zCurr) {
+	extendUpDown : function(xCurr, yCurr, zCurr, d) {
 
 		// alert("extendUpDown("+x+","+y+","+zCurr+")");
 		
-		var cUp = this.staircheck(xCurr, yCurr, zCurr, 1);
-		var cDown = this.staircheck(xCurr, yCurr, zCurr, -1);
+		var cUp = this.staircheck(xCurr, yCurr, zCurr, d, 1);
+		var cDown = this.staircheck(xCurr, yCurr, zCurr, d, -1);
 		
-		if (cUp==0 && cDown==0) return {x:xCurr, y:yCurr, z:zCurr};
+		if (cUp==0 && cDown==0) return {x:xCurr, y:yCurr, z:zCurr, d:d};
 
 		var c, updown;
 		
@@ -380,10 +378,7 @@ MazeMap.prototype = {
 			}
 		}
 		
-		if(xNext >= this.xSize - 1 || yNext >= this.ySize - 1)
-			alert("here");
-		// alert("success");
-		return {x:xNext, y:yNext, z:zNext};
+		return {x:xNext, y:yNext, z:zNext, d:this.gocheck(xNext, yNext, zNext)};
 	},
 	step1 : function() {
 		var x, y;
@@ -456,10 +451,12 @@ MazeMap.prototype = {
 				return true;
 
 			if(this.random(10) > 1) {
-				r = this.extendUpDown(x, y, z);
+				r = this.extendUpDown(x, y, z, d);
 				x = r.x;
 				y = r.y;
-				z = r.z;				
+				z = r.z;
+				d = r.d;
+				if (d==0) return true;	
 			}
 						
 		}
