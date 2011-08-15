@@ -266,13 +266,13 @@ MazeMap.prototype = {
 			return 0;
 		
 		var r = 0;
-		if (this.map[z][y][x+1] == 0)
+		if (this.map[z][y][x-1] == 0)
 			r = 1;
-		else if (this.map[z][y][x-1] == 0)
+		else if (this.map[z][y][x+1] == 0)
 			r = 2;
-		else if (this.map[z][y+1][x] == 0)
-			r = 4;
 		else if (this.map[z][y-1][x] == 0)
+			r = 4;
+		else if (this.map[z][y+1][x] == 0)
 			r = 8;
 		else
 			return 0; //alert("staircheck error");
@@ -321,26 +321,26 @@ MazeMap.prototype = {
 		switch (c) {
 			case 1:
 				xNext = x+1;
-				this.map[zCurr][y][x] = 5;
-				this.map[zNext][y][x] = 9;
-				this.map[zNext][y][xNext] = 0;
-				break;
-			case 2:
-				xNext = x-1;
 				this.map[zCurr][y][x] = 4;
 				this.map[zNext][y][x] = 8;
 				this.map[zNext][y][xNext] = 0;
 				break;
+			case 2:
+				xNext = x-1;
+				this.map[zCurr][y][x] = 5;
+				this.map[zNext][y][x] = 9;
+				this.map[zNext][y][xNext] = 0;
+				break;
 			case 4:
 				yNext = y+1;
-				this.map[zCurr][y][x] = 3;
-				this.map[zNext][y][x] = 7;
+				this.map[zCurr][y][x] = 2;
+				this.map[zNext][y][x] = 6;
 				this.map[zNext][yNext][x] = 0;
 				break;
 			case 8:
 				yNext = y-1;
-				this.map[zCurr][y][x] = 2;
-				this.map[zNext][y][x] = 6;
+				this.map[zCurr][y][x] = 3;
+				this.map[zNext][y][x] = 7;
 				this.map[zNext][yNext][x] = 0;
 				break;
 			default:
