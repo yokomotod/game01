@@ -35,12 +35,13 @@ MazeMap.prototype = {
 		while(this.make()) {
 		};
 
-		this.map[0][1][2] = 0;
-		this.map[0][2][2] = 2;
-		this.map[0][2][3] = 2;
-		this.map[0][1][3] = 0;
-		this.map[0][2][3] = 0;
-		this.map[0][2][1] = 0;
+		// this.map[0][2][1] = 2;
+		// this.map[0][2][2] = 2;
+		// this.map[0][2][3] = 2;
+		// this.map[0][1][3] = 0;
+		// this.map[0][2][3] = 0;
+		// this.map[0][2][1] = 0;
+		
 		// for (var x = 0; x < this.xSize; x++) {
 		// for (var y = 0; y < this.ySize; y++) {
 		// if ((this.data[x][y] & 0x1) != 0) {
@@ -251,6 +252,104 @@ MazeMap.prototype = {
 			d : this.gocheck(x, y, z)
 		};
 	},
+	staircheck : function(x, y, z, updown) {
+		var zNext = z + updown;
+		
+		if (zNext < 0 || zNext >= this.zSize)
+			return 0;
+			
+		if (this.map[zNext][y][x] != 1
+			|| this.map[zNext][y][x+1] != 1
+			|| this.map[zNext][y][x-1] != 1
+			|| this.map[zNext][y+1][x] != 1
+			|| this.map[zNext][y-1][x] != 1)
+			return 0;
+		
+		var r = 0;
+		if (this.map[z][y][x+1] == 0)
+			r = 1;
+		else if (this.map[z][y][x-1] == 0)
+			r = 2;
+		else if (this.map[z][y+1][x] == 0)
+			r = 4;
+		else if (this.map[z][y-1][x] == 0)
+			r = 8;
+		else
+			return 0; //alert("staircheck error");
+		
+		var d = this.gocheck(x, y, zNext);
+		
+		return r & d;
+		
+	},
+	extendUpDown : function(x, y, zCurr) {
+
+		// alert("extendUpDown("+x+","+y+","+zCurr+")");
+		
+		var cUp = this.staircheck(x, y, zCurr, 1);
+		var cDown = this.staircheck(x, y, zCurr, -1);
+		
+		if (cUp==0 && cDown==0) return {x:x, y:y, z:zCurr};
+
+		var c, zNext;
+		
+		if (cUp!=0) {
+			if (cDown!= 0) {
+				if (this.random(2) > 1) {
+					c = cUp;
+					zNext = zCurr+1;
+				}
+				else {
+					c = cDown;
+					zNext = zCurr-1;
+				}
+			}
+			else {
+				c = cUp;
+				zNext = zCurr+1;				
+			}
+		}
+		else {
+			c = cDown;
+			zNext = zCurr-1;			
+		}
+		
+		var xNext = x;
+		var yNext = y;
+
+		// alert("make "+[xNext, yNext, zNext]);
+		switch (c) {
+			case 1:
+				xNext = x+1;
+				this.map[zCurr][y][x] = 5;
+				this.map[zNext][y][x] = 9;
+				this.map[zNext][y][xNext] = 0;
+				break;
+			case 2:
+				xNext = x-1;
+				this.map[zCurr][y][x] = 4;
+				this.map[zNext][y][x] = 8;
+				this.map[zNext][y][xNext] = 0;
+				break;
+			case 4:
+				yNext = y+1;
+				this.map[zCurr][y][x] = 3;
+				this.map[zNext][y][x] = 7;
+				this.map[zNext][yNext][x] = 0;
+				break;
+			case 8:
+				yNext = y-1;
+				this.map[zCurr][y][x] = 2;
+				this.map[zNext][y][x] = 6;
+				this.map[zNext][yNext][x] = 0;
+				break;
+			default:
+				alert("error extendUpDown() : c = "+c);
+		}
+		
+		// alert("success");
+		return {x:xNext, y:yNext, z:zNext};
+	},
 	step1 : function() {
 		var x, y;
 
@@ -283,6 +382,7 @@ MazeMap.prototype = {
 			var p = this.stack[this.random(this.numRoad)];
 			x = p.x;
 			y = p.y;
+			z = p.z;
 
 			if(this.map[z][y][x] == 1)
 				alert("error stack broken");
@@ -294,6 +394,7 @@ MazeMap.prototype = {
 		//alert("chose " + x + " " + y);
 
 		while(true) {
+
 			c = this.gorand(d);
 
 			//alert("d = "+d+" and chose c="+c);
@@ -318,6 +419,14 @@ MazeMap.prototype = {
 
 			if(d == 0)
 				return true;
+
+			if(this.random(10) > 1) {
+				r = this.extendUpDown(x, y, z);
+				x = r.x;
+				y = r.y;
+				z = r.z;				
+			}
+						
 		}
 	},
 	make : function() {
@@ -705,7 +814,7 @@ MazeMap.prototype = {
 			0.0, 2.0*h,
 		];
 
-		for (var z=0; z < this.zSize; z++) {
+		for (var z=0; z < 1; z++) {
 		for (var y=0; y < this.ySize; y++) {
 		for (var x=0; x < this.xSize; x++) {
 

@@ -5,9 +5,9 @@ Game.prototype = {
 	initialize : function() {
 		this.key = 0;
 
-		this.xSize = 30;
-		this.ySize = 30;
-		this.zSize = 1;
+		this.xSize = 8;
+		this.ySize = 8;
+		this.zSize = 2;
 
 		this.xPos = 1.5;
 		this.yPos = 1.5;
