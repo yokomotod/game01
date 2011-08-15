@@ -109,6 +109,7 @@ Game.prototype = {
 	move : function(d) {
 		var x = this.xPos;
 		var y = this.yPos;
+		var z = this.zPos;
 
 		var dx = d * Math.sin(this.direction) * 0.1;
 		var dy = d * Math.cos(this.direction) * 0.1;
@@ -129,34 +130,34 @@ Game.prototype = {
 		var xNext = Math.floor(this.xPos + dx + xOffset);
 		var yNext = Math.floor(this.yPos + dy + yOffset);
 
-		if(this.map.map[yCurr][xCurr] == 0) {
-			if(this.map.map[yCurr][xNext] == 0 || (this.map.map[yCurr][xNext] == 3 && dx > 0) || (this.map.map[yCurr][xNext] == 4 && dx < 0)) {
+		if(this.map.map[z][yCurr][xCurr] == 0) {
+			if(this.map.map[z][yCurr][xNext] == 0 || (this.map.map[z][yCurr][xNext] == 3 && dx > 0) || (this.map.map[z][yCurr][xNext] == 4 && dx < 0)) {
 				this.xPos += dx;
 			}
 
-			if(this.map.map[yNext][xCurr] == 0 || (this.map.map[yNext][xCurr] == 2 && dy > 0) || (this.map.map[yNext][xCurr] == 3 && dy < 0)) {
+			if(this.map.map[z][yNext][xCurr] == 0 || (this.map.map[z][yNext][xCurr] == 2 && dy > 0) || (this.map.map[z][yNext][xCurr] == 3 && dy < 0)) {
 				this.yPos += dy;
 			}
 		} else {
-			if(this.map.map[yCurr][xNext] == 4 || this.map.map[yCurr][xNext] == 5) {
+			if(this.map.map[z][yCurr][xNext] == 4 || this.map.map[z][yCurr][xNext] == 5) {
 				this.xPos += dx;
 				this.zPos += dx;
-			} else if(this.map.map[yCurr][xNext] == 2 || this.map.map[yCurr][xNext] == 3) {
+			} else if(this.map.map[z][yCurr][xNext] == 2 || this.map.map[z][yCurr][xNext] == 3) {
 				this.xPos += dx;
-			} else if(this.map.map[yCurr][xNext] == 0) {
-				if(this.map.map[yCurr][xCurr] == 4 || this.map.map[yCurr][xCurr] == 5) {
+			} else if(this.map.map[z][yCurr][xNext] == 0) {
+				if(this.map.map[z][yCurr][xCurr] == 4 || this.map.map[z][yCurr][xCurr] == 5) {
 					this.xPos += dx;
 					this.zPos += dx;
 				}
 			}
 
-			if(this.map.map[yNext][xCurr] == 2 || this.map.map[yxNext][Curr] == 3) {
+			if(this.map.map[z][yNext][xCurr] == 2 || this.map.map[z][yNext][xCurr] == 3) {
 				this.yPos += dy;
 				this.zPos += dy;
-			} else if(this.map.map[yNext][xCurr] == 4 || this.map.map[yNext][xCurr] == 5) {
+			} else if(this.map.map[z][yNext][xCurr] == 4 || this.map.map[z][yNext][xCurr] == 5) {
 				this.yPos += dy;
-			} else if(this.map.map[yNext][xCurr] == 0) {
-				if(this.map.map[yCurr][xCurr] == 2 || this.map.map[yCurr][xCurr] == 3) {
+			} else if(this.map.map[z][yNext][xCurr] == 0) {
+				if(this.map.map[z][yCurr][xCurr] == 2 || this.map.map[z][yCurr][xCurr] == 3) {
 					this.yPos += dy;
 					this.zPos += dy;
 				}
