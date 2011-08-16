@@ -141,6 +141,7 @@ function degToRad(degrees) {
 var cameraPos, cameraRotX, cameraRotY, cameraRotZ;
 
 var game;
+var mapper;
 
 function keyDown(e) {
 	var key = e.keyCode;
@@ -160,6 +161,9 @@ function main() {
 	setInterval("game.loop()", 1000 / 60);
 	document.onkeydown = keyDown;
 
+	var mapCanvas = document.getElementById("map");
+	mapper = new Mapper(mapCanvas);
+	
 	game.draw();
 
 }

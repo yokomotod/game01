@@ -23,6 +23,7 @@ Game.prototype = {
 		this.initModel();
 		
 		this.updateFloorStatus(this.floor);
+		
 	},
 	loop : function() {
 		this.update();
@@ -110,6 +111,8 @@ Game.prototype = {
 		mat4.translate(mvMatrix, [-this.xPos*this.scale, -this.yPos*this.scale, -this.zPos*this.scale]);
 
 		this.map.draw();
+		
+		mapper.draw();
 
 	},
 	move : function(d) {
