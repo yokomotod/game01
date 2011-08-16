@@ -7,8 +7,8 @@ Game.prototype = {
 
 		this.scale = 2.0;
 		
-		this.xSize = 8;
-		this.ySize = 8;
+		this.xSize = 10;
+		this.ySize = 10;
 		this.zSize = 4;
 
 		this.xPos = 1.5;
@@ -17,6 +17,8 @@ Game.prototype = {
 		this.direction = 0;
 
 		this.floor = 0;
+		
+		this.mapDisplay = "none";
 		
 		this.map = new MazeMap(this.xSize, this.ySize, this.zSize, this.scale);
 
@@ -35,29 +37,34 @@ Game.prototype = {
 		switch(this.key) {
 			case 0:
 				return false;
-			case 65:
+				
 			// a:left
+			case 65:
 			case 37:
-				// left
 				game.turn(-1);
 				break;
-			case 87:
+
 			// w:up
+			case 87:
 			case 38:
-				// up
 				game.move(1);
 				break;
-			case 68:
+
 			// d:right
+			case 68:
 			case 39:
-				// right
 				game.turn(1);
 				break;
-			case 83:
+
 			// s:down
+			case 83:
 			case 40:
-				// down
 				game.move(-1);
+				break;
+				
+			// space
+			case 32:
+				this.toggleMapDisplay();
 				break;
 		}
 
@@ -300,5 +307,13 @@ Game.prototype = {
 	},
 	updateFloorStatus : function(floor) {
 		document.getElementById("floor").innerHTML = "<p>Floor : "+(floor+1)+"</p>";		
+	},
+	toggleMapDisplay : function() {
+		if (this.mapDisplay == "none")
+			this.mapDisplay = "";
+		else 
+			this.mapDisplay = "none";
+			
+		document.getElementById("map").style.display = this.mapDisplay;
 	}
 }

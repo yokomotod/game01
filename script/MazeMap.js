@@ -468,7 +468,7 @@ MazeMap.prototype = {
 			if(d == 0)
 				return true;
 
-			if(this.random(10) < 5) {
+			if(this.random(10) < 2) {
 				r = this.extendUpDown(x, y, z, d);
 				x = r.x;
 				y = r.y;

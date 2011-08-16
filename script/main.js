@@ -210,7 +210,7 @@ function mazegame() {
 			'	<div id="floor" style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px"></div>' +
 			'	<p onclick="newScene(0)">EXIT</p>' +
 			'</div>' +
-			'<canvas id="map" class="window" width="507" height="507"></div>';
+			'<canvas id="map" class="window" width="507" height="507" style="display:none" onclick=hidemap()></div>';
 
 	var canvas = document.getElementById("canvas");
 	initGL(canvas);
