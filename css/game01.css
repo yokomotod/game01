@@ -1,4 +1,9 @@
-html, body{
+#main {
+	width:900px;
+	margin:auto;
+	position:relative
+}
+/*html, body{
 	margin:0;
 	width:100%;
 }
@@ -10,4 +15,4 @@ header{
 #main{
 	width:960px;
 	margin:0 auto;
-}
+}*/
