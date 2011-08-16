@@ -12,7 +12,7 @@ function initGL(canvas) {
 	}
 }
 
-var vertexShaderCode =
+var vertexShaderSource =
 	'attribute vec3 aVertexPosition;' + "\n" +
 	'attribute vec3 aVertexNormal;' + "\n" +
 	'attribute vec2 aTextureCoord;' + "\n" +
@@ -34,7 +34,7 @@ var vertexShaderCode =
 	'	vTransformedNormal = uNMatrix * aVertexNormal;' + "\n" +
 	'}';
 
-var fragmentShaderCode =
+var fragmentShaderSource =
 	'#ifdef GL_ES' + "\n" +
 	'precision highp float;' + "\n" +
 	'#endif' + "\n" +
@@ -79,45 +79,25 @@ var fragmentShaderCode =
 	'	gl_FragColor = vec4(textureColor.rgb * lightWeighting, textureColor.a);' + "\n" +
 	'}';
 
-function getShader(gl, type, code) {
-	// var shaderScript = document.getElementById(id);
-	// if(!shaderScript) {
-		// return null;
-	// }
-// 
-	// var str = "";
-	// var k = shaderScript.firstChild;
-	// while(k) {
-		// if(k.nodeType == 3) {
-			// str += k.textContent;
-		// }
-		// k = k.nextSibling;
-	// }
-
-	var shader;
-	if(type == "fragment") {
-		shader = gl.createShader(gl.FRAGMENT_SHADER);
-	} else if(type == "vertex") {
-		shader = gl.createShader(gl.VERTEX_SHADER);
-	} else {
-		return null;
-	}
-
-	gl.shaderSource(shader, code);
-	gl.compileShader(shader);
-
-	if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-		alert(gl.getShaderInfoLog(shader));
-		return null;
-	}
-
-	return shader;
-}
 var shaderProgram;
 
 function initShaders() {
-	var fragmentShader = getShader(gl, "fragment", fragmentShaderCode);
-	var vertexShader = getShader(gl, "vertex", vertexShaderCode);
+	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);;
+	gl.shaderSource(fragmentShader, fragmentShaderSource);
+	gl.compileShader(fragmentShader);
+	if(!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+		alert(gl.getShaderInfoLog(fragmentShader));
+		return null;
+	}
+	
+	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+	gl.shaderSource(vertexShader, vertexShaderSource);
+	gl.compileShader(vertexShader);
+	if(!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+		alert(gl.getShaderInfoLog(vertexShader));
+		return null;
+	}
+
 	shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);
 	gl.attachShader(shaderProgram, fragmentShader);
