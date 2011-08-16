@@ -21,6 +21,8 @@ Game.prototype = {
 		this.map = new MazeMap(this.xSize, this.ySize, this.zSize, this.scale);
 
 		this.initModel();
+		
+		this.updateFloorStatus(this.floor);
 	},
 	loop : function() {
 		this.update();
@@ -205,6 +207,8 @@ Game.prototype = {
 			this.floor--;
 			this.zPos -= 0.01;
 		}
+		
+		this.updateFloorStatus(this.floor);
 			// var zNext = zCurr;
 			// switch (this.map.map[zCurr][yCurr][xCurr]) {
 				// case 4:
@@ -286,5 +290,8 @@ Game.prototype = {
 		else if(this.direction > 2 * Math.PI)
 			this.direction = 0;
 
+	},
+	updateFloorStatus : function(floor) {
+		document.getElementById("floor").innerHTML = "<p>Floor : "+(floor+1)+"</p>";		
 	}
 }
