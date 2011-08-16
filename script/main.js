@@ -12,30 +12,98 @@ function initGL(canvas) {
 	}
 }
 
-function getShader(gl, id) {
-	var shaderScript = document.getElementById(id);
-	if(!shaderScript) {
-		return null;
-	}
+var vertexShaderCode =
+	'attribute vec3 aVertexPosition;' + "\n" +
+	'attribute vec3 aVertexNormal;' + "\n" +
+	'attribute vec2 aTextureCoord;' + "\n" +
+	
+	'uniform mat4 uMVMatrix;' + "\n" +
+	'uniform mat4 uPMatrix;' + "\n" +
+	'uniform mat3 uNMatrix;' + "\n" +
+	
+	'varying vec2 vTextureCoord;' + "\n" +
+	'varying vec3 vTransformedNormal;' + "\n" +
+	'varying vec4 vPosition;' + "\n" +
+	
+	'void main(void) {' + "\n" +
+	'	vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);' + "\n" +
+	'	gl_Position = uPMatrix * vPosition;' + "\n" +
+		
+	'	vTextureCoord = aTextureCoord;' + "\n" +
+		
+	'	vTransformedNormal = uNMatrix * aVertexNormal;' + "\n" +
+	'}';
 
-	var str = "";
-	var k = shaderScript.firstChild;
-	while(k) {
-		if(k.nodeType == 3) {
-			str += k.textContent;
-		}
-		k = k.nextSibling;
-	}
+var fragmentShaderCode =
+	'#ifdef GL_ES' + "\n" +
+	'precision highp float;' + "\n" +
+	'#endif' + "\n" +
+
+	'varying vec2 vTextureCoord;' + "\n" +
+	'varying vec3 vTransformedNormal;' + "\n" +
+	'varying vec4 vPosition;' + "\n" +
+
+	'uniform float uMaterialShininess;' + "\n" +
+
+	'uniform vec3 uAmbientColor;' + "\n" +
+
+	'uniform vec3 uPointLightingLocation;' + "\n" +
+
+	'uniform vec3 uPointLightingSpecularColor;' + "\n" +
+	'uniform vec3 uPointLightingDiffuseColor;' + "\n" +
+
+	'uniform sampler2D uSampler;' + "\n" +
+
+	'void main(void) {' + "\n" +
+	'	vec3 ray = uPointLightingLocation - vPosition.xyz;' + "\n" +
+	'	float distance = length(ray);' + "\n" +
+		
+	'	vec3 lightDirection = normalize(ray);' + "\n" +
+	'	vec3 normal = normalize(vTransformedNormal);' + "\n" +
+
+	'	vec3 eyeDirection = normalize(-vPosition.xyz);' + "\n" +
+	'	vec3 reflectionDirection = reflect(-lightDirection, normal);' + "\n" +
+
+	'	float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess) / max(distance, 1.0);' + "\n" +
+
+    '   float diffuseLightWeighting = max(dot(normal, lightDirection), 0.0) / max(distance, 1.0);' + "\n" +
+        
+    '    vec3 lightWeighting = uAmbientColor' + "\n" +
+    '        + uPointLightingSpecularColor * specularLightWeighting;' + "\n" +
+    '        + uPointLightingDiffuseColor * diffuseLightWeighting;' + "\n" +
+
+	'	// float pointLightingWeighting = max(dot(transformedNormal, lightDirection), 0.0);' + "\n" +
+	'	// vec3 vLightWeighting = uAmbientColor + uPointLightingColor * pointLightingWeighting;' + "\n" +
+
+	'	vec4 textureColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));' + "\n" +
+	'	gl_FragColor = vec4(textureColor.rgb * lightWeighting, textureColor.a);' + "\n" +
+	'}';
+
+function getShader(gl, type, code) {
+	// var shaderScript = document.getElementById(id);
+	// if(!shaderScript) {
+		// return null;
+	// }
+// 
+	// var str = "";
+	// var k = shaderScript.firstChild;
+	// while(k) {
+		// if(k.nodeType == 3) {
+			// str += k.textContent;
+		// }
+		// k = k.nextSibling;
+	// }
+
 	var shader;
-	if(shaderScript.type == "x-shader/x-fragment") {
+	if(type == "fragment") {
 		shader = gl.createShader(gl.FRAGMENT_SHADER);
-	} else if(shaderScript.type == "x-shader/x-vertex") {
+	} else if(type == "vertex") {
 		shader = gl.createShader(gl.VERTEX_SHADER);
 	} else {
 		return null;
 	}
 
-	gl.shaderSource(shader, str);
+	gl.shaderSource(shader, code);
 	gl.compileShader(shader);
 
 	if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -45,12 +113,11 @@ function getShader(gl, id) {
 
 	return shader;
 }
-
 var shaderProgram;
 
 function initShaders() {
-	var fragmentShader = getShader(gl, "shader-fs");
-	var vertexShader = getShader(gl, "shader-vs");
+	var fragmentShader = getShader(gl, "fragment", fragmentShaderCode);
+	var vertexShader = getShader(gl, "vertex", vertexShaderCode);
 	shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);
 	gl.attachShader(shaderProgram, fragmentShader);
