@@ -1,7 +1,25 @@
+body {
+	color: #fff;
+	font-family:arial
+}
 #main {
 	width:900px;
 	margin:auto;
 	position:relative
+}
+#menu {
+	padding: 5px;
+	position:absolute;
+	left: 751px;
+	top: 11px;
+	background-color: #000;
+	opacity: 0.5;
+	height: 506px;
+	width: 186px;
+	border-radius: 5px;
+	-moz-border-radius5px;
+	-webkit-border-radius:5px;
+	border: 1px solid #fff;
 }
 /*html, body{
 	margin:0;
