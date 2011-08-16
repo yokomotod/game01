@@ -9,7 +9,7 @@ Game.prototype = {
 		
 		this.xSize = 8;
 		this.ySize = 8;
-		this.zSize = 8;
+		this.zSize = 4;
 
 		this.xPos = 1.5;
 		this.yPos = 1.5;

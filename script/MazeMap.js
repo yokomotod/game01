@@ -379,6 +379,8 @@ MazeMap.prototype = {
 					alert("error extendUpDown() : c = "+c);
 			}
 		}
+		//alert(this.stack[this.numRoad-1]);
+		this.stack[this.numRoad-1] = {x:xNext, y:yNext, z:zNext};
 		
 		return {x:xNext, y:yNext, z:zNext, d:this.gocheck(xNext, yNext, zNext)};
 	},
@@ -416,8 +418,8 @@ MazeMap.prototype = {
 			y = p.y;
 			z = p.z;
 
-			if(this.map[z][y][x] == 1)
-				alert("error stack broken");
+			if(this.map[z][y][x] != 0)
+				alert("error stack broken : "+this.map[z][y][x]);
 			d = this.gocheck(x, y, z);
 
 			if(d != 0)
