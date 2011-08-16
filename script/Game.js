@@ -179,6 +179,7 @@ Game.prototype = {
 				this.floor++;
 				this.zPos = this.floor;
 			}
+			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
  		} else if(this.map.map[zCurr][yCurr][xCurr] == 5) {
 			this.xPos += dx;
 			this.zPos -= dx;
@@ -191,6 +192,7 @@ Game.prototype = {
 				this.floor++;
 				this.zPos = this.floor;
 			}
+			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
 		} else if(this.map.map[zCurr][yCurr][xCurr] == 2) {
 			this.yPos += dy;
 			this.zPos += dy;
@@ -203,6 +205,7 @@ Game.prototype = {
 				this.floor++;
 				this.zPos = this.floor;
 			}
+			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
 		} else if(this.map.map[zCurr][yCurr][xCurr] == 3) {
 			this.yPos += dy;
 			this.zPos -= dy;			
@@ -215,7 +218,9 @@ Game.prototype = {
 				this.floor++;
 				this.zPos = this.floor;
 			}
+			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
 		} else if(6 <= this.map.map[zCurr][yCurr][xCurr] && this.map.map[zCurr][yCurr][xCurr] <= 9) {
+			this.map.walked[zCurr-1][yCurr][xCurr] = 1;
 			this.floor--;
 			this.zPos -= 0.01;
 		}
