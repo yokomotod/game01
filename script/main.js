@@ -148,8 +148,23 @@ function keyDown(e) {
 	game.key = key;
 }
 
-function main() {
-	
+function start() {
+	document.getElementById("main").innerHTML = 
+		'<div class="window" style="position:relative; margin:auto; width:120px; height:50px;" onclick="newScene(1)">' +
+		'	<p>GAME START</p>' +
+		'	</div>';
+}
+
+function mazegame() {
+	document.getElementById("main").innerHTML = 
+			'<canvas id="canvas" width="960" height="540"></canvas>' +
+			'<div id="menu" class="window">' +
+			'	<h1 style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px">Game01</h1>' +
+			'	<div id="floor" style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px"></div>' +
+			'	<p onclick="newScene(0)">EXIT</p>' +
+			'</div>' +
+			'<canvas id="map" class="window" width="507" height="507"></div>';
+
 	var canvas = document.getElementById("canvas");
 	initGL(canvas);
 	initShaders()
@@ -165,6 +180,18 @@ function main() {
 	var mapCanvas = document.getElementById("map");
 	mapper = new Mapper(mapCanvas);
 	
-	game.draw();
-
+	game.draw();	
+}
+function newScene(scene) {
+	switch (scene) {
+		case 0:
+			start();
+			break;
+		case 1:
+			mazegame();
+			break;
+	}
+}
+function main() {
+	newScene(0);
 }

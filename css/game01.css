@@ -1,8 +1,8 @@
 body {
-	color: #fff;
 	font-family:arial
 }
 .window {
+	color: #fff;
 	padding: 5px;
 	position:absolute;
 	background-color: #000;
