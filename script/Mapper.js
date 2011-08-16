@@ -27,6 +27,7 @@ Mapper.prototype = {
 		var yWidth = this.canvasHeight / ySize;
 		
 		var map = game.map.map;
+		var walked = game.map.walked;
 		
 		var ctx = this.ctx;
 		
@@ -39,6 +40,8 @@ Mapper.prototype = {
 		for (var y=0; y < ySize; y++) {
 		for (var x=0; x < xSize; x++) {
 				if (map[z][y][x] == 1)
+					continue;
+				if (walked[z][y][x] != 1)
 					continue;
 					
 				if (map[z][y][x] == 0) {

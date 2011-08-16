@@ -16,6 +16,8 @@ MazeMap.prototype = {
 		this.stack = new Array(this.xSize * this.ySize);
 		this.numRoad = 0;
 
+		this.walked;
+		
 		this.status = 1;
 		this.mark = 0;
 
@@ -37,6 +39,16 @@ MazeMap.prototype = {
 		while(this.make()) {
 		};
 
+		this.walked = new Array(this.zSize);
+		for(var z = 0; z < this.zSize; z++) {
+			this.walked[z] = new Array(this.ySize);
+			for(var y = 0; y < this.ySize; y++) {
+				this.walked[z][y] = new Array(this.xSize);
+				for(var x = 0; x < this.xSize; x++) {
+					this.walked[z][y][x] = 0;
+				}
+			}
+		}
 		// this.map[0][2][1] = 2;
 		// this.map[0][2][2] = 2;
 		// this.map[0][2][3] = 2;
@@ -381,7 +393,9 @@ MazeMap.prototype = {
 		}
 		//alert(this.stack[this.numRoad-1]);
 		this.stack[this.numRoad-1] = {x:xNext, y:yNext, z:zNext};
-		
+
+		if (this.map[zNext][yNext][xNext]!=0) alert("wrong stack");
+				
 		return {x:xNext, y:yNext, z:zNext, d:this.gocheck(xNext, yNext, zNext)};
 	},
 	step1 : function() {

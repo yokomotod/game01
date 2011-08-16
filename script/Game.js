@@ -22,6 +22,8 @@ Game.prototype = {
 
 		this.initModel();
 		
+		this.map.walked[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)] = 1;
+
 		this.updateFloorStatus(this.floor);
 		
 	},
@@ -210,6 +212,8 @@ Game.prototype = {
 			this.floor--;
 			this.zPos -= 0.01;
 		}
+		
+		this.map.walked[zCurr][yCurr][xCurr] = 1;
 		
 		this.updateFloorStatus(this.floor);
 			// var zNext = zCurr;

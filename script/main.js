@@ -149,6 +149,7 @@ function keyDown(e) {
 }
 
 function main() {
+	
 	var canvas = document.getElementById("canvas");
 	initGL(canvas);
 	initShaders()
