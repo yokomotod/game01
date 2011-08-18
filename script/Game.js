@@ -27,6 +27,9 @@ Game.prototype = {
 		for (var z=0; z<this.zSize-1; z++) {
 		for (var y=1; y<this.ySize-1; y++) {
 		for (var x=1; x<this.xSize-1; x++) {
+			if (this.map.map[z][y][x] != 0)
+				continue;
+				
 			this.actors[i] = new Actor(x, y, z);
 			i++;
 		}

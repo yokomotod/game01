@@ -61,7 +61,7 @@ ActorModel.prototype = {
 		
 
 		mvPushMatrix();
-		mat4.translate(mvMatrix, [(x+0.5)*game.scale, (y+0.5)*game.scale, 0.3]);
+		mat4.translate(mvMatrix, [(x+0.5)*game.scale, (y+0.5)*game.scale, z*game.scale+0.3]);
 		mat4.rotate(mvMatrix, degToRad(45), [0, 0, 1]);
 
 		this.model.draw();
