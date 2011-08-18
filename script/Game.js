@@ -51,9 +51,18 @@ Game.prototype = {
 		this.draw();
 	},
 	update : function() {
+
+		this.inputProc();
+		
+		for (var i=0; i < this.actorNum; i++) {
+			this.actors[i].update();
+		}
+
+	},
+	inputProc : function() {
 		switch(this.key) {
 			case 0:
-				return false;
+				return;
 				
 			// a:left
 			case 65:
@@ -64,7 +73,7 @@ Game.prototype = {
 			// w:up
 			case 87:
 			case 38:
-				game.move(1);
+				game.movePlayer(1);
 				break;
 
 			// d:right
@@ -76,7 +85,7 @@ Game.prototype = {
 			// s:down
 			case 83:
 			case 40:
-				game.move(-1);
+				game.movePlayer(-1);
 				break;
 				
 			// space
@@ -86,8 +95,6 @@ Game.prototype = {
 		}
 
 		this.key = 0;
-
-		return true;
 	},
 	initModel : function() {
 
@@ -145,13 +152,7 @@ Game.prototype = {
 		mapper.draw();
 
 	},
-	move : function(d) {
-		var x = this.xPos;
-		var y = this.yPos;
-		var z = this.zPos;
-
-		var dx = d * Math.sin(this.direction) * 0.05;
-		var dy = d * Math.cos(this.direction) * 0.05;
+	move : function(x, y, z, floor, dx, dy) {
 
 		var xOffset = 0;
 		var yOffset = 0;
@@ -164,11 +165,11 @@ Game.prototype = {
 		else
 			yOffset = -0.3;
 
-		var xCurr = Math.floor(this.xPos);
-		var yCurr = Math.floor(this.yPos);
-		var xNext = Math.floor(this.xPos + dx + xOffset);
-		var yNext = Math.floor(this.yPos + dy + yOffset);
-		var zCurr = Math.floor(this.zPos);
+		var xCurr = Math.floor(x);
+		var yCurr = Math.floor(y);
+		var xNext = Math.floor(x + dx + xOffset);
+		var yNext = Math.floor(y + dy + yOffset);
+		var zCurr = Math.floor(z);
 
 		//if (zCurr == 1)
 			//alert("zCurr = 1")
@@ -178,148 +179,97 @@ Game.prototype = {
 				|| (this.map.map[zCurr][yCurr][xNext] == 4 && dx > 0)
 				|| (this.map.map[zCurr][yCurr][xNext] == 5 && dx < 0)
 				|| (6 <= this.map.map[zCurr][yCurr][xNext] && this.map.map[zCurr][yCurr][xNext] <= 9 )) {
-				this.xPos += dx;
+				x += dx;
 			}
 
 			if(this.map.map[zCurr][yNext][xCurr] == 0
 				|| (this.map.map[zCurr][yNext][xCurr] == 2 && dy > 0)
 				|| (this.map.map[zCurr][yNext][xCurr] == 3 && dy < 0)
 				|| (6 <= this.map.map[zCurr][yNext][xCurr] && this.map.map[zCurr][yNext][xCurr] <= 9)) {
-				this.yPos += dy;
+				y += dy;
 			}
 		// } else {
 		} else if(this.map.map[zCurr][yCurr][xCurr] == 4) {
-			this.xPos += dx;
-			this.zPos += dx;
+			x += dx;
+			z += dx;
 			if(this.map.map[zCurr][yNext][xCurr] != 1) {
-				this.yPos += dy;				
+				y += dy;				
 			}			
-			if(this.zPos < this.floor)
-				this.zPos = this.floor;			
-			if(Math.floor(this.xPos) > xCurr) {
-				this.floor++;
-				this.zPos = this.floor;
+			if(z < floor)
+				z = floor;			
+			if(Math.floor(x) > xCurr) {
+				floor++;
+				z = floor;
 			}
-			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
  		} else if(this.map.map[zCurr][yCurr][xCurr] == 5) {
-			this.xPos += dx;
-			this.zPos -= dx;
+			x += dx;
+			z -= dx;
 			if(this.map.map[zCurr][yNext][xCurr] != 1) {
-				this.yPos += dy;				
+				y += dy;				
 			}
-			if(this.zPos < this.floor)
-				this.zPos = this.floor;			
-			if(Math.floor(this.xPos) < xCurr) {
-				this.floor++;
-				this.zPos = this.floor;
+			if(z < floor)
+				z = floor;			
+			if(Math.floor(x) < xCurr) {
+				floor++;
+				z = floor;
 			}
-			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
 		} else if(this.map.map[zCurr][yCurr][xCurr] == 2) {
-			this.yPos += dy;
-			this.zPos += dy;
+			y += dy;
+			z += dy;
 			if(this.map.map[zCurr][yCurr][xNext] != 1) {
-				this.xPos += dx;				
+				x += dx;				
 			}			
-			if(this.zPos < this.floor)
-				this.zPos = this.floor;			
-			if(Math.floor(this.yPos) > yCurr) {
-				this.floor++;
-				this.zPos = this.floor;
+			if(z < floor)
+				z = floor;			
+			if(Math.floor(y) > yCurr) {
+				floor++;
+				z = floor;
 			}
-			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
 		} else if(this.map.map[zCurr][yCurr][xCurr] == 3) {
-			this.yPos += dy;
-			this.zPos -= dy;			
+			y += dy;
+			z -= dy;			
 			if(this.map.map[zCurr][yCurr][xNext] != 1) {
-				this.xPos += dx;				
+				x += dx;				
 			}			
-			if(this.zPos < this.floor)
-				this.zPos = this.floor;			
-			if(Math.floor(this.yPos) < yCurr) {
-				this.floor++;
-				this.zPos = this.floor;
+			if(z < floor)
+				z = floor;			
+			if(Math.floor(y) < yCurr) {
+				floor++;
+				z = floor;
 			}
-			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
 		} else if(6 <= this.map.map[zCurr][yCurr][xCurr] && this.map.map[zCurr][yCurr][xCurr] <= 9) {
-			this.map.walked[zCurr-1][yCurr][xCurr] = 1;
-			this.floor--;
-			this.zPos -= 0.01;
+			floor--;
+			z -= 0.01;
 		}
 		
-		this.map.walked[zCurr][yCurr][xCurr] = 1;
+		return {x:x, y:y, z:z, xCurr:xCurr, yCurr:yCurr, zCurr:zCurr, floor:floor};
+	},
+	movePlayer : function(d) {
+		var dx = d * Math.sin(this.direction) * 0.05;
+		var dy = d * Math.cos(this.direction) * 0.05;
+
+		var pos = this.move(this.xPos, this.yPos, this.zPos, this.floor, dx, dy);		
+
+		this.xPos = pos.x;
+		this.yPos = pos.y;
+		this.zPos = pos.z;
 		
-		this.updateFloorStatus(this.floor);
-			// var zNext = zCurr;
-			// switch (this.map.map[zCurr][yCurr][xCurr]) {
-				// case 4:
-					// if (dx > 0)
-						// zNext = Math.floor(this.zPos + dx);
-						// // alert([this.zPos+dx, zNext]);
-					// break;				
-				// case 5:
-					// if (dx < 0)
-						// zNext = Math.floor(this.zPos - dx);
-						// // alert([this.zPos-dx, zNext]);
-					// break;				
-				// case 2:
-					// if (dy > 0)
-						// zNext = Math.floor(this.zPos + dy);
-						// // alert([this.zPos+dy, zNext]);
-					// break;				
-				// case 3:
-					// if (dy < 0)
-						// zNext = Math.floor(this.zPos - dy);
-						// // alert([this.zPos-dy, zNext]);
-					// break;				
-			// }
-			
-			// if (this.map.map[zNext][yCurr][xNext] == 0
-				// || this.map.map[zNext][yCurr][xNext] == 4
-				// || this.map.map[zNext][yCurr][xNext] == 5) {
-				// this.xPos += dx;
-				// this.zPos += dx;
-				// //if (this.zPos < zCurr) this.zPos = zCurr;
-			// } else if(this.map.map[zNext][yCurr][xNext] == 2 || this.map.map[zNext][yCurr][xNext] == 3) {
-				// this.xPos += dx;
-			// }
-// 
-			// if (this.map.map[zNext][yNext][xCurr] == 0
-				// || this.map.map[zNext][yNext][xCurr] == 2
-				// || this.map.map[zNext][yNext][xCurr] == 3) {
-				// this.yPos += dy;
-				// this.zPos += dy;
-				// //if (this.zPos < zCurr) this.zPos = zCurr;
-			// } else if(this.map.map[zNext][yNext][xCurr] == 4 || this.map.map[zNext][yNext][xCurr] == 5) {
-				// this.yPos += dy;
-			// }
+		this.floor = pos.floor;
+		
+		this.map.walked[pos.zCurr][pos.yCurr][pos.xCurr] = 1;
+		
+		var here = this.map.map[pos.zCurr][pos.yCurr][pos.xCurr];
+		if (2 <= here && here <= 5 ) {
+			this.map.walked[pos.zCurr+1][pos.yCurr][pos.xCurr] = 1;
 
+		}
 
-			// if(this.map.map[zCurr][yCurr][xNext] == 4 || this.map.map[zCurr][yCurr][xNext] == 5) {
-				// this.xPos += dx;
-				// this.zPos += dx;
-			// } else if(this.map.map[zCurr][yCurr][xNext] == 2 || this.map.map[zCurr][yCurr][xNext] == 3) {
-				// this.xPos += dx;
-			// } else if(this.map.map[zCurr][yCurr][xNext] == 0) {
-				// if(this.map.map[zCurr][yCurr][xCurr] == 4 || this.map.map[zCurr][yCurr][xCurr] == 5) {
-					// this.xPos += dx;
-					// this.zPos += dx;
-				// }
-			// }
+		if (6 <= here && here <= 9 ) {
+			this.map.walked[pos.zCurr-1][pos.yCurr][pos.xCurr] = 1;
 
-			// if(this.map.map[zCurr][yNext][xCurr] == 2 || this.map.map[zCurr][yNext][xCurr] == 3) {
-				// this.yPos += dy;
-				// this.zPos += dy;
-			// } else if(this.map.map[zCurr][yNext][xCurr] == 4 || this.map.map[zCurr][yNext][xCurr] == 5) {
-				// this.yPos += dy;
-			// } else if(this.map.map[zCurr][yNext][xCurr] == 0) {
-				// if(this.map.map[zCurr][yCurr][xCurr] == 2 || this.map.map[zCurr][yCurr][xCurr] == 3) {
-					// this.yPos += dy;
-					// this.zPos += dy;
-				// }
-			// }
-
-		//
-		//alert([this.xPos, this.yPos, this.zPos, ])
+		}
+		
+		this.updateFloorStatus(pos.floor);
 	},
 	turn : function(d) {
 
