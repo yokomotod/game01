@@ -219,6 +219,9 @@ function mazegame() {
 
 	gl.clearColor(0.0, 0.0, 1.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
+	
+	actorModel = new ActorModel();
+	
 	game = new Game();
 
 	setInterval("game.loop()", 1000 / 60);

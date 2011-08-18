@@ -49,6 +49,7 @@ MazeMap.prototype = {
 				}
 			}
 		}
+
 		// this.map[0][2][1] = 2;
 		// this.map[0][2][2] = 2;
 		// this.map[0][2][3] = 2;
