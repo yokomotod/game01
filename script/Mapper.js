@@ -19,15 +19,15 @@ Mapper.prototype = {
 	},
 	draw : function() {
 
-		var xSize = game.xSize;
-		var ySize = game.ySize;
-		var z = game.floor;
+		var xSize = gm.game.xSize;
+		var ySize = gm.game.ySize;
+		var z = gm.game.floor;
 
 		var xWidth = this.canvasWidth / xSize;
 		var yWidth = this.canvasHeight / ySize;
 		
-		var map = game.map.map;
-		var walked = game.map.walked;
+		var map = gm.game.map.map;
+		var walked = gm.game.map.walked;
 		
 		var ctx = this.ctx;
 		
@@ -59,11 +59,11 @@ Mapper.prototype = {
 			};
 		};
 		
-		var xCenter = (game.xPos) * xWidth;
-		var yCenter = ((ySize-game.yPos)) * yWidth;
+		var xCenter = (gm.game.xPos) * xWidth;
+		var yCenter = ((ySize-gm.game.yPos)) * yWidth;
 
 		ctx.fillStyle = "Red";
-		ctx.arc(xCenter, yCenter, xWidth/2, game.direction+Math.PI*5/4, game.direction+Math.PI*7/4, false);
+		ctx.arc(xCenter, yCenter, xWidth/2, gm.game.direction+Math.PI*5/4, gm.game.direction+Math.PI*7/4, false);
 		ctx.fill();
 		
 		

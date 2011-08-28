@@ -2,7 +2,31 @@ var Game = function() {
 	this.initialize.apply(this, arguments);
 }
 Game.prototype = {
-	initialize : function() {
+		initialize : function() {
+		document.getElementById("main").innerHTML = 
+				'<canvas id="canvas" width="960" height="540"></canvas>' +
+				'<div id="menu" class="window">' +
+				'	<h1 style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px">Game01</h1>' +
+				'	<div id="floor" style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px"></div>' +
+				'	<p onclick="newScene(0)">EXIT</p>' +
+				'</div>' +
+				'<canvas id="map" class="window" width="507" height="507" style="display:none" onclick=hidemap()></div>';
+	
+		var canvas = document.getElementById("canvas");
+		initGL(canvas);
+		initShaders()
+		initTexture();
+	
+		gl.clearColor(0.0, 0.0, 1.0, 1.0);
+		gl.enable(gl.DEPTH_TEST);
+		
+		actorModel = new ActorModel();
+		
+		// game = new Game();
+	
+		// setInterval("game.loop()", 1000 / 60);
+	
+
 		this.key = 0;
 
 		this.scale = 2.0;
@@ -38,18 +62,23 @@ Game.prototype = {
 		this.actorNum = i;
 
 		this.initModel();
-		
+			
 		this.map.walked[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)] = 1;
 
 		this.updateFloorStatus(this.floor);
 		
 		this.actor = new Actor();
 		
+		var mapCanvas = document.getElementById("map");
+		mapper = new Mapper(mapCanvas);
+		
+		// game.draw();
+		gm.draw();	
 	},
-	loop : function() {
-		this.update();
-		this.draw();
-	},
+	// loop : function() {
+		// this.update();
+		// this.draw();
+	// },
 	update : function() {
 
 		this.inputProc();
@@ -60,32 +89,32 @@ Game.prototype = {
 
 	},
 	inputProc : function() {
-		switch(this.key) {
+		switch(gm.key) {
 			case 0:
 				return;
 				
 			// a:left
 			case 65:
 			case 37:
-				game.turn(-1);
+				this.turn(-1);
 				break;
 
 			// w:up
 			case 87:
 			case 38:
-				game.movePlayer(1);
+				this.movePlayer(1);
 				break;
 
 			// d:right
 			case 68:
 			case 39:
-				game.turn(1);
+				this.turn(1);
 				break;
 
 			// s:down
 			case 83:
 			case 40:
-				game.movePlayer(-1);
+				this.movePlayer(-1);
 				break;
 				
 			// space
@@ -94,7 +123,7 @@ Game.prototype = {
 				break;
 		}
 
-		this.key = 0;
+		gm.key = 0;
 	},
 	initModel : function() {
 
