@@ -8,13 +8,7 @@ GameMaster.prototype = {
 		this.key = null;
 	},
 	loop : function() {
-		this.update();
-		this.draw();
-	},
-	update : function() {
 		this.game.update();
-	},
-	draw : function() {
 		this.game.draw();
 	},
 	newScene : function(scene) {

@@ -30,10 +30,6 @@ Game.prototype = {
 		
 		actorModel = new ActorModel();
 		
-		// game = new Game();
-	
-		// setInterval("game.loop()", 1000 / 60);
-	
 
 		this.key = 0;
 
@@ -78,16 +74,10 @@ Game.prototype = {
 		this.actor = new Actor();
 		
 		var mapCanvas = document.getElementById("map");
-		// mapper = new Mapper(mapCanvas);
 		this.mapper = new Mapper(mapCanvas);
 		
-		// game.draw();
-		gm.draw();	
+		this.draw();	
 	},
-	// loop : function() {
-		// this.update();
-		// this.draw();
-	// },
 	update : function() {
 
 		this.inputProc();
@@ -190,98 +180,6 @@ Game.prototype = {
 		this.mapper.draw(this.map.map, this.map.walked, this.xPos, this.yPos, this.floor, this.direction);
 
 	},
-	// move : function(x, y, z, floor, dx, dy) {
-// 
-		// var xOffset = 0;
-		// var yOffset = 0;
-		// if(dx > 0)
-			// xOffset = 0.3;
-		// else
-			// xOffset = -0.3;
-		// if(dy > 0)
-			// yOffset = 0.3;
-		// else
-			// yOffset = -0.3;
-// 
-		// var xCurr = Math.floor(x);
-		// var yCurr = Math.floor(y);
-		// var xNext = Math.floor(x + dx + xOffset);
-		// var yNext = Math.floor(y + dy + yOffset);
-		// var zCurr = Math.floor(z);
-// 
-		// //if (zCurr == 1)
-			// //alert("zCurr = 1")
-		// //if (this.map.map[zCurr][yCurr][xCurr]!=0)alert(this.map.map[zCurr][yCurr][xCurr]);
-		// if(this.map.map[zCurr][yCurr][xCurr] == 0) {
-			// if(this.map.map[zCurr][yCurr][xNext] == 0
-				// || (this.map.map[zCurr][yCurr][xNext] == 4 && dx > 0)
-				// || (this.map.map[zCurr][yCurr][xNext] == 5 && dx < 0)
-				// || (6 <= this.map.map[zCurr][yCurr][xNext] && this.map.map[zCurr][yCurr][xNext] <= 9 )) {
-				// x += dx;
-			// }
-// 
-			// if(this.map.map[zCurr][yNext][xCurr] == 0
-				// || (this.map.map[zCurr][yNext][xCurr] == 2 && dy > 0)
-				// || (this.map.map[zCurr][yNext][xCurr] == 3 && dy < 0)
-				// || (6 <= this.map.map[zCurr][yNext][xCurr] && this.map.map[zCurr][yNext][xCurr] <= 9)) {
-				// y += dy;
-			// }
-		// // } else {
-		// } else if(this.map.map[zCurr][yCurr][xCurr] == 4) {
-			// x += dx;
-			// z += dx;
-			// if(this.map.map[zCurr][yNext][xCurr] != 1) {
-				// y += dy;				
-			// }			
-			// if(z < floor)
-				// z = floor;			
-			// if(Math.floor(x) > xCurr) {
-				// floor++;
-				// z = floor;
-			// }
- 		// } else if(this.map.map[zCurr][yCurr][xCurr] == 5) {
-			// x += dx;
-			// z -= dx;
-			// if(this.map.map[zCurr][yNext][xCurr] != 1) {
-				// y += dy;				
-			// }
-			// if(z < floor)
-				// z = floor;			
-			// if(Math.floor(x) < xCurr) {
-				// floor++;
-				// z = floor;
-			// }
-		// } else if(this.map.map[zCurr][yCurr][xCurr] == 2) {
-			// y += dy;
-			// z += dy;
-			// if(this.map.map[zCurr][yCurr][xNext] != 1) {
-				// x += dx;				
-			// }			
-			// if(z < floor)
-				// z = floor;			
-			// if(Math.floor(y) > yCurr) {
-				// floor++;
-				// z = floor;
-			// }
-		// } else if(this.map.map[zCurr][yCurr][xCurr] == 3) {
-			// y += dy;
-			// z -= dy;			
-			// if(this.map.map[zCurr][yCurr][xNext] != 1) {
-				// x += dx;				
-			// }			
-			// if(z < floor)
-				// z = floor;			
-			// if(Math.floor(y) < yCurr) {
-				// floor++;
-				// z = floor;
-			// }
-		// } else if(6 <= this.map.map[zCurr][yCurr][xCurr] && this.map.map[zCurr][yCurr][xCurr] <= 9) {
-			// floor--;
-			// z -= 0.01;
-		// }
-// 		
-		// return {x:x, y:y, z:z, xCurr:xCurr, yCurr:yCurr, zCurr:zCurr, floor:floor};
-	// },
 	movePlayer : function(d) {
 		var dx = d * Math.sin(this.direction) * 0.05;
 		var dy = d * Math.cos(this.direction) * 0.05;
