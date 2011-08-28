@@ -17,17 +17,12 @@ Mapper.prototype = {
 		this.canvasWidth = canvas.width;
 		this.canvasHeight = canvas.height;
 	},
-	draw : function() {
-
-		var xSize = gm.game.xSize;
-		var ySize = gm.game.ySize;
-		var z = gm.game.floor;
+	draw : function(map, walked, xPos, yPos, zPos, direction) {
+		var xSize = Game.XSIZE;
+		var ySize = Game.YSIZE;
 
 		var xWidth = this.canvasWidth / xSize;
 		var yWidth = this.canvasHeight / ySize;
-		
-		var map = gm.game.map.map;
-		var walked = gm.game.map.walked;
 		
 		var ctx = this.ctx;
 		
@@ -39,33 +34,31 @@ Mapper.prototype = {
 
 		for (var y=0; y < ySize; y++) {
 		for (var x=0; x < xSize; x++) {
-				if (map[z][y][x] == 1)
+				if (map[zPos][y][x] == 1)
 					continue;
-				if (walked[z][y][x] != 1)
+				if (walked[zPos][y][x] != 1)
 					continue;
 					
-				if (map[z][y][x] == 0) {
+				if (map[zPos][y][x] == 0) {
 					ctx.fillStyle = "White";
 					ctx.fillRect(x*xWidth, (ySize-1-y)*yWidth, xWidth, yWidth);
 				}
-				if (2 <= map[z][y][x] && map[z][y][x] <= 5) {
+				if (2 <= map[zPos][y][x] && map[zPos][y][x] <= 5) {
 					ctx.fillStyle = "Yellow";
 					ctx.fillRect(x*xWidth, (ySize-1-y)*yWidth, xWidth, yWidth);
 				}
-				if (6 <= map[z][y][x] && map[z][y][x] <= 9) {
+				if (6 <= map[zPos][y][x] && map[zPos][y][x] <= 9) {
 					ctx.fillStyle = "Blue";
 					ctx.fillRect(x*xWidth, (ySize-1-y)*yWidth, xWidth, yWidth);
 				}
 			};
 		};
 		
-		var xCenter = (gm.game.xPos) * xWidth;
-		var yCenter = ((ySize-gm.game.yPos)) * yWidth;
+		var xCenter = xPos * xWidth;
+		var yCenter = (ySize-yPos) * yWidth;
 
 		ctx.fillStyle = "Red";
-		ctx.arc(xCenter, yCenter, xWidth/2, gm.game.direction+Math.PI*5/4, gm.game.direction+Math.PI*7/4, false);
+		ctx.arc(xCenter, yCenter, xWidth/2, direction+Math.PI*5/4, direction+Math.PI*7/4, false);
 		ctx.fill();
-		
-		
 	}
 }

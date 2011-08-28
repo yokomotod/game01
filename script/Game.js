@@ -5,6 +5,9 @@ var Game = function() {
 }
 
 Game.SCALE = 2.0;
+Game.XSIZE = 10;
+Game.YSIZE = 10;
+Game.ZSIZE = 4;
 
 Game.prototype = {
 		initialize : function() {
@@ -184,7 +187,7 @@ Game.prototype = {
 			this.actors[i].draw();
 		}
 
-		this.mapper.draw();
+		this.mapper.draw(this.map.map, this.map.walked, this.xPos, this.yPos, this.floor, this.direction);
 
 	},
 	// move : function(x, y, z, floor, dx, dy) {
