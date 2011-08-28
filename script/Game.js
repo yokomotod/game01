@@ -1,4 +1,4 @@
-var mapper;
+// var mapper;
 
 var Game = function() {
 	this.initialize.apply(this, arguments);
@@ -72,7 +72,8 @@ Game.prototype = {
 		this.actor = new Actor();
 		
 		var mapCanvas = document.getElementById("map");
-		mapper = new Mapper(mapCanvas);
+		// mapper = new Mapper(mapCanvas);
+		this.mapper = new Mapper(mapCanvas);
 		
 		// game.draw();
 		gm.draw();	
@@ -180,7 +181,7 @@ Game.prototype = {
 			this.actors[i].draw();
 		}
 
-		mapper.draw();
+		this.mapper.draw();
 
 	},
 	move : function(x, y, z, floor, dx, dy) {
