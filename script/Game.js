@@ -1,3 +1,5 @@
+var mapper;
+
 var Game = function() {
 	this.initialize.apply(this, arguments);
 }
@@ -8,7 +10,7 @@ Game.prototype = {
 				'<div id="menu" class="window">' +
 				'	<h1 style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px">Game01</h1>' +
 				'	<div id="floor" style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px"></div>' +
-				'	<p onclick="newScene(0)">EXIT</p>' +
+				'	<p onclick="gm.newScene(0)">EXIT</p>' +
 				'</div>' +
 				'<canvas id="map" class="window" width="507" height="507" style="display:none" onclick=hidemap()></div>';
 	

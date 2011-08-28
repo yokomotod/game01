@@ -5,7 +5,7 @@ var StartScene = function() {
 StartScene.prototype = {
 	initialize : function() {
 		document.getElementById("main").innerHTML = 
-			'<div class="window" style="position:relative; margin:auto; width:120px; height:50px;" onclick="newScene(1)">' +
+			'<div class="window" style="position:relative; margin:auto; width:120px; height:50px;" onclick="gm.newScene(1)">' +
 			'	<p>GAME START</p>' +
 			'	</div>';		
 	},
