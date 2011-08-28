@@ -58,14 +58,11 @@ ActorModel.prototype = {
 		this.size = size;
 	},
 	draw : function(x, y, z) {
-		
-
 		mvPushMatrix();
-		mat4.translate(mvMatrix, [x*gm.game.scale, y*gm.game.scale, z*gm.game.scale+0.3]);
+		mat4.translate(mvMatrix, [x*Game.SCALE, y*Game.SCALE, z*Game.SCALE+0.3]);
 		mat4.rotate(mvMatrix, degToRad(45), [0, 0, 1]);
 
 		this.model.draw();
-		
 		
 		mvPopMatrix();
 	}
@@ -87,17 +84,17 @@ Actor.prototype = {
 		
 		this.direction = Math.random()*Math.PI*2;
 	},
-	update : function() {
-		this.move();
+	update : function(map) {
+		this.move(map);
 	},
-	move : function() {
+	move : function(map) {
 				
 		var d = 0.005;
 		
 		var dx = d*Math.sin(this.direction);
 		var dy = d*Math.cos(this.direction);
 		
-		var pos = gm.game.move(this.x, this.y, this.z, this.floor, dx, dy);
+		var pos = map.move(this.x, this.y, this.z, this.floor, dx, dy);
 
 		if (this.x == pos.x || this.y == pos.y)
 			this.direction = Math.random()*Math.PI*2;
