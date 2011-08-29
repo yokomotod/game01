@@ -22,3 +22,6 @@ GameMaster.prototype = {
 		}
 	},
 }
+
+var gm;
+

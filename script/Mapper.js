@@ -31,7 +31,6 @@ Mapper.prototype = {
 		ctx.fillStyle = "Black";
 		ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
-
 		for (var y=0; y < ySize; y++) {
 		for (var x=0; x < xSize; x++) {
 				if (map[zPos][y][x] == 1)
