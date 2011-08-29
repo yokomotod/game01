@@ -71,29 +71,31 @@ Game.prototype = {
 	setupActor : function() {
 		actorModel = new ActorModel();
 
-		this.actor = new Actor();
-
+		this.actor = new Actor(0, this.xPos, this.yPos, this.zPos);
+		this.map.actors[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)][0] = this.actor;
+		
 		this.actors = new Array();
 		
 		// this.actors[0] = new Actor(0, 1, 1, 0);
 		// this.map.actors[0][1][1][0] = this.actors[0];
 		// this.actorNum = 1;
 		
-		var id=0;
+		var i=0;
 		for (var z=0; z<Game.ZSIZE; z++) {
 		for (var y=1; y<Game.YSIZE-1; y++) {
 		for (var x=1; x<Game.XSIZE-1; x++) {
 			if (this.map.map[z][y][x] != 0)
 				continue;
-				
-			this.actors[id] = new Actor(id, x, y, z);
-			this.map.actors[z][y][x][id] = this.actors[id];
-			id++;
+			
+			var id = i+1;
+			this.actors[i] = new Actor(id, x, y, z);
+			this.map.actors[z][y][x][id] = this.actors[i];
+			i++;
 			
 		}
 		}
 		}
-		this.actorNum = id;
+		this.actorNum = i;
 	},
 	setupMapper : function() {
 		var mapCanvas = document.getElementById("map");
@@ -148,9 +150,26 @@ Game.prototype = {
 
 		var pos = this.map.move(this.xPos, this.yPos, this.zPos, this.floor, dx, dy);		
 
+		for(var id in this.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
+			if(this.actor.id == id)
+				continue;
+			
+			var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
+			if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
+				return;
+			}
+		}
+		
+		delete this.map.actors[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)][0];
+		this.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][0] = this.actor;
+
 		this.xPos = pos.x;
 		this.yPos = pos.y;
 		this.zPos = pos.z;
+		
+		this.actor.x = this.xPos;
+		this.actor.y = this.yPos;
+		this.actor.z = this.zPos;
 		
 		this.floor = pos.floor;
 		
