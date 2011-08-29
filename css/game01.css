@@ -30,6 +30,13 @@ body {
 	height: 507px;
 	width: 507px;
 }
+#console {
+	left: 11px;
+	top: 300px;
+	height: 200px;
+	width: 600px;
+	line-height: 1px;
+}
 /*html, body{
 	margin:0;
 	width:100%;

@@ -92,7 +92,7 @@ Actor.prototype = {
 				
 		var d = 0.005;
 		
-		var dx = d*Math.sin(this.direction);
+		var dx = d*Math.sin(this.direction);Math.sin
 		var dy = d*Math.cos(this.direction);
 		
 		var pos = map.move(this.x, this.y, this.z, this.floor, dx, dy);
@@ -103,8 +103,10 @@ Actor.prototype = {
 			//alert("freeze : "+this.id);
 		}
 
-		if (this.x == pos.x || this.y == pos.y)
+		if (this.x == pos.x || this.y == pos.y){
 			this.direction += Math.PI*2/3 * (1 + Math.random());
+			this.direction = this.direction % Math.PI*2;
+		}
 
 		for(var id in gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
 			if(this.id == id)
@@ -113,6 +115,7 @@ Actor.prototype = {
 			var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
 			if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
 				this.direction += Math.PI*2/3 * (1 + Math.random());
+				this.direction = this.direction % Math.PI*2;
 				return;
 			}
 		}

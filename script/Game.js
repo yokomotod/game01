@@ -13,7 +13,9 @@ Game.prototype = {
 		this.setupMaze();
 		this.setupActor();
 		this.setupMapper();
-				
+		
+		this.console = new Console();
+		
 		this.draw();	
 	},
 	setupWebGL : function() {
@@ -72,20 +74,26 @@ Game.prototype = {
 		this.actor = new Actor();
 
 		this.actors = new Array();
-		var id=0;
-		for (var z=0; z<Game.ZSIZE; z++) {
-		for (var y=1; y<Game.YSIZE-1; y++) {
-		for (var x=1; x<Game.XSIZE-1; x++) {
-			if (this.map.map[z][y][x] != 0)
-				continue;
-				
-			this.actors[id] = new Actor(id, x, y, z);
-			this.map.actors[z][y][x][id] = this.actors[id];
-			id++;
-		}
-		}
-		}
-		this.actorNum = id;
+		
+		this.actors[0] = new Actor(0, 1, 1, 0);
+		this.map.actors[0][1][1][0] = this.actors[0];
+		this.actorNum = 1;
+		
+		// var id=0;
+		// for (var z=0; z<Game.ZSIZE; z++) {
+		// for (var y=1; y<Game.YSIZE-1; y++) {
+		// for (var x=1; x<Game.XSIZE-1; x++) {
+			// if (this.map.map[z][y][x] != 0)
+				// continue;
+// 				
+			// this.actors[id] = new Actor(id, x, y, z);
+			// this.map.actors[z][y][x][id] = this.actors[id];
+			// id++;
+// 			
+		// }
+		// }
+		// }
+		// this.actorNum = id;
 	},
 	setupMapper : function() {
 		var mapCanvas = document.getElementById("map");
@@ -93,7 +101,7 @@ Game.prototype = {
 		this.mapDisplay = "none";
 	},
 	update : function() {
-
+		this.console.write([this.actors[0].direction, this.actors[0].x, this.actors[0].y]);
 		this.inputProc();
 		
 		for (var i=0; i < this.actorNum; i++) {
