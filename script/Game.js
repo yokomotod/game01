@@ -33,12 +33,6 @@ Game.prototype = {
 
 		this.key = 0;
 
-		this.scale = 2.0;
-		
-		this.xSize = 10;
-		this.ySize = 10;
-		this.zSize = 4;
-
 		this.xPos = 1.5;
 		this.yPos = 1.5;
 		this.zPos = 0.0;
@@ -48,13 +42,13 @@ Game.prototype = {
 		
 		this.mapDisplay = "none";
 		
-		this.map = new MazeMap(this.xSize, this.ySize, this.zSize, this.scale);
+		this.map = new MazeMap();
 
 		this.actors = new Array();
 		var i=0;
-		for (var z=0; z<this.zSize-1; z++) {
-		for (var y=1; y<this.ySize-1; y++) {
-		for (var x=1; x<this.xSize-1; x++) {
+		for (var z=0; z<Game.ZSIZE-1; z++) {
+		for (var y=1; y<Game.YSIZE-1; y++) {
+		for (var x=1; x<Game.XSIZE-1; x++) {
 			if (this.map.map[z][y][x] != 0)
 				continue;
 				
@@ -169,7 +163,7 @@ Game.prototype = {
 		mat4.translate(mvMatrix, cameraPos);
 
 		mat4.rotate(mvMatrix, this.direction, [0, 0, 1]);
-		mat4.translate(mvMatrix, [-this.xPos*this.scale, -this.yPos*this.scale, -this.zPos*this.scale]);
+		mat4.translate(mvMatrix, [-this.xPos*Game.SCALE, -this.yPos*Game.SCALE, -this.zPos*Game.SCALE]);
 
 		this.map.draw();
 

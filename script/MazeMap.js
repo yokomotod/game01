@@ -3,12 +3,12 @@ var MazeMap = function() {
 	this.initialize.apply(this, arguments);
 }
 MazeMap.prototype = {
-	initialize : function(xSize, ySize, zSize, scale) {
-		this.xSize = xSize;
-		this.ySize = ySize;
-		this.zSize = zSize;
+	initialize : function() {
+		this.xSize = Game.XSIZE;
+		this.ySize = Game.YSIZE;
+		this.zSize = Game.ZSIZE;
 
-		this.scale = scale;
+		this.scale = Game.SCALE;
 		
 		this.data = undefined;
 		this.map = undefined;
