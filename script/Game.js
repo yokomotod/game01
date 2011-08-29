@@ -77,10 +77,6 @@ Game.prototype = {
 		
 		this.actors = new Array();
 		
-		// this.actors[0] = new Actor(0, 1, 1, 0);
-		// this.map.actors[0][1][1][0] = this.actors[0];
-		// this.actorNum = 1;
-		
 		var i=0;
 		for (var z=0; z<Game.ZSIZE; z++) {
 		for (var y=1; y<Game.YSIZE-1; y++) {
@@ -146,24 +142,6 @@ Game.prototype = {
 		gm.key = 0;
 	},
 	movePlayer : function(d) {
-		// var dx = d * Math.sin(this.direction) * 0.01;
-		// var dy = d * Math.cos(this.direction) * 0.01;
-// 
-		// var pos = this.map.move(this.xPos, this.yPos, this.zPos, this.floor, dx, dy);		
-// 
-		// for(var id in this.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
-			// if(this.actor.id == id)
-				// continue;
-// 			
-			// var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
-			// if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
-				// return;
-			// }
-		// }
-// 		
-		// delete this.map.actors[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)][0];
-		// this.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][0] = this.actor;
-
 		this.actor.move(this.map, d);
 		
 		this.xPos = this.actor.x;
@@ -172,27 +150,6 @@ Game.prototype = {
 		
 		this.floor = this.actor.floor;
 		
-		// this.actor.x = this.xPos;
-		// this.actor.y = this.yPos;
-		// this.actor.z = this.zPos;
-		
-		// this.floor = pos.floor;
-		
-		// this.map.walked[pos.zCurr][pos.yCurr][pos.xCurr] = 1;
-// 		
-		// var here = this.map.map[pos.zCurr][pos.yCurr][pos.xCurr];
-		// if (2 <= here && here <= 5 ) {
-			// this.map.walked[pos.zCurr+1][pos.yCurr][pos.xCurr] = 1;
-// 
-		// }
-// 
-		// if (6 <= here && here <= 9 ) {
-			// this.map.walked[pos.zCurr-1][pos.yCurr][pos.xCurr] = 1;
-// 
-		// }
-// 		
-		// this.updateFloorStatus(pos.floor);
-
 		var xCurr = Math.floor(this.xPos);
 		var yCurr = Math.floor(this.yPos);
 		var zCurr = Math.floor(this.zPos);
