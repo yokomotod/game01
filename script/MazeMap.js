@@ -1217,19 +1217,21 @@ MazeMap.prototype = {
 
 		var xCurr = Math.floor(x);
 		var yCurr = Math.floor(y);
+		var zCurr = Math.floor(z);
 		var xNext = Math.floor(x + dx + xOffset);
 		var yNext = Math.floor(y + dy + yOffset);
-		var zCurr = Math.floor(z);
 
-		//if (zCurr == 1)
-			//alert("zCurr = 1")
-		//if (this.map[zCurr][yCurr][xCurr]!=0)alert(this.map[zCurr][yCurr][xCurr]);
+		var collided = false;
+		
 		if(this.map[zCurr][yCurr][xCurr] == 0) {
 			if(this.map[zCurr][yCurr][xNext] == 0
 				|| (this.map[zCurr][yCurr][xNext] == 4 && dx > 0)
 				|| (this.map[zCurr][yCurr][xNext] == 5 && dx < 0)
 				|| (6 <= this.map[zCurr][yCurr][xNext] && this.map[zCurr][yCurr][xNext] <= 9 )) {
 				x += dx;
+			}
+			else {
+				collided = true;
 			}
 
 			if(this.map[zCurr][yNext][xCurr] == 0
@@ -1238,13 +1240,20 @@ MazeMap.prototype = {
 				|| (6 <= this.map[zCurr][yNext][xCurr] && this.map[zCurr][yNext][xCurr] <= 9)) {
 				y += dy;
 			}
-		// } else {
+			else {
+				collided = true;
+			}
 		} else if(this.map[zCurr][yCurr][xCurr] == 4) {
 			x += dx;
 			z += dx;
+
 			if(this.map[zCurr][yNext][xCurr] != 1) {
 				y += dy;				
 			}			
+			else {
+				collided = true;
+			}
+
 			if(z < floor)
 				z = floor;			
 			if(Math.floor(x) > xCurr) {
@@ -1254,9 +1263,14 @@ MazeMap.prototype = {
  		} else if(this.map[zCurr][yCurr][xCurr] == 5) {
 			x += dx;
 			z -= dx;
+
 			if(this.map[zCurr][yNext][xCurr] != 1) {
 				y += dy;				
 			}
+			else {
+				collided = true;
+			}
+
 			if(z < floor)
 				z = floor;			
 			if(Math.floor(x) < xCurr) {
@@ -1266,9 +1280,14 @@ MazeMap.prototype = {
 		} else if(this.map[zCurr][yCurr][xCurr] == 2) {
 			y += dy;
 			z += dy;
+
 			if(this.map[zCurr][yCurr][xNext] != 1) {
 				x += dx;				
 			}			
+			else {
+				collided = true;
+			}
+
 			if(z < floor)
 				z = floor;			
 			if(Math.floor(y) > yCurr) {
@@ -1278,9 +1297,14 @@ MazeMap.prototype = {
 		} else if(this.map[zCurr][yCurr][xCurr] == 3) {
 			y += dy;
 			z -= dy;			
+
 			if(this.map[zCurr][yCurr][xNext] != 1) {
 				x += dx;				
 			}			
+			else {
+				collided = true;
+			}
+
 			if(z < floor)
 				z = floor;			
 			if(Math.floor(y) < yCurr) {
@@ -1292,6 +1316,6 @@ MazeMap.prototype = {
 			z -= 0.01;
 		}
 		
-		return {x:x, y:y, z:z, xCurr:xCurr, yCurr:yCurr, zCurr:zCurr, floor:floor};
+		return {x:x, y:y, z:z, xCurr:xCurr, yCurr:yCurr, zCurr:zCurr, floor:floor, collided:collided};
 	},
 }

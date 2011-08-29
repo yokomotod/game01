@@ -72,6 +72,7 @@ Game.prototype = {
 		actorModel = new ActorModel();
 
 		this.actor = new Actor(0, this.xPos, this.yPos, this.zPos);
+		this.actor.direction = this.direction;
 		this.map.actors[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)][0] = this.actor;
 		
 		this.actors = new Array();
@@ -145,48 +146,71 @@ Game.prototype = {
 		gm.key = 0;
 	},
 	movePlayer : function(d) {
-		var dx = d * Math.sin(this.direction) * 0.05;
-		var dy = d * Math.cos(this.direction) * 0.05;
+		// var dx = d * Math.sin(this.direction) * 0.01;
+		// var dy = d * Math.cos(this.direction) * 0.01;
+// 
+		// var pos = this.map.move(this.xPos, this.yPos, this.zPos, this.floor, dx, dy);		
+// 
+		// for(var id in this.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
+			// if(this.actor.id == id)
+				// continue;
+// 			
+			// var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
+			// if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
+				// return;
+			// }
+		// }
+// 		
+		// delete this.map.actors[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)][0];
+		// this.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][0] = this.actor;
 
-		var pos = this.map.move(this.xPos, this.yPos, this.zPos, this.floor, dx, dy);		
+		this.actor.move(this.map, d);
+		
+		this.xPos = this.actor.x;
+		this.yPos = this.actor.y;
+		this.zPos = this.actor.z;
+		
+		this.floor = this.actor.floor;
+		
+		// this.actor.x = this.xPos;
+		// this.actor.y = this.yPos;
+		// this.actor.z = this.zPos;
+		
+		// this.floor = pos.floor;
+		
+		// this.map.walked[pos.zCurr][pos.yCurr][pos.xCurr] = 1;
+// 		
+		// var here = this.map.map[pos.zCurr][pos.yCurr][pos.xCurr];
+		// if (2 <= here && here <= 5 ) {
+			// this.map.walked[pos.zCurr+1][pos.yCurr][pos.xCurr] = 1;
+// 
+		// }
+// 
+		// if (6 <= here && here <= 9 ) {
+			// this.map.walked[pos.zCurr-1][pos.yCurr][pos.xCurr] = 1;
+// 
+		// }
+// 		
+		// this.updateFloorStatus(pos.floor);
 
-		for(var id in this.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
-			if(this.actor.id == id)
-				continue;
-			
-			var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
-			if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
-				return;
-			}
-		}
+		var xCurr = Math.floor(this.xPos);
+		var yCurr = Math.floor(this.yPos);
+		var zCurr = Math.floor(this.zPos);
 		
-		delete this.map.actors[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)][0];
-		this.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][0] = this.actor;
-
-		this.xPos = pos.x;
-		this.yPos = pos.y;
-		this.zPos = pos.z;
+		this.map.walked[zCurr][yCurr][xCurr] = 1;
 		
-		this.actor.x = this.xPos;
-		this.actor.y = this.yPos;
-		this.actor.z = this.zPos;
-		
-		this.floor = pos.floor;
-		
-		this.map.walked[pos.zCurr][pos.yCurr][pos.xCurr] = 1;
-		
-		var here = this.map.map[pos.zCurr][pos.yCurr][pos.xCurr];
+		var here = this.map.map[zCurr][yCurr][xCurr];
 		if (2 <= here && here <= 5 ) {
-			this.map.walked[pos.zCurr+1][pos.yCurr][pos.xCurr] = 1;
+			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
 
 		}
 
 		if (6 <= here && here <= 9 ) {
-			this.map.walked[pos.zCurr-1][pos.yCurr][pos.xCurr] = 1;
+			this.map.walked[zCurr-1][yCurr][xCurr] = 1;
 
 		}
 		
-		this.updateFloorStatus(pos.floor);
+		this.updateFloorStatus(this.floor);
 	},
 	turn : function(d) {
 
@@ -196,6 +220,8 @@ Game.prototype = {
 			this.direction = 2 * Math.PI;
 		else if(this.direction > 2 * Math.PI)
 			this.direction = 0;
+			
+		this.actor.direction = this.direction;
 
 	},
 	updateFloorStatus : function(floor) {
