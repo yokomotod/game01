@@ -2,25 +2,56 @@ var GameMaster = function() {
 	this.initialize.apply(this, arguments);
 }
 
+var SCENES = {
+	start : EmptyScene,
+	game : Game,
+};
+
 GameMaster.prototype = {
 	initialize  : function() {
-		this.game = null;
+		this.game = new EmptyScene();
 		this.key = null;
 	},
 	loop : function() {
 		this.game.update();
 		this.game.draw();
 	},
-	newScene : function(scene) {
-		switch (scene) {
-			case 0:
-				gm.game = new StartScene();
-				break;
-			case 1:
-				gm.game = new Game();
-				break;
+	loadScene : function(scene) {
+		var url = scene+".html";
+		
+		var req = new XMLHttpRequest();
+		if(! req) {
+			alert("failed : loadScene");
 		}
+
+		req.docurl=url;
+		req.onreadystatechange = function() {
+			if(this.readyState  == 4)
+			{
+				if(this.status  == 200 || this.status==0){
+					document.getElementById("main").innerHTML = this.responseText;
+					if(SCENES[scene] == undefined){
+						alert("unknown scene : "+scene);
+					}
+					gm.game = new SCENES[scene]();
+				}else{ 
+					alert("Error loading Document: "+this.docurl+" status "+this.status);
+				}
+			}
+		};
+		req.open("GET", url, true);
+		req.send("");
 	},
+	// newScene : function(scene) {
+		// switch (scene) {
+			// case 0:
+				// this.loadScene("start");
+				// break;
+			// case 1:
+				// this.loadScene("game");
+				// break;
+		// }
+	// },
 }
 
 var gm;

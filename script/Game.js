@@ -1,5 +1,3 @@
-// var mapper;
-
 var Game = function() {
 	this.initialize.apply(this, arguments);
 }
