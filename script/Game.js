@@ -3,29 +3,18 @@ var Game = function() {
 }
 
 Game.SCALE = 2.0;
-Game.XSIZE = 10;
-Game.YSIZE = 10;
-Game.ZSIZE = 4;
+Game.XSIZE = 4;
+Game.YSIZE = 4;
+Game.ZSIZE = 1;
 
 Game.prototype = {
 	initialize : function() {
-		this.setupHTML();
 		this.setupWebGL();
 		this.setupMaze();
 		this.setupActor();
 		this.setupMapper();
 				
 		this.draw();	
-	},
-	setupHTML : function() {
-		document.getElementById("main").innerHTML = 
-				'<canvas id="canvas" width="960" height="540"></canvas>' +
-				'<div id="menu" class="window">' +
-				'	<h1 style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px">Game01</h1>' +
-				'	<div id="floor" style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px"></div>' +
-				'	<p onclick="gm.newScene(0)">EXIT</p>' +
-				'</div>' +
-				'<canvas id="map" class="window" width="507" height="507" style="display:none" onclick=hidemap()></div>';
 	},
 	setupWebGL : function() {
 		var canvas = document.getElementById("canvas");
@@ -83,19 +72,20 @@ Game.prototype = {
 		this.actor = new Actor();
 
 		this.actors = new Array();
-		var i=0;
-		for (var z=0; z<Game.ZSIZE-1; z++) {
+		var id=0;
+		for (var z=0; z<Game.ZSIZE; z++) {
 		for (var y=1; y<Game.YSIZE-1; y++) {
 		for (var x=1; x<Game.XSIZE-1; x++) {
 			if (this.map.map[z][y][x] != 0)
 				continue;
 				
-			this.actors[i] = new Actor(x, y, z);
-			i++;
+			this.actors[id] = new Actor(id, x, y, z);
+			this.map.actors[z][y][x][id] = this.actors[id];
+			id++;
 		}
 		}
 		}
-		this.actorNum = i;
+		this.actorNum = id;
 	},
 	setupMapper : function() {
 		var mapCanvas = document.getElementById("map");

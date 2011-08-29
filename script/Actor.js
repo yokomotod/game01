@@ -75,7 +75,8 @@ var Actor = function () {
 }
 
 Actor.prototype = {
-	initialize : function(x, y, z) {
+	initialize : function(id, x, y, z) {
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -96,9 +97,29 @@ Actor.prototype = {
 		
 		var pos = map.move(this.x, this.y, this.z, this.floor, dx, dy);
 
-		if (this.x == pos.x || this.y == pos.y)
-			this.direction = Math.random()*Math.PI*2;
+		//alert(this.id+" : ("+this.x+","+this.y+","+this.z+")->("+pos.x+","+pos.y+","+pos.z+")");
+		
+		if(this.x == pos.x && this.y == pos.y && this.z == pos.z){
+			//alert("freeze : "+this.id);
+		}
 
+		if (this.x == pos.x || this.y == pos.y)
+			this.direction += Math.PI*2/3 * (1 + Math.random());
+
+		for(var id in gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
+			if(this.id == id)
+				continue;
+			
+			var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
+			if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
+				this.direction += Math.PI*2/3 * (1 + Math.random());
+				return;
+			}
+		}
+		
+		delete gm.game.map.actors[Math.floor(this.z)][Math.floor(this.y)][Math.floor(this.x)][this.id];
+		gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id] = this;
+		
 		this.x = pos.x;
 		this.y = pos.y;
 		this.z = pos.z;

@@ -50,6 +50,16 @@ MazeMap.prototype = {
 			}
 		}
 
+		this.actors = new Array(this.zSize);
+		for(var z = 0; z < this.zSize; z++) {
+			this.actors[z] = new Array(this.ySize);
+			for(var y = 0; y < this.ySize; y++) {
+				this.actors[z][y] = new Array(this.xSize);
+				for(var x = 0; x < this.xSize; x++) {
+					this.actors[z][y][x] = {};
+				}
+			}
+		}
 		// this.map[0][2][1] = 2;
 		// this.map[0][2][2] = 2;
 		// this.map[0][2][3] = 2;
