@@ -120,9 +120,6 @@ Actor.prototype = {
 			}
 		}
 		
-		delete gm.game.map.actors[Math.floor(this.z)][Math.floor(this.y)][Math.floor(this.x)][this.id];
-		gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id] = this;
-		
 		this.x = pos.x;
 		this.y = pos.y;
 		this.z = pos.z;

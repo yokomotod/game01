@@ -75,25 +75,25 @@ Game.prototype = {
 
 		this.actors = new Array();
 		
-		this.actors[0] = new Actor(0, 1, 1, 0);
-		this.map.actors[0][1][1][0] = this.actors[0];
-		this.actorNum = 1;
+		// this.actors[0] = new Actor(0, 1, 1, 0);
+		// this.map.actors[0][1][1][0] = this.actors[0];
+		// this.actorNum = 1;
 		
-		// var id=0;
-		// for (var z=0; z<Game.ZSIZE; z++) {
-		// for (var y=1; y<Game.YSIZE-1; y++) {
-		// for (var x=1; x<Game.XSIZE-1; x++) {
-			// if (this.map.map[z][y][x] != 0)
-				// continue;
-// 				
-			// this.actors[id] = new Actor(id, x, y, z);
-			// this.map.actors[z][y][x][id] = this.actors[id];
-			// id++;
-// 			
-		// }
-		// }
-		// }
-		// this.actorNum = id;
+		var id=0;
+		for (var z=0; z<Game.ZSIZE; z++) {
+		for (var y=1; y<Game.YSIZE-1; y++) {
+		for (var x=1; x<Game.XSIZE-1; x++) {
+			if (this.map.map[z][y][x] != 0)
+				continue;
+				
+			this.actors[id] = new Actor(id, x, y, z);
+			this.map.actors[z][y][x][id] = this.actors[id];
+			id++;
+			
+		}
+		}
+		}
+		this.actorNum = id;
 	},
 	setupMapper : function() {
 		var mapCanvas = document.getElementById("map");
