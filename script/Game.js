@@ -114,19 +114,14 @@ Game.prototype = {
 		this.mapDisplay = "none";
 	},
 	update : function() {
-		// this.inputProc();
-		
 		for (var i=0; i < this.actorNum; i++) {
 			this.actors[i].update(this.map);
 		}
 
 		this.updateHPStatus(this.actor.hp);
 	},
-	inputProc : function() {
-		switch(gm.key) {
-			case 0:
-				return;
-				
+	inputProc : function(key) {
+		switch(key) {
 			// a:left
 			case 65:
 			case 37:
@@ -152,8 +147,6 @@ Game.prototype = {
 				this.toggleMapDisplay();
 				break;
 		}
-
-		gm.key = 0;
 	},
 	movePlayer : function(d) {
 		this.actor.move(this.map, d);
