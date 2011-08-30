@@ -101,9 +101,6 @@ Actor.prototype = {
 		this.hp = 200;
 	},
 	update : function(map) {
-		var collided = this.move(map, 1);
-		if (collided) {
-		}
 	},
 	moveCheck : function (map, sign) {
 

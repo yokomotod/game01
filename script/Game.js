@@ -129,7 +129,6 @@ Game.prototype = {
 			case 87:
 			case 38:
 			  pushEvent(new PlayerMoveEvent(this.actor, this.map, 1));
-				//this.movePlayer(1);
 				break;
 			// d:right
 			case 68:
@@ -140,7 +139,6 @@ Game.prototype = {
 			case 83:
 			case 40:
         pushEvent(new PlayerMoveEvent(this.actor, this.map, -1));
-				//this.movePlayer(-1);
 				break;
 			// space
 			case 32:
@@ -148,28 +146,6 @@ Game.prototype = {
 				break;
 		}
 	},
-  // movePlayer : function(d) {
-    // this.actor.move(this.map, d);
-//     
-    // var xCurr = this.actor.xZone;
-    // var yCurr = this.actor.yZone;
-    // var zCurr = this.actor.floor;
-//     
-    // this.map.walked[zCurr][yCurr][xCurr] = 1;
-//     
-    // var here = this.map.map[zCurr][yCurr][xCurr];
-    // if (2 <= here && here <= 5 ) {
-      // this.map.walked[zCurr+1][yCurr][xCurr] = 1;
-// 
-    // }
-// 
-    // if (6 <= here && here <= 9 ) {
-      // this.map.walked[zCurr-1][yCurr][xCurr] = 1;
-// 
-    // }
-//     
-    // this.updateFloorStatus(this.actor.floor);
-  // },
 	turn : function(d) {
 
 		var direction = this.actor.direction + d * Math.PI * 0.02;
