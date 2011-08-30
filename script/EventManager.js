@@ -65,7 +65,7 @@ EmptyListener.prototype.tick = function(e) {}
 
 var KeyListener = function () {}
 KeyListener.prototype.tick = function(e) {
-  alert(e.key);
+  gm.game.inputProc(e.key);
 }
 
 var NewsceneListener = function() {}

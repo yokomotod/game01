@@ -20,6 +20,7 @@ Game.prototype = {
 		this.setupMapper();
 		
 		this.console = new Console();
+		attachListener(G.EVENT_KEY, new KeyListener());
 		
 		this.draw();	
 	},
@@ -113,7 +114,7 @@ Game.prototype = {
 		this.mapDisplay = "none";
 	},
 	update : function() {
-		this.inputProc();
+		// this.inputProc();
 		
 		for (var i=0; i < this.actorNum; i++) {
 			this.actors[i].update(this.map);
