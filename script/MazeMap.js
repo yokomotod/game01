@@ -3,7 +3,7 @@ var MazeMap = function() {
 	this.initialize.apply(this, arguments);
 }
 MazeMap.prototype = {
-	initialize : function() {
+	initialize : function(xStart, yStart, zStart) {
 		this.xSize = Game.XSIZE;
 		this.ySize = Game.YSIZE;
 		this.zSize = Game.ZSIZE;
@@ -36,7 +36,7 @@ MazeMap.prototype = {
 			}
 		}
 
-		while(this.make()) {
+		while(this.make(xStart, yStart, zStart)) {
 		};
 
 		this.walked = new Array(this.zSize);
@@ -409,9 +409,9 @@ MazeMap.prototype = {
 				
 		return {x:xNext, y:yNext, z:zNext, d:this.gocheck(xNext, yNext, zNext)};
 	},
-	step1 : function() {
-		var x, y;
-
+	step1 : function(xStart, yStart, zStart) {
+		// var x, y;
+// 
 		// for (x = 0; x < this.xSize; x++) {
 		// this.map[x][0] = 0;
 		// this.map[x][this.ySize - 1] = 0;
@@ -421,8 +421,8 @@ MazeMap.prototype = {
 		// this.map[this.xSize - 1][y] = 0;
 		// }
 
-		this.map[0][1][1] = 0;
-		this.stack[this.numRoad] = {x:1, y:1, z:0};
+		this.map[zStart][yStart][xStart] = 0;
+		this.stack[this.numRoad] = {x:xStart, y:yStart, z:zStart};
 		this.numRoad++;
 
 		// this.map[this.xSize - 1][this.ySize - 1] = 0;
@@ -490,10 +490,10 @@ MazeMap.prototype = {
 						
 		}
 	},
-	make : function() {
+	make : function(xStart, yStart, zStart) {
 		switch (this.status) {
 			case 1:
-				this.step1();
+				this.step1(xStart, yStart, zStart);
 				this.status = 2;
 				break;
 			case 2:

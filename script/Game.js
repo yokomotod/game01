@@ -3,9 +3,14 @@ var Game = function() {
 }
 
 Game.SCALE = 2.0;
-Game.XSIZE = 4;
-Game.YSIZE = 4;
-Game.ZSIZE = 1;
+Game.XSIZE = 10;
+Game.YSIZE = 10;
+Game.ZSIZE = 4;
+
+Game.XSTART = 1.5;
+Game.YSTART = 1.5;
+Game.ZSTART = 0;
+Game.DIRSTART = 0;
 
 Game.prototype = {
 	initialize : function() {
@@ -55,25 +60,29 @@ Game.prototype = {
 		gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
 	},
 	setupMaze : function() {
-		this.xPos = 1.5;
-		this.yPos = 1.5;
-		this.zPos = 0.0;
-		this.direction = 0;
+		// this.xPos = 1.5;
+		// this.yPos = 1.5;
+		// this.zPos = 0.0;
+		// this.direction = 0;
 
-		this.floor = 0;
+		// this.floor = 0;
 		
-		this.map = new MazeMap();
+		var xStart = Math.floor(Game.XSTART);
+		var yStart = Math.floor(Game.YSTART);
+		var zStart = Math.floor(Game.ZSTART);
+		
+		this.map = new MazeMap(xStart, yStart, zStart);
 
-		this.map.walked[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)] = 1;
+		this.map.walked[zStart][yStart][xStart] = 1;
 
-		this.updateFloorStatus(this.floor);
+		this.updateFloorStatus(zStart);
 	},
 	setupActor : function() {
 		actorModel = new ActorModel();
 
-		this.actor = new Actor(0, this.xPos, this.yPos, this.zPos);
-		this.actor.direction = this.direction;
-		this.map.actors[Math.floor(this.zPos)][Math.floor(this.yPos)][Math.floor(this.xPos)][0] = this.actor;
+		var actor = new Actor(0, Game.XSTART, Game.YSTART, Game.ZSTART, Game.DIRSTART);
+		this.actor = actor;
+		this.map.actors[actor.floor][actor.yZone][actor.xZone][actor.id] = actor;
 		
 		this.actors = new Array();
 		
@@ -144,15 +153,9 @@ Game.prototype = {
 	movePlayer : function(d) {
 		this.actor.move(this.map, d);
 		
-		this.xPos = this.actor.x;
-		this.yPos = this.actor.y;
-		this.zPos = this.actor.z;
-		
-		this.floor = this.actor.floor;
-		
-		var xCurr = Math.floor(this.xPos);
-		var yCurr = Math.floor(this.yPos);
-		var zCurr = Math.floor(this.zPos);
+		var xCurr = this.actor.xZone;
+		var yCurr = this.actor.yZone;
+		var zCurr = this.actor.floor;
 		
 		this.map.walked[zCurr][yCurr][xCurr] = 1;
 		
@@ -167,18 +170,18 @@ Game.prototype = {
 
 		}
 		
-		this.updateFloorStatus(this.floor);
+		this.updateFloorStatus(this.actor.floor);
 	},
 	turn : function(d) {
 
-		this.direction += d * Math.PI * 0.02;
+		var direction = this.actor.direction + d * Math.PI * 0.02;
 
-		if(this.direction < 0)
-			this.direction = 2 * Math.PI;
-		else if(this.direction > 2 * Math.PI)
-			this.direction = 0;
+		if(direction < 0)
+			direction = 2 * Math.PI;
+		else if(direction > 2 * Math.PI)
+			direction = 0;
 			
-		this.actor.direction = this.direction;
+		this.actor.direction = direction;
 
 	},
 	updateFloorStatus : function(floor) {
@@ -206,16 +209,16 @@ Game.prototype = {
 		mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
 		mat4.translate(mvMatrix, cameraPos);
 
-		mat4.rotate(mvMatrix, this.direction, [0, 0, 1]);
-		mat4.translate(mvMatrix, [-this.xPos*Game.SCALE, -this.yPos*Game.SCALE, -this.zPos*Game.SCALE]);
-
+		mat4.rotate(mvMatrix, this.actor.direction, [0, 0, 1]);
+		mat4.translate(mvMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
+		
 		this.map.draw();
 
 		for (var i=0; i < this.actorNum; i++) {
 			this.actors[i].draw();
 		}
 
-		this.mapper.draw(this.map.map, this.map.walked, this.xPos, this.yPos, this.floor, this.direction);
+		this.mapper.draw(this.map.map, this.map.walked, this.actor.x, this.actor.y, this.actor.floor, this.actor.direction);
 
 	},
 }

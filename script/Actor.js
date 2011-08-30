@@ -75,15 +75,24 @@ var Actor = function () {
 }
 
 Actor.prototype = {
-	initialize : function(id, x, y, z) {
+	initialize : function(id, x, y, z, direction) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		
-		this.floor = z;
+		if(direction == undefined) {
+			this.direction = Math.random()*Math.PI*2;			
+		}
+		else {
+			this.direction = direction;
+		}
+
+		this.xZone = Math.floor(this.x);
+		this.yZone = Math.floor(this.y);
 		
-		this.direction = Math.random()*Math.PI*2;
+		this.floor = Math.floor(this.z);
+		
 	},
 	update : function(map) {
 		var collided = this.move(map, 1);
@@ -118,7 +127,10 @@ Actor.prototype = {
 		this.y = pos.y;
 		this.z = pos.z;
 		
-		this.floor = pos.floor;
+		this.xZone = Math.floor(this.x);
+		this.yZone = Math.floor(this.y);
+		
+		this.floor = Math.floor(this.z);
 		
 		return pos.collided;
 	},
