@@ -80,7 +80,7 @@ Game.prototype = {
 	setupActor : function() {
 		actorModel = new ActorModel();
 
-		var actor = new Actor(0, Game.XSTART, Game.YSTART, Game.ZSTART, Game.DIRSTART);
+		var actor = new Actor(Game.XSTART, Game.YSTART, Game.ZSTART, Game.DIRSTART);
 		this.actor = actor;
 		this.map.actors[actor.floor][actor.yZone][actor.xZone][actor.id] = actor;
 		
@@ -93,9 +93,8 @@ Game.prototype = {
 			if (this.map.map[z][y][x] != 0)
 				continue;
 			
-			var id = i+1;
-			this.actors[i] = new Actor(id, x, y, z);
-			this.map.actors[z][y][x][id] = this.actors[i];
+			this.actors[i] = new Actor(x, y, z);
+			this.map.actors[z][y][x][this.actors[i].id] = this.actors[i];
 			i++;
 			
 		}

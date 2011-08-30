@@ -74,9 +74,14 @@ var Actor = function () {
 	this.initialize.apply(this, arguments);
 }
 
+
 Actor.prototype = {
-	initialize : function(id, x, y, z, direction) {
-		this.id = id;
+	nextId : 0,
+	
+	initialize : function(x, y, z, direction) {
+		this.id = this.nextId;
+		Actor.prototype.nextId++;
+		
 		this.x = x;
 		this.y = y;
 		this.z = z;
