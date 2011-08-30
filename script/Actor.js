@@ -98,6 +98,7 @@ Actor.prototype = {
 		
 		this.floor = Math.floor(this.z);
 		
+		this.hp = 200;
 	},
 	update : function(map) {
 		var collided = this.move(map, 1);
@@ -121,6 +122,8 @@ Actor.prototype = {
 			
 			var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
 			if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
+				gm.game.console.write(this.id+"の攻撃！"+a.id+"に１５のダメージ！");
+				a.hp -= 15;
 				return true;
 			}
 		}

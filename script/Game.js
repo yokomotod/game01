@@ -3,9 +3,9 @@ var Game = function() {
 }
 
 Game.SCALE = 2.0;
-Game.XSIZE = 10;
-Game.YSIZE = 10;
-Game.ZSIZE = 4;
+Game.XSIZE = 4;
+Game.YSIZE = 4;
+Game.ZSIZE = 1;
 
 Game.XSTART = 1.5;
 Game.YSTART = 1.5;
@@ -84,6 +84,8 @@ Game.prototype = {
 		this.actor = actor;
 		this.map.actors[actor.floor][actor.yZone][actor.xZone][actor.id] = actor;
 		
+		this.updateHPStatus(this.actor.hp);
+		
 		this.actors = new Array();
 		
 		var i=0;
@@ -93,6 +95,9 @@ Game.prototype = {
 			if (this.map.map[z][y][x] != 0)
 				continue;
 			
+			if ((x+y)%2==0)
+				continue;
+				
 			this.actors[i] = new Actor(x, y, z);
 			this.map.actors[z][y][x][this.actors[i].id] = this.actors[i];
 			i++;
@@ -108,13 +113,13 @@ Game.prototype = {
 		this.mapDisplay = "none";
 	},
 	update : function() {
-		this.console.write([this.actors[0].direction, this.actors[0].x, this.actors[0].y]);
 		this.inputProc();
 		
 		for (var i=0; i < this.actorNum; i++) {
 			this.actors[i].update(this.map);
 		}
 
+		this.updateHPStatus(this.actor.hp);
 	},
 	inputProc : function() {
 		switch(gm.key) {
@@ -185,6 +190,9 @@ Game.prototype = {
 	},
 	updateFloorStatus : function(floor) {
 		document.getElementById("floor").innerHTML = "<p>Floor : "+(floor+1)+"</p>";		
+	},
+	updateHPStatus : function(hp) {
+		document.getElementById("hp").innerHTML = "<p>HP : "+hp+"</p>";		
 	},
 	toggleMapDisplay : function() {
 		if (this.mapDisplay == "none")
