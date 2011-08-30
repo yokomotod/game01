@@ -23,6 +23,8 @@ Game.prototype = {
 		attachListener(G.EVENT_KEY, new KeyListener());
     attachListener(G.EVENT_ACTOR_MOVE, new ActorMoveListener);
     attachListener(G.EVENT_PLAYER_MOVE, new PlayerMoveListener);
+    attachListener(G.EVENT_ACTOR_COLLIDE, new ActorCollideListener);
+    attachListener(G.EVENT_ACTOR_COLLIDE_ACTOR, new ActorCollideActorListener);
 		
 		this.draw();	
 	},
@@ -77,6 +79,7 @@ Game.prototype = {
 		actorModel = new ActorModel();
 
 		var actor = new Actor(Game.XSTART, Game.YSTART, Game.ZSTART, Game.DIRSTART);
+		actor.isPlayer = true;
 		this.actor = actor;
 		this.map.actors[actor.floor][actor.yZone][actor.xZone][actor.id] = actor;
 		
@@ -110,7 +113,7 @@ Game.prototype = {
 	},
 	update : function() {
 		for (var i=0; i < this.actorNum; i++) {
-			pushEvent(new ActorMoveEvent(this.actors[i], this.map, 1));
+			pushEvent(new ActorMoveEvent(this.actors[i], this.map.map, 1));
 		}
 
 		this.updateHPStatus(this.actor.hp);

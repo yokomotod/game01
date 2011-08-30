@@ -51,10 +51,20 @@ GameMaster.prototype = {
 }
 
 function pushEvent(e) {
+  if(! e.type){
+    alert("pushEvent() : invalid event");
+    return;
+  }
+
   gm.eventManager.pushEvent(e);  
 }
 
 function triggerEvent(e) {
+  if(! e.type){
+    alert("triggerEvent() : invalid event");
+    return;
+  }
+
   gm.eventManager.trigger(e);
 }
 

@@ -31,7 +31,7 @@ EventManager.prototype.tick = function() {
 
 EventManager.prototype.attachListener = function(eventType, eventListener) {
   if(eventType==undefined) {
-    alert("eventType undefined");
+    alert("eventType undefined : "+this.toSource);
     return;
   }
   
@@ -48,6 +48,8 @@ G.EVENT_KEY = 1;
 G.EVENT_NEWSCENE = 2;
 G.EVENT_ACTOR_MOVE = 3;
 G.EVENT_PLAYER_MOVE = 4;
+G.EVENT_ACTOR_COLLIDE = 5;
+G.EVENT_ACTOR_COLLIDE_ACTOR = 6;
 
 var EmptyEvent = function() {}
 EmptyEvent.prototype.type = G.EVENT_EMPTY;
@@ -76,6 +78,18 @@ var PlayerMoveEvent = function (player, map, sign) {
 }
 PlayerMoveEvent.prototype.type = G.EVENT_PLAYER_MOVE;
 
+var ActorCollideEvent = function (actor) {
+  this.actor = actor;
+}
+ActorCollideEvent.prototype.type = G.EVENT_ACTOR_COLLIDE;
+
+var ActorCollideActorEvent = function (actor, other) {
+  this.actor = actor;
+  this.other = other;
+}
+ActorCollideActorEvent.prototype.type = G.EVENT_ACTOR_COLLIDE_ACTOR;
+
+
 var EmptyListener = function() {}
 EmptyListener.prototype.tick = function(e) {}
 
@@ -96,6 +110,22 @@ ActorMoveListener.prototype.tick = function (e) {
 
 var PlayerMoveListener = function() {}
 PlayerMoveListener.prototype.tick = function (e) {
-  triggerEvent(new ActorMoveEvent(e.player, e.map, e.sign));
+  triggerEvent(new ActorMoveEvent(e.player, e.map.map, e.sign));
   e.player.movePlayer(e.map);
 }
+
+var ActorCollideListener = function() {}
+ActorCollideListener.prototype.tick = function (e) {
+  if(e.actor.isPlayer)
+    return;
+    
+  e.actor.collide();
+}
+
+var ActorCollideActorListener = function() {}
+ActorCollideActorListener.prototype.tick = function (e) {
+  triggerEvent(new ActorCollideEvent(e.actor));
+  
+  e.actor.collideOther(e.other);
+}
+

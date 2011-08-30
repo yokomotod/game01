@@ -103,18 +103,136 @@ Actor.prototype = {
 	update : function(map) {
 		var collided = this.move(map, 1);
 		if (collided) {
-			this.direction += Math.PI*2/3 * (1 + Math.random());
-			this.direction = this.direction % Math.PI*2;
 		}
+	},
+	moveCheck : function (map, sign) {
+
+    var x = this.x;
+    var y = this.y;
+    var z = this.z;
+    
+    var floor = this.floor;
+    	  
+    var d = sign * 0.01;
+    
+    var dx = d*Math.sin(this.direction);
+    var dy = d*Math.cos(this.direction);
+    
+    var xOffset = 0;
+    var yOffset = 0;
+    if(dx > 0)
+      xOffset = 0.3;
+    else
+      xOffset = -0.3;
+    if(dy > 0)
+      yOffset = 0.3;
+    else
+      yOffset = -0.3;
+
+    var xCurr = Math.floor(x);
+    var yCurr = Math.floor(y);
+    var zCurr = Math.floor(z);
+    var xNext = Math.floor(x + dx + xOffset);
+    var yNext = Math.floor(y + dy + yOffset);
+
+    if(map[zCurr][yCurr][xCurr] == 0) {
+      if(map[zCurr][yCurr][xNext] == 0
+        || (map[zCurr][yCurr][xNext] == 4 && dx > 0)
+        || (map[zCurr][yCurr][xNext] == 5 && dx < 0)
+        || (6 <= map[zCurr][yCurr][xNext] && map[zCurr][yCurr][xNext] <= 9 )) {
+        x += dx;
+      }
+      else {
+        pushEvent(new ActorCollideEvent(this));
+      }
+
+      if(map[zCurr][yNext][xCurr] == 0
+        || (map[zCurr][yNext][xCurr] == 2 && dy > 0)
+        || (map[zCurr][yNext][xCurr] == 3 && dy < 0)
+        || (6 <= map[zCurr][yNext][xCurr] && map[zCurr][yNext][xCurr] <= 9)) {
+        y += dy;
+      }
+      else {
+        pushEvent(new ActorCollideEvent(this));
+      }
+    } else if(map[zCurr][yCurr][xCurr] == 4) {
+      x += dx;
+      z += dx;
+
+      if(map[zCurr][yNext][xCurr] != 1) {
+        y += dy;        
+      }     
+      else {
+        pushEvent(new ActorCollideEvent(this));
+      }
+
+      if(z < floor)
+        z = floor;      
+      if(Math.floor(x) > xCurr) {
+        floor++;
+        z = floor;
+      }
+    } else if(map[zCurr][yCurr][xCurr] == 5) {
+      x += dx;
+      z -= dx;
+
+      if(map[zCurr][yNext][xCurr] != 1) {
+        y += dy;        
+      }
+      else {
+        pushEvent(new ActorCollideEvent(this));
+      }
+
+      if(z < floor)
+        z = floor;      
+      if(Math.floor(x) < xCurr) {
+        floor++;
+        z = floor;
+      }
+    } else if(map[zCurr][yCurr][xCurr] == 2) {
+      y += dy;
+      z += dy;
+
+      if(map[zCurr][yCurr][xNext] != 1) {
+        x += dx;        
+      }     
+      else {
+        pushEvent(new ActorCollideEvent(this));
+      }
+
+      if(z < floor)
+        z = floor;      
+      if(Math.floor(y) > yCurr) {
+        floor++;
+        z = floor;
+      }
+    } else if(map[zCurr][yCurr][xCurr] == 3) {
+      y += dy;
+      z -= dy;      
+
+      if(map[zCurr][yCurr][xNext] != 1) {
+        x += dx;        
+      }     
+      else {
+        pushEvent(new ActorCollideEvent(this));
+      }
+
+      if(z < floor)
+        z = floor;      
+      if(Math.floor(y) < yCurr) {
+        floor++;
+        z = floor;
+      }
+    } else if(6 <= map[zCurr][yCurr][xCurr] && map[zCurr][yCurr][xCurr] <= 9) {
+      floor--;
+      z -= 0.01;
+    }
+    
+    return {x:x, y:y, z:z, xCurr:xCurr, yCurr:yCurr, zCurr:zCurr, floor:floor};
 	},
 	move : function(map, sign) {
 				
-		var d = sign * 0.01;
-		
-		var dx = d*Math.sin(this.direction);
-		var dy = d*Math.cos(this.direction);
-		
-		var pos = map.move(this.x, this.y, this.z, this.floor, dx, dy);
+		var pos = this.moveCheck(map, sign);
 
 		for(var id in gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
 			if(this.id == id)
@@ -122,8 +240,7 @@ Actor.prototype = {
 			
 			var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
 			if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
-				gm.game.console.write(this.id+"の攻撃！"+a.id+"に１５のダメージ！");
-				a.hp -= 15;
+			  pushEvent(new ActorCollideActorEvent(this, a));
 				return true;
 			}
 		}
@@ -141,6 +258,14 @@ Actor.prototype = {
 		this.floor = Math.floor(this.z);
 		
 		return pos.collided;
+	},
+	collide : function () {
+    this.direction += Math.PI*2/3 * (1 + Math.random());
+    this.direction = this.direction % Math.PI*2;
+	},
+	collideOther : function (other) {
+    gm.game.console.write(this.id+"の攻撃！"+other.id+"に１５のダメージ！");
+    other.hp -= 15;   
 	},
   movePlayer : function(map) {
     var xCurr = this.xZone;
