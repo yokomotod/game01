@@ -7,6 +7,10 @@ var SCENES = {
 	game : Game,
 };
 
+// var now = parseInt(new Date().getTime());
+// var last = now;
+// var fps = 0.0;
+
 GameMaster.prototype = {
 	initialize  : function() {
 	  this.eventManager = new EventManager();
@@ -17,10 +21,17 @@ GameMaster.prototype = {
 		this.key = null;
 	},
 	loop : function() {
+	  // now = parseInt(new Date().getTime());
+	  // fps = (now - last);
+    // last = now;
+// 	  
+	  // document.getElementById("fps").innerHTML = fps;
+	  
 	  this.eventManager.tick();
 	  
 		this.game.update();
 		this.game.draw();
+		
 	},
 	loadScene : function(scene) {
 		var url = scene+".html";

@@ -112,7 +112,10 @@ Game.prototype = {
 		this.mapDisplay = "none";
 	},
 	update : function() {
+	  this.actor.update();
+	  
 		for (var i=0; i < this.actorNum; i++) {
+		  this.actors[i].update();
 			pushEvent(new ActorMoveEvent(this.actors[i], this.map.map, 1));
 		}
 

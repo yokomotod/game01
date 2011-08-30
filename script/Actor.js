@@ -99,8 +99,12 @@ Actor.prototype = {
 		this.floor = Math.floor(this.z);
 		
 		this.hp = 200;
+		this.wait = 0;
+		
 	},
 	update : function(map) {
+	  if(this.wait != 0)
+	    this.wait--;
 	},
 	moveCheck : function (map, sign) {
 
@@ -261,8 +265,13 @@ Actor.prototype = {
     this.direction = this.direction % Math.PI*2;
 	},
 	collideOther : function (other) {
+	  if(this.wait != 0)
+	    return;
+	    
     gm.game.console.write(this.id+"の攻撃！"+other.id+"に１５のダメージ！");
-    other.hp -= 15;   
+    other.hp -= 15;
+    
+    this.wait = 100;
 	},
   movePlayer : function(map) {
     var xCurr = this.xZone;
