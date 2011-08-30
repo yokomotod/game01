@@ -11,7 +11,7 @@ GameMaster.prototype = {
 	initialize  : function() {
 	  this.eventManager = new EventManager();
 	  
-	  this.eventManager.attachListener(G.EVENT_KEY, new KeyListener());
+    this.eventManager.attachListener(G.EVENT_NEWSCENE, new NewsceneListener());
 	  
 		this.game = new EmptyScene();
 		this.key = null;
@@ -58,6 +58,14 @@ GameMaster.prototype = {
 				// break;
 		// }
 	// },
+}
+
+function pushEvent(e) {
+  gm.eventManager.pushEvent(e);  
+}
+
+function attachListener(type, listener) {
+  gm.eventManager.attachListener(type, listener);
 }
 
 var gm;

@@ -3,7 +3,7 @@
 	<h1 style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px">Game01</h1>
 	<div id="floor" style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px"></div>
 	<div id="hp" style="margin:0;padding:0;padding-bottom: 5px;font-size: 20px"></div>
-	<p onclick="gm.loadScene('start')">EXIT</p>
+	<p onclick="pushEvent(new NewsceneEvent('start'))">EXIT</p>
 </div>
 <canvas id="map" class="window" width="507" height="507" style="display:none" onclick=hidemap()></canvas>
 <div id="console" class="window"></div>

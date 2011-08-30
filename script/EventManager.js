@@ -45,6 +45,7 @@ EventManager.prototype.attachListener = function(eventType, eventListener) {
 var G = {};
 G.EVENT_EMPTY = 0;
 G.EVENT_KEY = 1;
+G.EVENT_NEWSCENE = 2;
 
 var EmptyEvent = function() {}
 EmptyEvent.prototype.type = G.EVENT_EMPTY;
@@ -54,12 +55,22 @@ var KeyEvent = function(key){
 }
 KeyEvent.prototype.type = G.EVENT_KEY;
 
+var NewsceneEvent = function (scene) {
+  this.scene = scene;
+}
+NewsceneEvent.prototype.type = G.EVENT_NEWSCENE;
+
 var EmptyListener = function() {}
 EmptyListener.prototype.tick = function(e) {}
 
 var KeyListener = function () {}
 KeyListener.prototype.tick = function(e) {
   alert(e.key);
+}
+
+var NewsceneListener = function() {}
+NewsceneListener.prototype.tick = function (e) {
+  gm.loadScene(e.scene);  
 }
 
 // var eventManager = new EventManager();
