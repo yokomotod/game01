@@ -142,6 +142,26 @@ Actor.prototype = {
 		
 		return pos.collided;
 	},
+  movePlayer : function(map) {
+    var xCurr = this.xZone;
+    var yCurr = this.yZone;
+    var zCurr = this.floor;
+    
+    map.walked[zCurr][yCurr][xCurr] = 1;
+    
+    var here = map.map[zCurr][yCurr][xCurr];
+    if (2 <= here && here <= 5 ) {
+      map.walked[zCurr+1][yCurr][xCurr] = 1;
+
+    }
+
+    if (6 <= here && here <= 9 ) {
+      map.walked[zCurr-1][yCurr][xCurr] = 1;
+
+    }
+    
+    gm.game.updateFloorStatus(this.floor);
+  },
 	draw : function() {
 		actorModel.draw(this.x, this.y, this.z);
 	},

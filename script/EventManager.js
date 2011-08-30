@@ -9,7 +9,7 @@ EventManager.prototype.pushEvent = function(e) {
   this.eventsNum++;
 }
 
-EventManager.prototype.callListener = function(e) {
+EventManager.prototype.trigger = function(e) {
   if(!this.listeners[e.type]) {
     alert("unknown event type : " + e.type);
     return;
@@ -22,7 +22,7 @@ EventManager.prototype.callListener = function(e) {
 
 EventManager.prototype.tick = function() {
   for(var i = 0; i < this.eventsNum; i++) {
-    this.callListener(this.events[i]);
+    this.trigger(this.events[i]);
     delete this.events[i];
   }
 
@@ -46,6 +46,8 @@ var G = {};
 G.EVENT_EMPTY = 0;
 G.EVENT_KEY = 1;
 G.EVENT_NEWSCENE = 2;
+G.EVENT_ACTOR_MOVE = 3;
+G.EVENT_PLAYER_MOVE = 4;
 
 var EmptyEvent = function() {}
 EmptyEvent.prototype.type = G.EVENT_EMPTY;
@@ -60,6 +62,20 @@ var NewsceneEvent = function (scene) {
 }
 NewsceneEvent.prototype.type = G.EVENT_NEWSCENE;
 
+var ActorMoveEvent = function (actor, map, sign) {
+  this.actor = actor;
+  this.map = map
+  this.sign = sign;
+}
+ActorMoveEvent.prototype.type = G.EVENT_ACTOR_MOVE;
+
+var PlayerMoveEvent = function (player, map, sign) {
+  this.player = player;
+  this.map = map;
+  this.sign = sign;
+}
+PlayerMoveEvent.prototype.type = G.EVENT_PLAYER_MOVE;
+
 var EmptyListener = function() {}
 EmptyListener.prototype.tick = function(e) {}
 
@@ -73,19 +89,13 @@ NewsceneListener.prototype.tick = function (e) {
   gm.loadScene(e.scene);  
 }
 
-// var eventManager = new EventManager();
-// 
-// 
-// eventManager.addListener(G.EMPTY_EVENT, new EmptyListener());
-// 
-// eventManager.pushEvent(new EmptyEvent());
-// eventManager.pushEvent(new EmptyEvent());
-// eventManager.pushEvent(new EmptyEvent());
-// 
-// eventManager.tick();
-// 
-// alert("next");
-// 
-// eventManager.pushEvent(new EmptyEvent());
-// 
-// eventManager.tick();
+var ActorMoveListener = function() {}
+ActorMoveListener.prototype.tick = function (e) {
+  e.actor.move(e.map, e.sign);
+}
+
+var PlayerMoveListener = function() {}
+PlayerMoveListener.prototype.tick = function (e) {
+  triggerEvent(new ActorMoveEvent(e.player, e.map, e.sign));
+  e.player.movePlayer(e.map);
+}

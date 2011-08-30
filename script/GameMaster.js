@@ -48,20 +48,14 @@ GameMaster.prototype = {
 		req.open("GET", url, true);
 		req.send("");
 	},
-	// newScene : function(scene) {
-		// switch (scene) {
-			// case 0:
-				// this.loadScene("start");
-				// break;
-			// case 1:
-				// this.loadScene("game");
-				// break;
-		// }
-	// },
 }
 
 function pushEvent(e) {
   gm.eventManager.pushEvent(e);  
+}
+
+function triggerEvent(e) {
+  gm.eventManager.trigger(e);
 }
 
 function attachListener(type, listener) {

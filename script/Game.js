@@ -21,6 +21,8 @@ Game.prototype = {
 		
 		this.console = new Console();
 		attachListener(G.EVENT_KEY, new KeyListener());
+    attachListener(G.EVENT_ACTOR_MOVE, new ActorMoveListener);
+    attachListener(G.EVENT_PLAYER_MOVE, new PlayerMoveListener);
 		
 		this.draw();	
 	},
@@ -61,13 +63,6 @@ Game.prototype = {
 		gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
 	},
 	setupMaze : function() {
-		// this.xPos = 1.5;
-		// this.yPos = 1.5;
-		// this.zPos = 0.0;
-		// this.direction = 0;
-
-		// this.floor = 0;
-		
 		var xStart = Math.floor(Game.XSTART);
 		var yStart = Math.floor(Game.YSTART);
 		var zStart = Math.floor(Game.ZSTART);
@@ -115,7 +110,7 @@ Game.prototype = {
 	},
 	update : function() {
 		for (var i=0; i < this.actorNum; i++) {
-			this.actors[i].update(this.map);
+			pushEvent(new ActorMoveEvent(this.actors[i], this.map, 1));
 		}
 
 		this.updateHPStatus(this.actor.hp);
@@ -130,7 +125,8 @@ Game.prototype = {
 			// w:up
 			case 87:
 			case 38:
-				this.movePlayer(1);
+			  pushEvent(new PlayerMoveEvent(this.actor, this.map, 1));
+				//this.movePlayer(1);
 				break;
 			// d:right
 			case 68:
@@ -140,7 +136,8 @@ Game.prototype = {
 			// s:down
 			case 83:
 			case 40:
-				this.movePlayer(-1);
+        pushEvent(new PlayerMoveEvent(this.actor, this.map, -1));
+				//this.movePlayer(-1);
 				break;
 			// space
 			case 32:
@@ -148,28 +145,28 @@ Game.prototype = {
 				break;
 		}
 	},
-	movePlayer : function(d) {
-		this.actor.move(this.map, d);
-		
-		var xCurr = this.actor.xZone;
-		var yCurr = this.actor.yZone;
-		var zCurr = this.actor.floor;
-		
-		this.map.walked[zCurr][yCurr][xCurr] = 1;
-		
-		var here = this.map.map[zCurr][yCurr][xCurr];
-		if (2 <= here && here <= 5 ) {
-			this.map.walked[zCurr+1][yCurr][xCurr] = 1;
-
-		}
-
-		if (6 <= here && here <= 9 ) {
-			this.map.walked[zCurr-1][yCurr][xCurr] = 1;
-
-		}
-		
-		this.updateFloorStatus(this.actor.floor);
-	},
+  // movePlayer : function(d) {
+    // this.actor.move(this.map, d);
+//     
+    // var xCurr = this.actor.xZone;
+    // var yCurr = this.actor.yZone;
+    // var zCurr = this.actor.floor;
+//     
+    // this.map.walked[zCurr][yCurr][xCurr] = 1;
+//     
+    // var here = this.map.map[zCurr][yCurr][xCurr];
+    // if (2 <= here && here <= 5 ) {
+      // this.map.walked[zCurr+1][yCurr][xCurr] = 1;
+// 
+    // }
+// 
+    // if (6 <= here && here <= 9 ) {
+      // this.map.walked[zCurr-1][yCurr][xCurr] = 1;
+// 
+    // }
+//     
+    // this.updateFloorStatus(this.actor.floor);
+  // },
 	turn : function(d) {
 
 		var direction = this.actor.direction + d * Math.PI * 0.02;
