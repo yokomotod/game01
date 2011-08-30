@@ -7,12 +7,10 @@ var SCENES = {
 	game : Game,
 };
 
-// var now = parseInt(new Date().getTime());
-// var last = now;
-// var fps = 0.0;
-
 GameMaster.prototype = {
 	initialize  : function() {
+	  this.clock = new Clock();
+	  
 	  this.eventManager = new EventManager();
 	  
     this.eventManager.attachListener(G.EVENT_NEWSCENE, new NewsceneListener());
@@ -21,12 +19,8 @@ GameMaster.prototype = {
 		this.key = null;
 	},
 	loop : function() {
-	  // now = parseInt(new Date().getTime());
-	  // fps = (now - last);
-    // last = now;
-// 	  
-	  // document.getElementById("fps").innerHTML = fps;
-	  
+	  this.clock.tick();
+	  	  
 	  this.eventManager.tick();
 	  
 		this.game.update();
