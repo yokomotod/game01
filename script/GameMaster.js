@@ -9,10 +9,16 @@ var SCENES = {
 
 GameMaster.prototype = {
 	initialize  : function() {
+	  this.eventManager = new EventManager();
+	  
+	  this.eventManager.attachListener(G.EVENT_KEY, new KeyListener());
+	  
 		this.game = new EmptyScene();
 		this.key = null;
 	},
 	loop : function() {
+	  this.eventManager.tick();
+	  
 		this.game.update();
 		this.game.draw();
 	},
