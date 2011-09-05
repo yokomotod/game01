@@ -179,7 +179,7 @@ Game.prototype = {
 
     mvPushMatrix();
 
-    gl.useProgram(shaderProgram2);
+    useShaderProgram(0);
     mat4.translate(mvMatrix, [-1.5, 0.0, -3.0]);
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -188,14 +188,13 @@ Game.prototype = {
 
     mat4.translate(mvMatrix, [3.0, 0.0, 0.0]);
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
-    gl.vertexAttribPointer(shaderProgram2.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
     setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 
     mvPopMatrix();
 
-   gl.useProgram(shaderProgram);
-
+    useShaderProgram(1);
 		mat4.rotate(mvMatrix, degToRad(cameraRotX), [1, 0, 0]);
 		mat4.rotate(mvMatrix, degToRad(cameraRotY), [0, 1, 0]);
 		mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
