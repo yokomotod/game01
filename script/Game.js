@@ -66,6 +66,7 @@ Game.prototype = {
 
 		var actor = new Actor(Game.XSTART, Game.YSTART, Game.ZSTART, Game.DIRSTART);
 		actor.isPlayer = true;
+		actor.speed = 5;
 		this.actor = actor;
 		this.map.actors[actor.floor][actor.yZone][actor.xZone][actor.id] = actor;
 		

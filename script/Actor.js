@@ -133,6 +133,8 @@ Actor.prototype = {
 		this.id = this.nextId;
 		Actor.prototype.nextId++;
 		
+		this.speed = 1;
+		
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -165,7 +167,7 @@ Actor.prototype = {
     
     var floor = this.floor;
     	  
-    var d = sign * 0.01;
+    var d = sign * 0.01 * this.speed;
     
     var dx = d*Math.sin(this.direction);
     var dy = d*Math.cos(this.direction);
