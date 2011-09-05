@@ -1197,7 +1197,7 @@ MazeMap.prototype = {
 		}
 		}
 
-		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
+		this.model = new GLModel(GL.SHADER_TYPE_TEXTURE, vertices, vertexIndices, textureCoords, vertexNormals);
 	},
 	draw : function() {
 		this.model.draw();

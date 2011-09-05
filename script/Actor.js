@@ -54,7 +54,7 @@ ActorModel.prototype = {
 		
 		];
 		
-		this.model = new GLModel(vertices, vertexIndices, textureCoords, vertexNormals);
+		this.model = new GLColorModel(GL.SHADER_TYPE_COLOR,vertices, vertexIndices, textureCoords, vertexNormals);
 		this.size = size;
 	},
 	draw : function(x, y, z) {

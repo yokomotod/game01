@@ -1,5 +1,7 @@
 var gl;
 
+var GL = {SHADER_TYPE_COLOR:0, SHADER_TYPE_TEXTURE:1};
+
 function initGL(canvas) {
   try {
     gl = canvas.getContext("experimental-webgl");
@@ -48,8 +50,8 @@ function createShaderProgram(fragmentShaderSource, vertexShaderSource) {
   return shaderProgram;
 }
 
-function useShaderProgram(shaderProgramId) {
-  switch (shaderProgramId) {
+function useShaderProgram(shaderType) {
+  switch (shaderType) {
     case 0:
       shaderProgram = shaderProgramColor;
       break;
