@@ -106,6 +106,10 @@ Game.prototype = {
     attachListener(G.EVENT_ACTOR_COLLIDE_ACTOR, new ActorCollideActorListener);
 	},
 	update : function() {
+	  if (gm.mouse.right) {
+      pushEvent(new PlayerMoveEvent(this.actor, this.map, 1));	    
+	  }
+	  
 	  this.actor.update();
 	  
 		for (var i=0; i < this.actorNum; i++) {

@@ -115,16 +115,26 @@ var MouseListener = function () {}
 MouseListener.prototype.tick = function(e) {
   var mouse = e.mouse;
   if (mouse.down) {
-    gm.mouse.pressed = true;
+    if (mouse.left) {
+      gm.mouse.left = true;      
+    }
+    else if (mouse.right) {
+      gm.mouse.right = true;      
+    }
   }
   if (mouse.up) {
-    gm.mouse.pressed = false;
+    if (mouse.left) {
+      gm.mouse.left = false;      
+    }
+    else if (mouse.right) {
+      gm.mouse.right = false;      
+    }
   }
   if (mouse.move) {
     gm.mouse.prev = gm.mouse.curr;
     gm.mouse.curr = {x:mouse.x, y:mouse.y};
     
-    if (gm.mouse.pressed && gm.mouse.prev && gm.game.mouseProc)
+    if (gm.mouse.left && gm.mouse.prev && gm.game.mouseProc)
       gm.game.mouseProc();    
   }
 }

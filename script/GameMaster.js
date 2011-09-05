@@ -18,7 +18,7 @@ GameMaster.prototype = {
 	  
 		this.game = new EmptyScene();
 		this.key = null;
-		this.mouse = {prev:null, curr:null, pressed:false};
+		this.mouse = {prev:null, curr:null, right:false, left:false};
 	},
 	loop : function() {
 	  this.clock.tick();
