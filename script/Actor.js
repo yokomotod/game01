@@ -114,7 +114,7 @@ Actor.prototype = {
     
     var floor = this.floor;
     	  
-    var d = sign * 0.01;
+    var d = sign * 0.05;
     
     var dx = d*Math.sin(this.direction);
     var dy = d*Math.cos(this.direction);
@@ -233,21 +233,21 @@ Actor.prototype = {
 	},
 	move : function(map, sign) {
 				
-		var pos = this.moveCheck(map, sign);
+		var pos = this.moveCheck(map.map, sign);
 
-		for(var id in gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
+		for(var id in map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
 			if(this.id == id)
 				continue;
 			
-			var a = gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
+			var a = map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][id];
 			if((pos.x - a.x)*(pos.x - a.x) + (pos.y - a.y)*(pos.y - a.y) + (pos.z - a.z)*(pos.z - a.z) < 0.1){
 			  pushEvent(new ActorCollideActorEvent(this, a));
 				return true;
 			}
 		}
 		
-		delete gm.game.map.actors[Math.floor(this.z)][Math.floor(this.y)][Math.floor(this.x)][this.id];
-		gm.game.map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][this.id] = this;
+		delete map.actors[Math.floor(this.z)][Math.floor(this.y)][Math.floor(this.x)][this.id];
+		map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)][this.id] = this;
 		
 		this.x = pos.x;
 		this.y = pos.y;

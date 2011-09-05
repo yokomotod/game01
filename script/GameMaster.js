@@ -73,9 +73,14 @@ function triggerEvent(e) {
   gm.eventManager.trigger(e);
 }
 
+function clearEvent() {
+  gm.eventManager.clear();
+}
+
 function attachListener(type, listener) {
   gm.eventManager.attachListener(type, listener);
 }
+
 
 var gm;
 

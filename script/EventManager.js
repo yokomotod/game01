@@ -42,6 +42,11 @@ EventManager.prototype.attachListener = function(eventType, eventListener) {
   this.listeners[eventType][this.listeners[eventType].length] = eventListener;
 }
 
+EventManager.prototype.clear = function () {
+  this.events = new Array();
+  this.eventsNum = 0;
+}
+
 var G = {};
 G.EVENT_EMPTY = 0;
 G.EVENT_KEY = 1;
@@ -60,8 +65,10 @@ var KeyEvent = function(key){
 KeyEvent.prototype.type = G.EVENT_KEY;
 
 var NewsceneEvent = function (scene) {
+  // clearEvent();
   this.scene = scene;
 }
+
 NewsceneEvent.prototype.type = G.EVENT_NEWSCENE;
 
 var ActorMoveEvent = function (actor, map, sign) {
@@ -110,7 +117,7 @@ ActorMoveListener.prototype.tick = function (e) {
 
 var PlayerMoveListener = function() {}
 PlayerMoveListener.prototype.tick = function (e) {
-  triggerEvent(new ActorMoveEvent(e.player, e.map.map, e.sign));
+  triggerEvent(new ActorMoveEvent(e.player, e.map, e.sign));
   e.player.movePlayer(e.map);
 }
 

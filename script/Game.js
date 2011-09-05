@@ -3,9 +3,9 @@ var Game = function() {
 }
 
 Game.SCALE = 2.0;
-Game.XSIZE = 4;
-Game.YSIZE = 4;
-Game.ZSIZE = 1;
+Game.XSIZE = 10;
+Game.YSIZE = 10;
+Game.ZSIZE = 5;
 
 Game.XSTART = 1.5;
 Game.YSTART = 1.5;
@@ -20,11 +20,8 @@ Game.prototype = {
 		this.setupMapper();
 		
 		this.console = new Console();
-		attachListener(G.EVENT_KEY, new KeyListener());
-    attachListener(G.EVENT_ACTOR_MOVE, new ActorMoveListener);
-    attachListener(G.EVENT_PLAYER_MOVE, new PlayerMoveListener);
-    attachListener(G.EVENT_ACTOR_COLLIDE, new ActorCollideListener);
-    attachListener(G.EVENT_ACTOR_COLLIDE_ACTOR, new ActorCollideActorListener);
+		
+		this.setupEventListener();
 		
 		this.draw();	
 	},
@@ -111,12 +108,19 @@ Game.prototype = {
 		this.mapper = new Mapper(mapCanvas);
 		this.mapDisplay = "none";
 	},
+	setupEventListener : function() {
+    attachListener(G.EVENT_KEY, new KeyListener());
+    attachListener(G.EVENT_ACTOR_MOVE, new ActorMoveListener);
+    attachListener(G.EVENT_PLAYER_MOVE, new PlayerMoveListener);
+    attachListener(G.EVENT_ACTOR_COLLIDE, new ActorCollideListener);
+    attachListener(G.EVENT_ACTOR_COLLIDE_ACTOR, new ActorCollideActorListener);
+	},
 	update : function() {
 	  this.actor.update();
 	  
 		for (var i=0; i < this.actorNum; i++) {
 		  this.actors[i].update();
-			pushEvent(new ActorMoveEvent(this.actors[i], this.map.map, 1));
+			pushEvent(new ActorMoveEvent(this.actors[i], this.map, 1));
 		}
 
 		this.updateHPStatus(this.actor.hp);
