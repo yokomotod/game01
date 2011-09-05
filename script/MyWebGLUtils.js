@@ -325,7 +325,7 @@ float diffuseLightWeighting = max(dot(normal, lightDirection), 0.0) / max(distan
 vec3 lightWeighting = uAmbientColor + uPointLightingSpecularColor * specularLightWeighting + uPointLightingDiffuseColor * diffuseLightWeighting; \n\
 // float pointLightingWeighting = max(dot(transformedNormal, lightDirection), 0.0); \n\
 // vec3 vLightWeighting = uAmbientColor + uPointLightingColor * pointLightingWeighting; \n\
-gl_FragColor = vec4(vec3(1.0, 0.0, 0.0) * lightWeighting, 1.0); \n\
+gl_FragColor = vec4(vec3(0.0, 0.0, 1.0) * lightWeighting, 1.0); \n\
 \n\
 } \n\
 ";
