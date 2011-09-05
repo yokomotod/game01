@@ -13,10 +13,12 @@ GameMaster.prototype = {
 	  
 	  this.eventManager = new EventManager();
 	  
+    this.eventManager.attachListener(G.EVENT_MOUSE, new MouseListener());
     this.eventManager.attachListener(G.EVENT_NEWSCENE, new NewsceneListener());
 	  
 		this.game = new EmptyScene();
 		this.key = null;
+		this.mouse = {prev:null, curr:null, pressed:false};
 	},
 	loop : function() {
 	  this.clock.tick();

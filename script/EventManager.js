@@ -50,11 +50,12 @@ EventManager.prototype.clear = function () {
 var G = {};
 G.EVENT_EMPTY = 0;
 G.EVENT_KEY = 1;
-G.EVENT_NEWSCENE = 2;
-G.EVENT_ACTOR_MOVE = 3;
-G.EVENT_PLAYER_MOVE = 4;
-G.EVENT_ACTOR_COLLIDE = 5;
-G.EVENT_ACTOR_COLLIDE_ACTOR = 6;
+G.EVENT_MOUSE = 2;
+G.EVENT_NEWSCENE = 3;
+G.EVENT_ACTOR_MOVE = 4;
+G.EVENT_PLAYER_MOVE = 5;
+G.EVENT_ACTOR_COLLIDE = 6;
+G.EVENT_ACTOR_COLLIDE_ACTOR = 7;
 
 var EmptyEvent = function() {}
 EmptyEvent.prototype.type = G.EVENT_EMPTY;
@@ -63,6 +64,11 @@ var KeyEvent = function(key){
   this.key = key;
 }
 KeyEvent.prototype.type = G.EVENT_KEY;
+
+var MouseEvent = function(mouse){
+  this.mouse = mouse;
+}
+MouseEvent.prototype.type = G.EVENT_MOUSE;
 
 var NewsceneEvent = function (scene) {
   // clearEvent();
@@ -105,6 +111,23 @@ KeyListener.prototype.tick = function(e) {
   gm.game.inputProc(e.key);
 }
 
+var MouseListener = function () {}
+MouseListener.prototype.tick = function(e) {
+  var mouse = e.mouse;
+  if (mouse.down) {
+    gm.mouse.pressed = true;
+  }
+  if (mouse.up) {
+    gm.mouse.pressed = false;
+  }
+  if (mouse.move) {
+    gm.mouse.prev = gm.mouse.curr;
+    gm.mouse.curr = {x:mouse.x, y:mouse.y};
+    
+    if (gm.mouse.pressed && gm.mouse.prev && gm.game.mouseProc)
+      gm.game.mouseProc();    
+  }
+}
 var NewsceneListener = function() {}
 NewsceneListener.prototype.tick = function (e) {
   gm.loadScene(e.scene);  

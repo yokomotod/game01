@@ -24,6 +24,7 @@ Game.prototype = {
 		this.setupEventListener();
 		
 		// initBuffers();
+		this.directionY = 0;
 		
 		this.draw();	
 	},
@@ -141,8 +142,11 @@ Game.prototype = {
 				break;
 		}
 	},
+	mouseProc : function() {
+	  this.turn((gm.mouse.curr.x - gm.mouse.prev.x)*-0.05);
+	  this.turnY((gm.mouse.curr.y - gm.mouse.prev.y)*-0.05);
+	},
 	turn : function(d) {
-
 		var direction = this.actor.direction + d * Math.PI * 0.02;
 
 		if(direction < 0)
@@ -153,6 +157,17 @@ Game.prototype = {
 		this.actor.direction = direction;
 
 	},
+	turnY : function(d) {
+    var direction = this.directionY + d * Math.PI * 0.02;
+
+    if(direction < 0)
+      direction = 2 * Math.PI;
+    else if(direction > 2 * Math.PI)
+      direction = 0;
+      
+    this.directionY = direction;
+
+  },
 	updateFloorStatus : function(floor) {
 		document.getElementById("floor").innerHTML = "<p>Floor : "+(floor+1)+"</p>";		
 	},
@@ -204,6 +219,7 @@ Game.prototype = {
 		mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
 		mat4.translate(mvMatrix, cameraPos);
 
+    mat4.rotate(mvMatrix, this.directionY, [1, 0, 0]);
 		mat4.rotate(mvMatrix, this.actor.direction, [0, 0, 1]);
 		mat4.translate(mvMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
 		
