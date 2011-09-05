@@ -114,6 +114,9 @@ function initShaders() {
   shaderProgramColor.vertexPositionAttribute = gl.getAttribLocation(shaderProgramColor, "aVertexPosition");
   gl.enableVertexAttribArray(shaderProgramColor.vertexPositionAttribute);
 
+  shaderProgramColor.vertexNormalAttribute = gl.getAttribLocation(shaderProgramColor, "aVertexNormal");
+  gl.enableVertexAttribArray(shaderProgramColor.vertexNormalAttribute);
+
   shaderProgramColor.pMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uPMatrix");
   shaderProgramColor.mvMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uMVMatrix");
   shaderProgramColor.samplerUniform = gl.getUniformLocation(shaderProgramColor, "uSampler");
