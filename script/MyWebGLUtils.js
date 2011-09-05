@@ -106,7 +106,6 @@ function initShaders() {
     gl.uniform3f(shaderProgram.pointLightingLocationUniform, vCamera[0], vCamera[1], vCamera[2]);
 
     gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
-
   };
 
   shaderProgramColor = createShaderProgram(fragmentShaderSourceColor, vertexShaderSourceColor);
@@ -119,13 +118,35 @@ function initShaders() {
 
   shaderProgramColor.pMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uPMatrix");
   shaderProgramColor.mvMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uMVMatrix");
+  shaderProgramColor.nMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uNMatrix");
   shaderProgramColor.samplerUniform = gl.getUniformLocation(shaderProgramColor, "uSampler");
+  shaderProgramColor.materialShininessUniform = gl.getUniformLocation(shaderProgramColor, "uMaterialShininess");
+  shaderProgramColor.ambientColorUniform = gl.getUniformLocation(shaderProgramColor, "uAmbientColor");
+  shaderProgramColor.pointLightingLocationUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingLocation");
+  shaderProgramColor.pointLightingSpecularColorUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingSpecularColor");
+  shaderProgramColor.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingDiffuseColor");
 
   shaderProgramColor.setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
     gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 
+    var normalMatrix = mat3.create();
+    mat4.toInverseMat3(mvMatrix, normalMatrix);
+    mat3.transpose(normalMatrix);
+    gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
+
     gl.uniform1i(shaderProgram.samplerUniform, 0);
+
+    gl.uniform1f(shaderProgram.materialShininessUniform, 1.0);
+
+    gl.uniform3f(shaderProgram.ambientColorUniform, 0.6, 0.6, 0.6);
+    gl.uniform3f(shaderProgram.pointLightingSpecularColorUniform, 0.8, 0.8, 0.8);
+    gl.uniform3f(shaderProgram.pointLightingDiffuseColorUniform, 0.8, 0.8, 0.8);
+
+    var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.3, 0.5]);
+    gl.uniform3f(shaderProgram.pointLightingLocationUniform, vCamera[0], vCamera[1], vCamera[2]);
+
+    gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
   };
 
   useShaderProgram(1);
@@ -172,28 +193,28 @@ function mvPopMatrix() {
   mvMatrix = mvMatrixStack.pop();
 }
 
-function setMatrixUniforms() {
-  gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-  gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-
-  var normalMatrix = mat3.create();
-  mat4.toInverseMat3(mvMatrix, normalMatrix);
-  mat3.transpose(normalMatrix);
-  gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
-
-  gl.uniform1i(shaderProgram.samplerUniform, 0);
-
-  gl.uniform1f(shaderProgram.materialShininessUniform, 1.0);
-
-  gl.uniform3f(shaderProgram.ambientColorUniform, 0.6, 0.6, 0.6);
-  gl.uniform3f(shaderProgram.pointLightingSpecularColorUniform, 0.8, 0.8, 0.8);
-  gl.uniform3f(shaderProgram.pointLightingDiffuseColorUniform, 0.8, 0.8, 0.8);
-
-  var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.3, 0.5]);
-  gl.uniform3f(shaderProgram.pointLightingLocationUniform, vCamera[0], vCamera[1], vCamera[2]);
-
-  gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
-}
+// function setMatrixUniforms() {
+  // gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+  // gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+// 
+  // var normalMatrix = mat3.create();
+  // mat4.toInverseMat3(mvMatrix, normalMatrix);
+  // mat3.transpose(normalMatrix);
+  // gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
+// 
+  // gl.uniform1i(shaderProgram.samplerUniform, 0);
+// 
+  // gl.uniform1f(shaderProgram.materialShininessUniform, 1.0);
+// 
+  // gl.uniform3f(shaderProgram.ambientColorUniform, 0.6, 0.6, 0.6);
+  // gl.uniform3f(shaderProgram.pointLightingSpecularColorUniform, 0.8, 0.8, 0.8);
+  // gl.uniform3f(shaderProgram.pointLightingDiffuseColorUniform, 0.8, 0.8, 0.8);
+// 
+  // var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.3, 0.5]);
+  // gl.uniform3f(shaderProgram.pointLightingLocationUniform, vCamera[0], vCamera[1], vCamera[2]);
+// 
+  // gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
+// }
 
 function degToRad(degrees) {
   return degrees * Math.PI / 180;
@@ -258,14 +279,22 @@ gl_FragColor = vec4(textureColor.rgb * lightWeighting, textureColor.a); \n\
 ";
 
 var vertexShaderSourceColor = " \n\
-attribute vec3 aVertexPosition; \n\
+attribute vec3 aVertexPosition;  \n\n \n\
+attribute vec3 aVertexNormal; \n\
+\n\
 uniform mat4 uMVMatrix; \n\
 uniform mat4 uPMatrix; \n\
+uniform mat3 uNMatrix; \n\
+\n\
+varying vec2 vTextureCoord; \n\
+varying vec3 vTransformedNormal; \n\
 varying vec4 vPosition; \n\
+\n\
 void main(void) { \n\
 vPosition = uMVMatrix * vec4(aVertexPosition, 1.0); \n\
 gl_Position = uPMatrix * vPosition; \n\
-} \n\
+vTransformedNormal = uNMatrix * aVertexNormal; \n\
+}\
 ";
 
 var fragmentShaderSourceColor = " \n\
@@ -273,7 +302,30 @@ var fragmentShaderSourceColor = " \n\
 precision highp float; \n\
 #endif \n\
 \n\
+varying vec3 vTransformedNormal; \n\
+varying vec4 vPosition; \n\
+\n\
+uniform float uMaterialShininess; \n\
+uniform vec3 uAmbientColor; \n\
+uniform vec3 uPointLightingLocation; \n\
+uniform vec3 uPointLightingSpecularColor; \n\
+uniform vec3 uPointLightingDiffuseColor; \n\
+uniform sampler2D uSampler; \n\
+\n\
 void main(void) { \n\
-gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); \n\
+\n\
+vec3 ray = uPointLightingLocation - vPosition.xyz; \n\
+float distance = length(ray); \n\
+vec3 lightDirection = normalize(ray); \n\
+vec3 normal = normalize(vTransformedNormal); \n\
+vec3 eyeDirection = normalize(-vPosition.xyz); \n\
+vec3 reflectionDirection = reflect(-lightDirection, normal); \n\
+float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess) / max(distance, 1.0); \n\
+float diffuseLightWeighting = max(dot(normal, lightDirection), 0.0) / max(distance, 1.0); \n\
+vec3 lightWeighting = uAmbientColor + uPointLightingSpecularColor * specularLightWeighting + uPointLightingDiffuseColor * diffuseLightWeighting; \n\
+// float pointLightingWeighting = max(dot(transformedNormal, lightDirection), 0.0); \n\
+// vec3 vLightWeighting = uAmbientColor + uPointLightingColor * pointLightingWeighting; \n\
+gl_FragColor = vec4(vec3(1.0, 0.0, 0.0) * lightWeighting, 1.0); \n\
+\n\
 } \n\
 ";
