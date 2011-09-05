@@ -183,13 +183,13 @@ Game.prototype = {
     mat4.translate(mvMatrix, [-1.5, 0.0, -3.0]);
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    setMatrixUniforms();
+    shaderProgram.setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
 
     mat4.translate(mvMatrix, [3.0, 0.0, 0.0]);
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    setMatrixUniforms();
+    shaderProgram.setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 
     mvPopMatrix();

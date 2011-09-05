@@ -39,7 +39,7 @@ GLModel.prototype = {
 		gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, this.modelTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
-		setMatrixUniforms();
+		shaderProgram.setMatrixUniforms();
 		gl.drawElements(gl.TRIANGLES, this.modelIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
 
