@@ -41,5 +41,19 @@ GLModel.prototype = {
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
 		setMatrixUniforms();
 		gl.drawElements(gl.TRIANGLES, this.modelIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+
+    // gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
+    // gl.vertexAttribPointer(shaderProgram2.vertexPositionAttribute, this.modelPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+// 
+    // gl.bindBuffer(gl.ARRAY_BUFFER, this.modelVertexNormalBuffer);
+    // gl.vertexAttribPointer(shaderProgram2.vertexNormalAttribute, this.modelVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
+// 
+    // gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
+    // gl.vertexAttribPointer(shaderProgram2.texture2CoordAttribute, this.modelTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+// 
+    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.modelIndexBuffer);
+    // setMatrixUniforms();
+    // gl.drawElements(gl.TRIANGLES, this.modelIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 	}
 }
