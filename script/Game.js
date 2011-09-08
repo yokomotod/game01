@@ -3,9 +3,9 @@ var Game = function() {
 }
 
 Game.SCALE = 2.0;
-Game.XSIZE = 20;
-Game.YSIZE = 20;
-Game.ZSIZE = 10;
+Game.XSIZE = 10;
+Game.YSIZE = 10;
+Game.ZSIZE = 5;
 
 Game.XSTART = 1.5;
 Game.YSTART = 1.5;
@@ -96,7 +96,7 @@ Game.prototype = {
 	setupMapper : function() {
 		var mapCanvas = document.getElementById("map");
 		this.mapper = new Mapper(mapCanvas);
-		this.mapDisplay = "none";
+		this.mapMode = 0;
 	},
 	setupEventListener : function() {
     attachListener(G.EVENT_KEY, new KeyListener());
@@ -180,12 +180,22 @@ Game.prototype = {
 		document.getElementById("hp").innerHTML = "<p>HP : "+hp+"</p>";		
 	},
 	toggleMapDisplay : function() {
-		if (this.mapDisplay == "none")
-			this.mapDisplay = "";
-		else 
-			this.mapDisplay = "none";
-			
-		document.getElementById("map").style.display = this.mapDisplay;
+		if (this.mapMode == 0) {
+			this.mapMode = 1;
+			document.getElementById("map").style.display = "";		
+		}
+		else if (this.mapMode == 1) {
+			this.mapMode = 2;
+			var map = document.getElementById("map");
+			map.className = map.className.replace(/map/, "minimap");
+			document.getElementById("map").style.display = "";
+		}
+		else {
+			this.mapMode = 0;
+			var map = document.getElementById("map");
+			map.className = map.className.replace(/minimap/, "map");
+			document.getElementById("map").style.display = "none";			
+		}
 	},
 	draw : function() {
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);

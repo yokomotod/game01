@@ -13,6 +13,18 @@ body {
 	border: 1px solid #fff;
 	
 }
+.map {
+	left: 100px;
+	top: 11px;
+	height: 507px;
+	width: 507px;
+}
+.minimap {
+	left: 11px;
+	top: 11px;
+	height: 150px;
+	width: 150px;
+}
 #main {
 	width:900px;
 	margin:auto;
@@ -23,12 +35,6 @@ body {
 	top: 11px;
 	height: 506px;
 	width: 186px;
-}
-#map {
-	left: 100px;
-	top: 11px;
-	height: 507px;
-	width: 507px;
 }
 #console {
 	left: 11px;
