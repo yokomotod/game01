@@ -33,12 +33,15 @@ GLModel.prototype = {
 	draw : function() {
 	  useShaderProgram(this.shaderType);
 	  
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, this.modelPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelVertexNormalBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, this.modelVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.modelTextureCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, this.modelTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
@@ -78,10 +81,11 @@ GLColorModel.prototype = {
   },
   draw : function() {
     useShaderProgram(this.shaderType);
-    
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, this.modelPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.modelVertexNormalBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, this.modelVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 

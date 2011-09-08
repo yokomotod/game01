@@ -17,6 +17,7 @@ function initGL(canvas) {
 var shaderProgram;
 var shaderProgramTexture;
 var shaderProgramColor;
+var shaderProgramSprite;
 
 function createShaderProgram(fragmentShaderSource, vertexShaderSource) {
   var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -58,23 +59,58 @@ function useShaderProgram(shaderType) {
     case 1:
       shaderProgram = shaderProgramTexture;
       break;
+    case 2:
+      shaderProgram = shaderProgramSprite;
+      break;
   }
 
   gl.useProgram(shaderProgram)
 }
 
 function initShaders() {
-  // shaderProgramTexture = createShaderProgram(fragmentShaderSourceTexture, vertexShaderSourceTexture);
-  shaderProgramTexture = createShaderProgram(fragmentShaderSourceTest2, vertexShaderSourceTest2);
+  shaderProgramSprite = createShaderProgram(fragmentShaderSourceSprite, vertexShaderSourceSprite);
+
+  shaderProgramSprite.vertexPositionAttribute = gl.getAttribLocation(shaderProgramSprite, "aVertexPosition");
+  //alert(shaderProgramSprite.vertexPositionAttribute);
+  //gl.enableVertexAttribArray(shaderProgramSprite.vertexPositionAttribute);
+
+  shaderProgramSprite.vertexNormalAttribute = gl.getAttribLocation(shaderProgramSprite, "aVertexNormal");
+  //alert(shaderProgramSprite.vertexNormalAttribute);
+  //gl.enableVertexAttribArray(shaderProgramSprite.vertexNormalAttribute);
+
+  shaderProgramSprite.textureCoordAttribute = gl.getAttribLocation(shaderProgramSprite, "aTextureCoord");
+  //alert(shaderProgramSprite.textureCoordAttribute);
+  //gl.enableVertexAttribArray(shaderProgramSprite.textureCoordAttribute);
+
+  shaderProgramSprite.pMatrixUniform = gl.getUniformLocation(shaderProgramSprite, "uPMatrix");
+  shaderProgramSprite.mvMatrixUniform = gl.getUniformLocation(shaderProgramSprite, "uMVMatrix");
+  shaderProgramSprite.nMatrixUniform = gl.getUniformLocation(shaderProgramSprite, "uNMatrix");
+  shaderProgramSprite.samplerUniform = gl.getUniformLocation(shaderProgramSprite, "uSampler");
+  shaderProgramSprite.materialShininessUniform = gl.getUniformLocation(shaderProgramSprite, "uMaterialShininess");
+  shaderProgramSprite.ambientColorUniform = gl.getUniformLocation(shaderProgramSprite, "uAmbientColor");
+  shaderProgramSprite.pointLightingLocationUniform = gl.getUniformLocation(shaderProgramSprite, "uPointLightingLocation");
+  shaderProgramSprite.pointLightingSpecularColorUniform = gl.getUniformLocation(shaderProgramSprite, "uPointLightingSpecularColor");
+  shaderProgramSprite.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgramSprite, "uPointLightingDiffuseColor");
+
+  shaderProgramSprite.setMatrixUniforms = function() {
+    gl.uniformMatrix4fv(shaderProgramSprite.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgramSprite.mvMatrixUniform, false, mvMatrix);
+
+    gl.uniform1i(shaderProgramSprite.samplerUniform, 0);
+  };
+
+
+  shaderProgramTexture = createShaderProgram(fragmentShaderSourceTexture, vertexShaderSourceTexture);
+  // shaderProgramTexture = createShaderProgram(fragmentShaderSourceSprite, vertexShaderSourceSprite);
 
   shaderProgramTexture.vertexPositionAttribute = gl.getAttribLocation(shaderProgramTexture, "aVertexPosition");
-  gl.enableVertexAttribArray(shaderProgramTexture.vertexPositionAttribute);
+  //gl.enableVertexAttribArray(shaderProgramTexture.vertexPositionAttribute);
 
-  // shaderProgramTexture.vertexNormalAttribute = gl.getAttribLocation(shaderProgramTexture, "aVertexNormal");
-  // gl.enableVertexAttribArray(shaderProgramTexture.vertexNormalAttribute);
+  shaderProgramTexture.vertexNormalAttribute = gl.getAttribLocation(shaderProgramTexture, "aVertexNormal");
+  //gl.enableVertexAttribArray(shaderProgramTexture.vertexNormalAttribute);
 
   shaderProgramTexture.textureCoordAttribute = gl.getAttribLocation(shaderProgramTexture, "aTextureCoord");
-  gl.enableVertexAttribArray(shaderProgramTexture.textureCoordAttribute);
+  //gl.enableVertexAttribArray(shaderProgramTexture.textureCoordAttribute);
 
   shaderProgramTexture.pMatrixUniform = gl.getUniformLocation(shaderProgramTexture, "uPMatrix");
   shaderProgramTexture.mvMatrixUniform = gl.getUniformLocation(shaderProgramTexture, "uMVMatrix");
@@ -87,6 +123,51 @@ function initShaders() {
   shaderProgramTexture.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgramTexture, "uPointLightingDiffuseColor");
 
   shaderProgramTexture.setMatrixUniforms = function() {
+    gl.uniformMatrix4fv(shaderProgramTexture.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgramTexture.mvMatrixUniform, false, mvMatrix);
+
+    var normalMatrix = mat3.create();
+    mat4.toInverseMat3(mvMatrix, normalMatrix);
+    mat3.transpose(normalMatrix);
+    gl.uniformMatrix3fv(shaderProgramTexture.nMatrixUniform, false, normalMatrix);
+
+    gl.uniform1i(shaderProgramTexture.samplerUniform, 0);
+
+    gl.uniform1f(shaderProgramTexture.materialShininessUniform, 1.0);
+
+    gl.uniform3f(shaderProgramTexture.ambientColorUniform, 0.6, 0.6, 0.6);
+    gl.uniform3f(shaderProgramTexture.pointLightingSpecularColorUniform, 0.8, 0.8, 0.8);
+    gl.uniform3f(shaderProgramTexture.pointLightingDiffuseColorUniform, 0.8, 0.8, 0.8);
+
+    var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.3, 0.5]);
+    gl.uniform3f(shaderProgramTexture.pointLightingLocationUniform, vCamera[0], vCamera[1], vCamera[2]);
+
+    gl.uniform3f(shaderProgramTexture.pointLightingColorUniform, 1.0, 1.0, 1.0);
+  };
+
+
+  shaderProgramColor = createShaderProgram(fragmentShaderSourceColor, vertexShaderSourceColor);
+  // shaderProgramColor = createShaderProgram(fragmentShaderSourceTest, vertexShaderSourceTest);
+
+  shaderProgramColor.vertexPositionAttribute = gl.getAttribLocation(shaderProgramColor, "aVertexPosition");
+  //alert(shaderProgramColor.vertexPositionAttribute);
+  //gl.enableVertexAttribArray(shaderProgramColor.vertexPositionAttribute);
+
+  shaderProgramColor.vertexNormalAttribute = gl.getAttribLocation(shaderProgramColor, "aVertexNormal");
+  //alert(shaderProgramColor.vertexNormalAttribute);
+  //gl.enableVertexAttribArray(shaderProgramColor.vertexNormalAttribute);
+
+  shaderProgramColor.pMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uPMatrix");
+  shaderProgramColor.mvMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uMVMatrix");
+  shaderProgramColor.nMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uNMatrix");
+  shaderProgramColor.samplerUniform = gl.getUniformLocation(shaderProgramColor, "uSampler");
+  shaderProgramColor.materialShininessUniform = gl.getUniformLocation(shaderProgramColor, "uMaterialShininess");
+  shaderProgramColor.ambientColorUniform = gl.getUniformLocation(shaderProgramColor, "uAmbientColor");
+  shaderProgramColor.pointLightingLocationUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingLocation");
+  shaderProgramColor.pointLightingSpecularColorUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingSpecularColor");
+  shaderProgramColor.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingDiffuseColor");
+
+  shaderProgramColor.setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
     gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 
@@ -109,49 +190,9 @@ function initShaders() {
     gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
   };
 
-  // shaderProgramColor = createShaderProgram(fragmentShaderSourceColor, vertexShaderSourceColor);
-  // shaderProgramColor = createShaderProgram(fragmentShaderSourceTest, vertexShaderSourceTest);
-// 
-  // shaderProgramColor.vertexPositionAttribute = gl.getAttribLocation(shaderProgramColor, "aVertexPosition");
-  // gl.enableVertexAttribArray(shaderProgramColor.vertexPositionAttribute);
-// 
-  // shaderProgramColor.vertexNormalAttribute = gl.getAttribLocation(shaderProgramColor, "aVertexNormal");
-  // gl.enableVertexAttribArray(shaderProgramColor.vertexNormalAttribute);
-// 
-  // shaderProgramColor.pMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uPMatrix");
-  // shaderProgramColor.mvMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uMVMatrix");
-  // shaderProgramColor.nMatrixUniform = gl.getUniformLocation(shaderProgramColor, "uNMatrix");
-  // shaderProgramColor.samplerUniform = gl.getUniformLocation(shaderProgramColor, "uSampler");
-  // shaderProgramColor.materialShininessUniform = gl.getUniformLocation(shaderProgramColor, "uMaterialShininess");
-  // shaderProgramColor.ambientColorUniform = gl.getUniformLocation(shaderProgramColor, "uAmbientColor");
-  // shaderProgramColor.pointLightingLocationUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingLocation");
-  // shaderProgramColor.pointLightingSpecularColorUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingSpecularColor");
-  // shaderProgramColor.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgramColor, "uPointLightingDiffuseColor");
-// 
-  // shaderProgramColor.setMatrixUniforms = function() {
-    // gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-    // gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-// 
-    // var normalMatrix = mat3.create();
-    // mat4.toInverseMat3(mvMatrix, normalMatrix);
-    // mat3.transpose(normalMatrix);
-    // gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
-// 
-    // gl.uniform1i(shaderProgram.samplerUniform, 0);
-// 
-    // gl.uniform1f(shaderProgram.materialShininessUniform, 1.0);
-// 
-    // gl.uniform3f(shaderProgram.ambientColorUniform, 0.6, 0.6, 0.6);
-    // gl.uniform3f(shaderProgram.pointLightingSpecularColorUniform, 0.8, 0.8, 0.8);
-    // gl.uniform3f(shaderProgram.pointLightingDiffuseColorUniform, 0.8, 0.8, 0.8);
-// 
-    // var vCamera = mat4.multiplyVec3(mvMatrix, [0.0, 0.3, 0.5]);
-    // gl.uniform3f(shaderProgram.pointLightingLocationUniform, vCamera[0], vCamera[1], vCamera[2]);
-// 
-    // gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
-  // };
 
-  useShaderProgram(1);
+
+  useShaderProgram(2);
 }
 
 var textureList = [];
@@ -237,9 +278,9 @@ function degToRad(degrees) {
 var cameraPos, cameraRotX, cameraRotY, cameraRotZ;
 
 var vertexShaderSourceTexture = " \n\
-attribute vec3 aVertexPosition;  \n\n \n\
-attribute vec3 aVertexNormal; \n\
 attribute vec2 aTextureCoord; \n\
+attribute vec3 aVertexNormal; \n\
+attribute vec3 aVertexPosition; \n\
 \n\
 uniform mat4 uMVMatrix; \n\
 uniform mat4 uPMatrix; \n\
@@ -339,8 +380,7 @@ float diffuseLightWeighting = max(dot(normal, lightDirection), 0.0) / max(distan
 vec3 lightWeighting = uAmbientColor + uPointLightingSpecularColor * specularLightWeighting + uPointLightingDiffuseColor * diffuseLightWeighting; \n\
 // float pointLightingWeighting = max(dot(transformedNormal, lightDirection), 0.0); \n\
 // vec3 vLightWeighting = uAmbientColor + uPointLightingColor * pointLightingWeighting; \n\
-//gl_FragColor = vec4(vec3(0.0, 0.0, 1.0) * lightWeighting, 1.0); \n\
-gl_FragColor = vec4(1.0, 0, 0, 1); \n\
+gl_FragColor = vec4(vec3(0.0, 0.0, 1.0) * lightWeighting, 1.0); \n\
 \n\
 } \n\
 ";
@@ -367,7 +407,7 @@ void main(void) { \n\
 ";
 
 
-var fragmentShaderSourceTest2 = "\
+var fragmentShaderSourceSprite = "\
 #ifdef GL_ES \n\
 precision highp float; \n\
 #endif \n\
@@ -377,15 +417,17 @@ varying vec2 vTextureCoord; \n\
 uniform sampler2D uSampler; \n\
 \n\
 void main(void) { \n\
-  vec4 textureColor = texture2D(uSampler, vec2(vTextureCoord.s+0.125*5.0, vTextureCoord.t)); \n\
-  gl_FragColor = vec4(textureColor.rgb, textureColor.a); \n\
-  //gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)); \n\
+  gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)); \n\
 } \n\
 ";
 
-var vertexShaderSourceTest2 = "\
-attribute vec3 aVertexPosition; \n\
+var vertexShaderSourceSprite = "\
 attribute vec2 aTextureCoord; \n\
+attribute vec3 aVertexNormal; \n\
+attribute vec3 aVertexPosition; \n\
+//attribute vec3 aVertexPosition; \n\
+//attribute vec3 aVertexNormal; \n\
+//attribute vec2 aTextureCoord; \n\
 \n\
 uniform mat4 uMVMatrix; \n\
 uniform mat4 uPMatrix; \n\
