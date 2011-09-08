@@ -25,6 +25,10 @@ body {
 	height: 150px;
 	width: 150px;
 }
+#fps {
+    left:800px;
+    top:15px;
+}
 #main {
 	width:900px;
 	margin:auto;
