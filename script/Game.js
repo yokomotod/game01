@@ -3,9 +3,9 @@ var Game = function() {
 }
 
 Game.SCALE = 2.0;
-Game.XSIZE = 10;
-Game.YSIZE = 10;
-Game.ZSIZE = 5;
+Game.XSIZE = 20;
+Game.YSIZE = 20;
+Game.ZSIZE = 10;
 
 Game.XSTART = 1.5;
 Game.YSTART = 1.5;
@@ -81,7 +81,7 @@ Game.prototype = {
 			if (this.map.map[z][y][x] != 0)
 				continue;
 			
-			if ((x+y)%8==0)
+			if ((x+y)%1==0)
 				continue;
 				
 			this.actors[i] = new Actor(x, y, z);
