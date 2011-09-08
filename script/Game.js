@@ -25,6 +25,8 @@ Game.prototype = {
 		
 		this.directionY = 0;
 		
+		initBuffers();
+		
 		this.draw();	
 	},
 	setupWebGL : function() {
@@ -33,9 +35,11 @@ Game.prototype = {
 		initShaders()
 		initTexture();
 	
-		gl.clearColor(0.0, 0.0, 1.0, 1.0);
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.enable(gl.DEPTH_TEST);
-		
+
+    gl.depthFunc(gl.LEQUAL);		
+
 		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 		cameraPos = [0.0, 0.0, -0.3];
 		cameraRotX = -90;
@@ -80,7 +84,7 @@ Game.prototype = {
 			if (this.map.map[z][y][x] != 0)
 				continue;
 			
-			if ((x+y)%1==0)
+			if (x+y>3)
 				continue;
 				
 			this.actors[i] = new Actor(x, y, z);
@@ -177,33 +181,143 @@ Game.prototype = {
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    useShaderProgram(1);
+    
+    mat4.identity(mvMatrix);
 
-	    gl.activeTexture(gl.TEXTURE0);
-	    gl.bindTexture(gl.TEXTURE_2D, neheTexture);
-	
-	    mat4.identity(mvMatrix);
-	
-	    useShaderProgram(1);
-		mat4.rotate(mvMatrix, degToRad(cameraRotX), [1, 0, 0]);
-		mat4.rotate(mvMatrix, degToRad(cameraRotY), [0, 1, 0]);
-		mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
-		mat4.translate(mvMatrix, cameraPos);
-	
-	    mat4.rotate(mvMatrix, this.directionY, [1, 0, 0]);
-		mat4.rotate(mvMatrix, this.actor.direction, [0, 0, 1]);
-		mat4.translate(mvMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
-		
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    gl.enable(gl.BLEND);
+    gl.disable(gl.DEPTH_TEST);
+    
+    mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+    // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    // setMatrixUniforms();
+    // gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
+ 
+ 
+    mat4.translate(mvMatrix, [3.0, 0.0, 0.0]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, textureList[1]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
+    gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, squareVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 
-		this.map.draw();
+    // gl.activeTexture(gl.TEXTURE0);
+    // gl.bindTexture(gl.TEXTURE_2D, textureList[0]);
+// 	
+// 
+// 
+		// mat4.rotate(mvMatrix, degToRad(cameraRotX), [1, 0, 0]);
+		// mat4.rotate(mvMatrix, degToRad(cameraRotY), [0, 1, 0]);
+		// mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
+		// mat4.translate(mvMatrix, cameraPos);
+// 	
+    // mat4.rotate(mvMatrix, this.directionY, [1, 0, 0]);
+		// mat4.rotate(mvMatrix, this.actor.direction, [0, 0, 1]);
+		// mat4.translate(mvMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
+// 		
+    // mvPushMatrix();
+// 
+    // useShaderProgram(0);
+    // mat4.translate(mvMatrix, [1.5, 0.0, -3.0]);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexNormalBuffer);
+    // gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, squareVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    // shaderProgram.setMatrixUniforms();
+    // gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
+// 
+    // mvPopMatrix();
+// 
+		// this.map.draw();
+// 
+		// for (var i=0; i < this.actorNum; i++) {
+			// this.actors[i].draw();
+		// }
+// 
+		// this.mapper.draw(this.map.map, this.map.walked, this.actor.x, this.actor.y, this.actor.floor, this.actor.direction);
 
-		for (var i=0; i < this.actorNum; i++) {
-			this.actors[i].draw();
-		}
-
-		this.mapper.draw(this.map.map, this.map.walked, this.actor.x, this.actor.y, this.actor.floor, this.actor.direction);
-
+    // useShaderProgram(0);
+// 
+    // // gl.activeTexture(gl.TEXTURE1);
+    // // gl.bindTexture(gl.TEXTURE_2D, textureList[1]);
+    
+    
 	},
 }
 
 var triangleVertexPositionBuffer;
 var squareVertexPositionBuffer;
+ 
+function initBuffers() {
+    // triangleVertexPositionBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+    // var vertices = [
+         // 0.0,  1.0,  0.0,
+        // -1.0, -1.0,  0.0,
+         // 1.0, -1.0,  0.0
+    // ];
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    // triangleVertexPositionBuffer.itemSize = 3;
+    // triangleVertexPositionBuffer.numItems = 3;
+ 
+    squareVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    vertices = [
+         1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+         1.0, -1.0,  0.0,
+        -1.0, -1.0,  0.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    squareVertexPositionBuffer.itemSize = 3;
+    squareVertexPositionBuffer.numItems = 4;
+
+    squareVertexTextureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
+    var textureCoords = [
+      // Front face
+      0.0, 0.0,
+      0.125, 0.0,
+      0.0, 1.0,
+      0.125, 1.0,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+    squareVertexTextureCoordBuffer.itemSize = 2;
+    squareVertexTextureCoordBuffer.numItems = 4;
+}
+
+function setMatrixUniforms() {
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+}
+
+// function initBuffers() {
+  // squareVertexPositionBuffer = gl.createBuffer();
+  // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+  // vertices = [
+       // 1.0,  1.0,  0.0,
+      // -1.0,  1.0,  0.0,
+       // 1.0, -1.0,  0.0,
+      // -1.0, -1.0,  0.0
+  // ];
+  // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  // squareVertexPositionBuffer.itemSize = 3;
+  // squareVertexPositionBuffer.numItems = 4;
+// 
+  // squareVertexNormalBuffer = gl.createBuffer();
+  // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexNormalBuffer);
+  // var vertexNormals= [
+  // 0.0, -1.0, 0.0,
+  // 0.0, -1.0, 0.0,
+  // 0.0, -1.0, 0.0,
+  // 0.0, -1.0, 0.0,
+  // ];
+  // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
+  // squareVertexNormalBuffer.itemSize = 3;
+  // squareVertexNormalBuffer.numItems = 4;
+// }

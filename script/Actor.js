@@ -133,7 +133,7 @@ Actor.prototype = {
 		this.id = this.nextId;
 		Actor.prototype.nextId++;
 		
-		this.speed = 1;
+		this.speed = 0.5;
 		
 		this.x = x;
 		this.y = y;
