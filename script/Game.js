@@ -17,9 +17,9 @@ Game.prototype = {
 		this.setupWebGL();
 		this.setupMaze();
 		this.setupActor();
-		this.setupMapper();
 		
 		this.console = new Console();
+		this.mapper = new Mapper();
 		
 		this.setupEventListener();
 		
@@ -92,17 +92,12 @@ Game.prototype = {
 		}
 		this.actorNum = i;
 	},
-	setupMapper : function() {
-		var mapCanvas = document.getElementById("map");
-		this.mapper = new Mapper(mapCanvas);
-		this.mapMode = 0;
-	},
 	setupEventListener : function() {
-    attachListener(G.EVENT_KEY, new KeyListener());
-    attachListener(G.EVENT_ACTOR_MOVE, new ActorMoveListener);
-    attachListener(G.EVENT_PLAYER_MOVE, new PlayerMoveListener);
-    attachListener(G.EVENT_ACTOR_COLLIDE, new ActorCollideListener);
-    attachListener(G.EVENT_ACTOR_COLLIDE_ACTOR, new ActorCollideActorListener);
+	    attachListener(G.EVENT_KEY, new KeyListener());
+	    attachListener(G.EVENT_ACTOR_MOVE, new ActorMoveListener);
+	    attachListener(G.EVENT_PLAYER_MOVE, new PlayerMoveListener);
+	    attachListener(G.EVENT_ACTOR_COLLIDE, new ActorCollideListener);
+	    attachListener(G.EVENT_ACTOR_COLLIDE_ACTOR, new ActorCollideActorListener);
 	},
 	update : function() {
 	  if (gm.mouse.right) {
@@ -142,7 +137,7 @@ Game.prototype = {
 				break;
 			// space
 			case 32:
-				this.toggleMapDisplay();
+				this.mapper.changeMode();
 				break;
 		}
 	},
@@ -162,14 +157,14 @@ Game.prototype = {
 
 	},
 	turnY : function(d) {
-    var direction = this.directionY + d * Math.PI * 0.02;
-
-    if(direction < 0)
-      direction = 2 * Math.PI;
-    else if(direction > 2 * Math.PI)
-      direction = 0;
-      
-    this.directionY = direction;
+	    var direction = this.directionY + d * Math.PI * 0.02;
+	
+	    if(direction < 0)
+	      direction = 2 * Math.PI;
+	    else if(direction > 2 * Math.PI)
+	      direction = 0;
+	      
+	    this.directionY = direction;
 
   },
 	updateFloorStatus : function(floor) {
@@ -177,24 +172,6 @@ Game.prototype = {
 	},
 	updateHPStatus : function(hp) {
 		document.getElementById("hp").innerHTML = "<p>HP : "+hp+"</p>";		
-	},
-	toggleMapDisplay : function() {
-		if (this.mapMode == 0) {
-			this.mapMode = 1;
-			document.getElementById("map").style.display = "";		
-		}
-		else if (this.mapMode == 1) {
-			this.mapMode = 2;
-			var map = document.getElementById("map");
-			map.className = map.className.replace(/map/, "minimap");
-			document.getElementById("map").style.display = "";
-		}
-		else {
-			this.mapMode = 0;
-			var map = document.getElementById("map");
-			map.className = map.className.replace(/minimap/, "map");
-			document.getElementById("map").style.display = "none";			
-		}
 	},
 	draw : function() {
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
