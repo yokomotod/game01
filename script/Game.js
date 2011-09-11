@@ -103,6 +103,8 @@ Game.prototype = {
 	    attachListener(G.EVENT_ACTOR_COLLIDE, new ActorCollideListener);
 	    attachListener(G.EVENT_ACTOR_COLLIDE_ACTOR, new ActorCollideActorListener);
 	},
+	count : 0,
+	position : 0,
 	update : function() {
 	  if (gm.mouse.right) {
       pushEvent(new PlayerMoveEvent(this.actor, this.map, 1));	    
@@ -116,6 +118,19 @@ Game.prototype = {
 		}
 
 		this.updateHPStatus(this.actor.hp);
+		
+		this.count++;
+		if (this.count % 2 == 0)
+		  this.position++;
+		
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureOffsetBuffer);
+    var textureOffset = [
+      0.125*this.position, 0.0,
+      0.125*this.position, 0.0,
+      0.125*this.position, 0.0,
+      0.125*this.position, 0.0,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureOffset), gl.STATIC_DRAW);
 	},
 	inputProc : function(key) {
 		switch(key) {
@@ -211,6 +226,9 @@ Game.prototype = {
     mvPopMatrix();
 
 
+    if (this.position >= 8)
+      return;
+      
     useShaderProgram(2);
     
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
@@ -230,9 +248,19 @@ Game.prototype = {
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, textureList[1]);
+
     gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
     gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, squareVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+    gl.enableVertexAttribArray(shaderProgram.textureCoord2Attribute);
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureOffsetBuffer);
+    gl.vertexAttribPointer(shaderProgram.textureCoord2Attribute, squareVertexTextureOffsetBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+    // gl.enableVertexAttribArray(shaderProgram.textureOffsetAttribute);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureOffsetBuffer);
+    // gl.vertexAttribPointer(shaderProgram.textureOffsetAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    
     setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
     mvPopMatrix();
@@ -278,6 +306,18 @@ function initBuffers() {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
     squareVertexTextureCoordBuffer.itemSize = 2;
     squareVertexTextureCoordBuffer.numItems = 4;
+
+    squareVertexTextureOffsetBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureOffsetBuffer);
+    var textureOffset = [
+      0.0, 0.0,
+      0.0, 0.0,
+      0.0, 0.0,
+      0.0, 0.0,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureOffset), gl.STATIC_DRAW);
+    squareVertexTextureOffsetBuffer.itemSize = 2;
+    squareVertexTextureOffsetBuffer.numItems = 4;
 }
 
 function setMatrixUniforms() {

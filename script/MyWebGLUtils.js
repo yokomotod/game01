@@ -78,19 +78,17 @@ function initShaders() {
   //alert(shaderProgramSprite.vertexNormalAttribute);
   //gl.enableVertexAttribArray(shaderProgramSprite.vertexNormalAttribute);
 
-  shaderProgramSprite.textureCoordAttribute = gl.getAttribLocation(shaderProgramSprite, "aTextureCoord");
+  // shaderProgramSprite.textureCoordAttribute = gl.getAttribLocation(shaderProgramSprite, "aTextureCoord");
+  shaderProgramSprite.textureCoord2Attribute = gl.getAttribLocation(shaderProgramSprite, "aTextureCoord2");
   //alert(shaderProgramSprite.textureCoordAttribute);
   //gl.enableVertexAttribArray(shaderProgramSprite.textureCoordAttribute);
+
+  shaderProgramSprite.textureOffsetAttribute = gl.getAttribLocation(shaderProgramSprite, "aTextureOffset");
 
   shaderProgramSprite.pMatrixUniform = gl.getUniformLocation(shaderProgramSprite, "uPMatrix");
   shaderProgramSprite.mvMatrixUniform = gl.getUniformLocation(shaderProgramSprite, "uMVMatrix");
   shaderProgramSprite.nMatrixUniform = gl.getUniformLocation(shaderProgramSprite, "uNMatrix");
   shaderProgramSprite.samplerUniform = gl.getUniformLocation(shaderProgramSprite, "uSampler");
-  shaderProgramSprite.materialShininessUniform = gl.getUniformLocation(shaderProgramSprite, "uMaterialShininess");
-  shaderProgramSprite.ambientColorUniform = gl.getUniformLocation(shaderProgramSprite, "uAmbientColor");
-  shaderProgramSprite.pointLightingLocationUniform = gl.getUniformLocation(shaderProgramSprite, "uPointLightingLocation");
-  shaderProgramSprite.pointLightingSpecularColorUniform = gl.getUniformLocation(shaderProgramSprite, "uPointLightingSpecularColor");
-  shaderProgramSprite.pointLightingDiffuseColorUniform = gl.getUniformLocation(shaderProgramSprite, "uPointLightingDiffuseColor");
 
   shaderProgramSprite.setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shaderProgramSprite.pMatrixUniform, false, pMatrix);
@@ -223,7 +221,6 @@ function loadTexture(file, handler) {
   texture.image.onload = function() {
     if(texture.image == null) {
       alert("can't open image");
-      w
     }
     handler(texture);
   }
@@ -413,29 +410,35 @@ precision highp float; \n\
 #endif \n\
 \n\
 varying vec2 vTextureCoord; \n\
+varying vec2 vTextureOffset; \n\
 \n\
 uniform sampler2D uSampler; \n\
 \n\
 void main(void) { \n\
-  gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)); \n\
+  // gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.x, vTextureCoord.y)); \n\
+  // gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.x+0.125, vTextureCoord.y)); \n\
+  // gl_FragColor = texture2D(uSampler, vec2(vTextureOffset.x, vTextureOffset.y)); \n\
+  gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s+vTextureOffset.x, vTextureCoord.t+vTextureOffset.y)); \n\
 } \n\
 ";
 
 var vertexShaderSourceSprite = "\
-attribute vec2 aTextureCoord; \n\
-attribute vec3 aVertexNormal; \n\
 attribute vec3 aVertexPosition; \n\
-//attribute vec3 aVertexPosition; \n\
-//attribute vec3 aVertexNormal; \n\
-//attribute vec2 aTextureCoord; \n\
+attribute vec3 aVertexNormal; \n\
+attribute vec2 aTextureCoord; \n\
+attribute vec2 aTextureCoord2; \n\
+// attribute vec2 aTextureOffset; \n\
 \n\
 uniform mat4 uMVMatrix; \n\
 uniform mat4 uPMatrix; \n\
 \n\
 varying vec2 vTextureCoord; \n\
+varying vec2 vTextureOffset; \n\
 \n\
 void main(void) { \n\
     gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0); \n\
     vTextureCoord = aTextureCoord; \n\
+    vTextureOffset = aTextureCoord2; \n\
+    // vTextureOffset = aTextureOffset; \n\
 } \n\
 ";
