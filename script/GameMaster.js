@@ -11,6 +11,7 @@ GameMaster.prototype = {
 	initialize  : function() {
 	  this.clock = new Clock();
 	  
+	  this.processManager = new ProcessManager();
 	  this.eventManager = new EventManager();
 	  
     this.eventManager.attachListener(G.EVENT_MOUSE, new MouseListener());
@@ -25,6 +26,7 @@ GameMaster.prototype = {
 	  	  
 	  this.eventManager.tick();
 	  
+	  this.processManager.update();
 		this.game.update();
 		this.game.draw();
 		
@@ -83,6 +85,9 @@ function attachListener(type, listener) {
   gm.eventManager.attachListener(type, listener);
 }
 
+function attachProcess(process) {
+  gm.processManager.attach(process);
+}
 
 var gm;
 

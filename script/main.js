@@ -10,16 +10,16 @@ function main() {
       pushEvent(new MouseEvent({
         down : true,
         left : true,
-        x : e.x,
-        y : e.y
+        x : e.clientX,
+        y : e.clientY
       }));      
     }
     else if (e.button == 2) {
       pushEvent(new MouseEvent({
         down : true,
         right : true,
-        x : e.x,
-        y : e.y
+        x : e.clientX,
+        y : e.clientY
       }));      
     }
   }
@@ -28,16 +28,16 @@ function main() {
       pushEvent(new MouseEvent({
         up : true,
         left : true,
-        x : e.x,
-        y : e.y
+        x : e.clientX,
+        y : e.clientY
       }));      
     }
     else if (e.button == 2) {
       pushEvent(new MouseEvent({
         up : true,
         right : true,
-        x : e.x,
-        y : e.y
+        x : e.clientX,
+        y : e.clientY
       }));      
     }
   }

@@ -117,6 +117,12 @@ MouseListener.prototype.tick = function(e) {
   if (mouse.down) {
     if (mouse.left) {
       gm.mouse.left = true;      
+
+      if (gl) {
+        var effect = new Effect(mouse.x, mouse.y);
+        attachProcess(effect);
+        gm.game.scene.addChild(effect);        
+      }
     }
     else if (mouse.right) {
       gm.mouse.right = true;      
