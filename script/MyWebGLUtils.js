@@ -231,6 +231,7 @@ function loadTexture(file, handler) {
 var mvMatrix = mat4.create();
 var mvMatrixStack = [];
 var pMatrix = mat4.create();
+var camMatrix = mat4.create();
 
 function mvPushMatrix() {
   var copy = mat4.create();

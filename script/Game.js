@@ -183,23 +183,34 @@ Game.prototype = {
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    mat4.identity(mvMatrix);
+    mat4.identity(camMatrix);
+    mat4.rotate(camMatrix, degToRad(cameraRotX), [1, 0, 0]);
+    mat4.rotate(camMatrix, degToRad(cameraRotY), [0, 1, 0]);
+    mat4.rotate(camMatrix, degToRad(cameraRotZ), [0, 0, 1]);
 
- 
- 
+    mat4.rotate(camMatrix, this.directionY, [1, 0, 0]);
+    mat4.rotate(camMatrix, this.actor.direction, [0, 0, 1]);
+
+    mat4.translate(camMatrix, cameraPos);
+
+    mat4.translate(camMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
+
+    mat4.identity(mvMatrix);
+    
+    mat4.multiply(camMatrix, mvMatrix, mvMatrix);
     
     gl.disable(gl.BLEND);
     gl.enable(gl.DEPTH_TEST);
 
     mvPushMatrix();
-		mat4.rotate(mvMatrix, degToRad(cameraRotX), [1, 0, 0]);
-		mat4.rotate(mvMatrix, degToRad(cameraRotY), [0, 1, 0]);
-		mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
-		mat4.translate(mvMatrix, cameraPos);
+		// mat4.rotate(mvMatrix, degToRad(cameraRotX), [1, 0, 0]);
+		// mat4.rotate(mvMatrix, degToRad(cameraRotY), [0, 1, 0]);
+		// mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
+		// mat4.translate(mvMatrix, cameraPos);
 	
-    mat4.rotate(mvMatrix, this.directionY, [1, 0, 0]);
-		mat4.rotate(mvMatrix, this.actor.direction, [0, 0, 1]);
-		mat4.translate(mvMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
+    // mat4.rotate(mvMatrix, this.directionY, [1, 0, 0]);
+		// mat4.rotate(mvMatrix, this.actor.direction, [0, 0, 1]);
+		// mat4.translate(mvMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, textureList[0]);
