@@ -86,9 +86,9 @@ Game.prototype = {
 			if (this.map.map[z][y][x] != 0)
 				continue;
 			
-			if (x+y>3)
-				continue;
-				
+			if (x % 4 != 0 && y % 4 != 0)
+		    continue;
+		    
 			this.actors[i] = new Actor(x, y, z);
 			this.map.actors[z][y][x][this.actors[i].id] = this.actors[i];
 			i++;
@@ -213,21 +213,25 @@ Game.prototype = {
 		// mat4.rotate(mvMatrix, this.actor.direction, [0, 0, 1]);
 		// mat4.translate(mvMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
 
+    useShaderProgram(1);
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, textureList[0]);
 		this.map.draw();
 
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.BLEND);
+    //gl.disable(gl.DEPTH_TEST);
+    
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, textureList[2]);
 		for (var i=0; i < this.actorNum; i++) {
 			this.actors[i].draw();
 		}
 
 		this.mapper.draw(this.map.map, this.map.walked, this.actor.x, this.actor.y, this.actor.floor, this.actor.direction);
 
-    useShaderProgram(1);
-    
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.enable(gl.BLEND);
-    gl.disable(gl.DEPTH_TEST);
+    useShaderProgram(2);
     
     // mvPushMatrix();
     // mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
@@ -235,7 +239,7 @@ Game.prototype = {
     // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
     // setMatrixUniforms();
     // gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
-    mat4.translate(mvMatrix, [3, 3, 0.2]);
+    mat4.translate(mvMatrix, [3, 5, 0.2]);
     
     var invMatrix = mat3.create();
     mat4.toInverseMat3(mvMatrix, invMatrix);
@@ -248,8 +252,8 @@ Game.prototype = {
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, textureList[2]);
+    // gl.activeTexture(gl.TEXTURE0);
+    // gl.bindTexture(gl.TEXTURE_2D, textureList[2]);
 
     gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
@@ -263,7 +267,8 @@ Game.prototype = {
     // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureOffsetBuffer);
     // gl.vertexAttribPointer(shaderProgram.textureOffsetAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
     
-    setMatrixUniforms();
+    // setMatrixUniforms();
+    shaderProgram.setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
     // mvPopMatrix();
 
