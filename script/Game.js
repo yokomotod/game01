@@ -223,13 +223,12 @@ Game.prototype = {
 
 		this.mapper.draw(this.map.map, this.map.walked, this.actor.x, this.actor.y, this.actor.floor, this.actor.direction);
 
-    useShaderProgram(0);
-//     
-    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-    // gl.enable(gl.BLEND);
-    // gl.disable(gl.DEPTH_TEST);
-//     
-
+    useShaderProgram(1);
+    
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.BLEND);
+    gl.disable(gl.DEPTH_TEST);
+    
     // mvPushMatrix();
     // mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
     // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
@@ -250,7 +249,7 @@ Game.prototype = {
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, textureList[1]);
+    gl.bindTexture(gl.TEXTURE_2D, textureList[2]);
 
     gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
@@ -294,10 +293,10 @@ function initBuffers() {
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
     var textureCoords = [
       // Front face
-      0.0, 0.0,
-      0.125, 0.0,
       0.0, 1.0,
-      0.125, 1.0,
+      1.0, 1.0,
+      0.0, 0.0,
+      1.0, 0.0,
     ];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
     squareVertexTextureCoordBuffer.itemSize = 2;
