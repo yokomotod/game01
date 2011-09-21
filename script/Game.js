@@ -223,6 +223,11 @@ Game.prototype = {
     gl.enable(gl.BLEND);
     //gl.disable(gl.DEPTH_TEST);
     
+    var actor = this.actor;
+    this.actors.sort( function(a, b){return distance(actor, a) < distance(actor, b) });
+    // for (var key in this.actors) {
+      // alert([this.actors[key].id, distance(actor, this.actors[key])]);
+    // }
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, textureList[2]);
 		for (var i=0; i < this.actorNum; i++) {
@@ -276,6 +281,16 @@ Game.prototype = {
 
     this.scene.render();
 	},
+}
+
+function distance(a, b) {
+  var dx = a.x - b.x;
+  var dy = a.y - b.y;
+  
+  // if (Math.sqrt(dx*dx+dy+dy) == NaN) {
+    // alert([a.x, a.y, b.x, b.y, dx, dy]);
+  // }
+  return Math.sqrt(dx*dx+dy*dy);
 }
 
 // var triangleVertexPositionBuffer;
@@ -350,3 +365,4 @@ function setMatrixUniforms() {
   // squareVertexNormalBuffer.itemSize = 3;
   // squareVertexNormalBuffer.numItems = 4;
 // }
+
