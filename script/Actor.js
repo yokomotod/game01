@@ -178,6 +178,10 @@ Actor.prototype = {
 		this.y = y;
 		this.z = z;
 		
+		this.xOffset = 0;
+    this.yOffset = 0;
+    this.zOffset = 0;
+		
 		if(direction == undefined) {
 			this.direction = Math.random()*Math.PI*2;			
 		}
@@ -324,7 +328,10 @@ Actor.prototype = {
     return {x:x, y:y, z:z, xCurr:xCurr, yCurr:yCurr, zCurr:zCurr, floor:floor};
 	},
 	move : function(map, sign) {
-				
+		
+		if (this.stan)
+		  return;
+		  
 		var pos = this.moveCheck(map.map, sign);
 
 		for(var id in map.actors[Math.floor(pos.z)][Math.floor(pos.y)][Math.floor(pos.x)]) {
@@ -363,6 +370,8 @@ Actor.prototype = {
     gm.game.console.write(this.id+"の攻撃！"+other.id+"に１５のダメージ！");
     other.hp -= 15;
     
+    attachProcess(new Shock(other));
+
     this.wait = 100;
 	},
   movePlayer : function(map) {
@@ -386,6 +395,6 @@ Actor.prototype = {
     gm.game.updateFloorStatus(this.floor);
   },
 	draw : function() {
-		actorModel.draw(this.x, this.y, this.z);
+		actorModel.draw(this.x+this.xOffset, this.y+this.yOffset, this.z+this.zOffset);
 	},
 }

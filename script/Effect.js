@@ -104,3 +104,34 @@ Effect.prototype = {
     mvPopMatrix();
   }
 }
+
+var Shock = function() {
+  this.initialize.apply(this, arguments);
+}
+
+Shock.prototype = {
+  initialize : function(targetActor) {
+    this.targetActor = targetActor;
+    
+    this.term = 20;
+    this.count = this.term;
+    this.rate = this.term / 4;
+    
+    this.prevZ = 0;
+    
+    this.targetActor.stan = true;
+  },
+  update : function() {
+    var z = 0.01*Math.sin(2*Math.PI*this.rate*this.count/this.term);
+    
+    this.targetActor.zOffset += z - this.prevZ;
+    
+    this.prevZ = z;
+     
+    this.count--;
+    if (this.count <= 0) {
+      this.targetActor.stan = false;
+      this.isDead = 1;
+    }
+  },
+}

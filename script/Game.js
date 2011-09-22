@@ -91,6 +91,7 @@ Game.prototype = {
 		    
 			this.actors[i] = new Actor(x, y, z);
 			this.map.actors[z][y][x][this.actors[i].id] = this.actors[i];
+						
 			i++;
 			
 		}
