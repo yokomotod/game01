@@ -183,6 +183,9 @@ Game.prototype = {
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    gl.disable(gl.BLEND);
+    // gl.enable(gl.DEPTH_TEST);
+
     mat4.identity(camMatrix);
     mat4.rotate(camMatrix, degToRad(cameraRotX), [1, 0, 0]);
     mat4.rotate(camMatrix, degToRad(cameraRotY), [0, 1, 0]);
@@ -192,31 +195,14 @@ Game.prototype = {
     mat4.rotate(camMatrix, this.actor.direction, [0, 0, 1]);
 
     mat4.translate(camMatrix, cameraPos);
-
     mat4.translate(camMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
 
     mat4.identity(mvMatrix);
     
-    gl.disable(gl.BLEND);
-    gl.enable(gl.DEPTH_TEST);
-
     mvPushMatrix();
 
     mat4.multiply(camMatrix, mvMatrix, mvMatrix);
     
-		// mat4.rotate(mvMatrix, degToRad(cameraRotX), [1, 0, 0]);
-		// mat4.rotate(mvMatrix, degToRad(cameraRotY), [0, 1, 0]);
-		// mat4.rotate(mvMatrix, degToRad(cameraRotZ), [0, 0, 1]);
-		// mat4.translate(mvMatrix, cameraPos);
-	
-    // mat4.rotate(mvMatrix, this.directionY, [1, 0, 0]);
-		// mat4.rotate(mvMatrix, this.actor.direction, [0, 0, 1]);
-		// mat4.translate(mvMatrix, [-this.actor.x*Game.SCALE, -this.actor.y*Game.SCALE, -this.actor.z*Game.SCALE]);
-
-    useShaderProgram(1);
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, textureList[0]);
 		this.map.draw();
 
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -225,9 +211,7 @@ Game.prototype = {
     
     var actor = this.actor;
     this.actors.sort( function(a, b){return distance(actor, a) < distance(actor, b) });
-    // for (var key in this.actors) {
-      // alert([this.actors[key].id, distance(actor, this.actors[key])]);
-    // }
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, textureList[2]);
 		for (var i=0; i < this.actorNum; i++) {
@@ -236,46 +220,35 @@ Game.prototype = {
 
 		this.mapper.draw(this.map.map, this.map.walked, this.actor.x, this.actor.y, this.actor.floor, this.actor.direction);
 
-    useShaderProgram(2);
-    
-    // mvPushMatrix();
-    // mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
-    // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-    // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    // setMatrixUniforms();
-    // gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
-    mat4.translate(mvMatrix, [3, 5, 0.2]);
-    
-    var invMatrix = mat3.create();
-    mat4.toInverseMat3(mvMatrix, invMatrix);
-    var invMatrix4 = mat4.create();
-    mat3.toMat4(invMatrix, invMatrix4);
-    
-    mat4.multiply(mvMatrix, invMatrix4);
-
-    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-    // gl.activeTexture(gl.TEXTURE0);
-    // gl.bindTexture(gl.TEXTURE_2D, textureList[2]);
-
-    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
-    gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, squareVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
+    // useShaderProgram(2);
+//     
+    // mat4.translate(mvMatrix, [3, 5, 0.2]);
+//     
+    // var invMatrix = mat3.create();
+    // mat4.toInverseMat3(mvMatrix, invMatrix);
+    // var invMatrix4 = mat4.create();
+    // mat3.toMat4(invMatrix, invMatrix4);
+//     
+    // mat4.multiply(mvMatrix, invMatrix4);
+// 
+    // gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+// 
+    // gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
+    // gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, squareVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+//
     // gl.enableVertexAttribArray(shaderProgram.textureCoord2Attribute);
     // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureOffsetBuffer);
     // gl.vertexAttribPointer(shaderProgram.textureCoord2Attribute, squareVertexTextureOffsetBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
+//
     // gl.enableVertexAttribArray(shaderProgram.textureOffsetAttribute);
     // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureOffsetBuffer);
     // gl.vertexAttribPointer(shaderProgram.textureOffsetAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    
-    // setMatrixUniforms();
-    shaderProgram.setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
-    // mvPopMatrix();
+// 
+    // shaderProgram.setMatrixUniforms();
+    // gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 
     mvPopMatrix();
 

@@ -1200,6 +1200,11 @@ MazeMap.prototype = {
 		this.model = new GLModel(GL.SHADER_TYPE_TEXTURE, vertices, vertexIndices, textureCoords, vertexNormals);
 	},
 	draw : function() {
+    useShaderProgram(1);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, textureList[0]);
+
 		this.model.draw();
 	},
 }
