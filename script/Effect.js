@@ -7,8 +7,8 @@ Effect.prototype = {
     var div = document.getElementById("main");
     var left = div.offsetLeft;
     var top = div.offsetTop;
-    this.x = ((x-left)-460)/100;
-    this.y = -((y-top)-270)/100;
+    this.x = ((x-left)-460)/2000;
+    this.y = -((y-top)-270)/2000;
     
     this.count = 0;
     this.position = 0;
@@ -19,10 +19,10 @@ Effect.prototype = {
     this.vertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexPositionBuffer);
     vertices = [
-         1.0,  1.0,  0.0,
-        -1.0,  1.0,  0.0,
-         1.0, -1.0,  0.0,
-        -1.0, -1.0,  0.0
+         0.05,  0.05,  0.0,
+        -0.05,  0.05,  0.0,
+         0.05, -0.05,  0.0,
+        -0.05, -0.05,  0.0
     ];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     this.vertexPositionBuffer.itemSize = 3;
@@ -75,13 +75,13 @@ Effect.prototype = {
   render : function() {
     useShaderProgram(2);
     
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.enable(gl.BLEND);
-    gl.disable(gl.DEPTH_TEST);
     
     mvPushMatrix();
 
-    mat4.translate(mvMatrix, [this.x, this.y, -7.0]);
+    mat4.translate(mvMatrix, [this.x, this.y, -0.3]);
 
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexPositionBuffer);
