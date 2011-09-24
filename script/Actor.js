@@ -194,7 +194,7 @@ Actor.prototype = {
 		
 		this.floor = Math.floor(this.z);
 		
-		this.hp = 200;
+		this.hp = 50;
 		this.wait = 0;
 		
 	},
@@ -366,11 +366,33 @@ Actor.prototype = {
 	collideOther : function (other) {
 	  if(this.wait != 0)
 	    return;
-	    
-    gm.game.console.write(this.id+"の攻撃！"+other.id+"に１５のダメージ！");
+	  
+	  if (this.id == 0) {
+      gm.game.console.write("15のダメージをあたえた！");	    
+	  }
+	  
+    if (other.id == 0) {
+      gm.game.console.write("15のダメージをうけた！");      
+    }
+    
     other.hp -= 15;
     
     attachProcess(new Shock(other));
+    
+    if(other.hp <= 0) {
+      other.isDead = true;
+      
+      if (this.id ==0) {
+        gm.game.console.write("モンスターを撃破した！");              
+      }
+      if (other.id ==0) {
+        gm.game.console.write("しんでしまった・・・");              
+        gm.game.console.write("オートリレイズ！");
+        other.hp = 50;
+      }
+      
+    }
+      
 
     this.wait = 100;
 	},

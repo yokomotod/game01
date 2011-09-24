@@ -113,9 +113,20 @@ Game.prototype = {
 	  
 	  this.actor.update();
 	  
-		for (var i=0; i < this.actorNum; i++) {
-		  this.actors[i].update();
-			pushEvent(new ActorMoveEvent(this.actors[i], this.map, 1));
+    var len = this.actors.length - 1;
+
+    for (var i=len; i >= 0; i--) {
+      var actor = this.actors[i];
+      
+      if (actor.isDead) {
+        delete this.map.actors[Math.floor(actor.z)][Math.floor(actor.y)][Math.floor(actor.x)][actor.id];
+        this.actorNum--;
+        this.actors.splice(i, 1);
+      }
+      else {
+  		  actor.update();
+	 		  pushEvent(new ActorMoveEvent(actor, this.map, 1));
+	 		}
 		}
 
 		this.updateHPStatus(this.actor.hp);
